@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/users"
 )
 
 var (
@@ -16,7 +17,7 @@ var usersCreateCmd = &cobra.Command{
 	Short: "Creates a Sumo Logic user",
 	Long:  `Creates a Sumo Logic user by specifying the first name, last name, email and roleIds`,
 	Run: func(cmd *cobra.Command, args []string) {
-		GetApiCredentials(accessId, accessKey)
+		users.CreateUser(firstName, lastName, emailAddress, roleIds)
 
 	},
 }

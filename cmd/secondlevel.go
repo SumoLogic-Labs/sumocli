@@ -9,6 +9,12 @@ var createCmd = &cobra.Command{
 	Short: "Sets the scope to create operations",
 }
 
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Sets the scope to list operations",
+}
+
 func init() {
 	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(listCmd)
 }
