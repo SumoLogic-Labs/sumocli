@@ -23,6 +23,6 @@ This command supports setting the number of results and filter based on name.`,
 func init() {
 	listCmd.AddCommand(rolesListCmd)
 
-	rolesListCmd.PersistentFlags().StringVar(&numberResults, "results", "100", "Specify the number of results, this is set to 100 by default.")
+	rolesListCmd.PersistentFlags().StringVar(&numberResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	rolesListCmd.PersistentFlags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
 }
