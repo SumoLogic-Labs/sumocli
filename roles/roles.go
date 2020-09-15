@@ -50,7 +50,6 @@ func ListRoleIds(numberOfResults string, name string) {
 		query.Add("name", name)
 	}
 	request.URL.RawQuery = query.Encode()
-	fmt.Println(request.URL)
 
 	response, err := client.Do(request)
 	util.LogError(err)
@@ -61,7 +60,12 @@ func ListRoleIds(numberOfResults string, name string) {
 
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
 	util.LogError(jsonErr)
-	fmt.Println(string(responseBody))
-	fmt.Println(roleInfo.Data)
 
+	// TODO: Add a flag to output to file or console, there needs to be a conditional IF statement
+	for i, _ := range roleInfo.Data {
+		roleInfoJson, err := json.MarshalIndent(roleInfo.Data[i], "", "    ")
+		util.LogError(err)
+		fmt.Print(string(roleInfoJson))
+		i++
+	}
 }
