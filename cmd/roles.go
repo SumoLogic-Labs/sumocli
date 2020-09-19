@@ -8,6 +8,7 @@ import (
 var (
 	numberResults string
 	filter        string
+	output        bool
 )
 
 var rolesListCmd = &cobra.Command{
@@ -16,7 +17,7 @@ var rolesListCmd = &cobra.Command{
 	Long: `Lists the roles in the Sumo Logic tenancy. 
 This command supports setting the number of results and filter based on name.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		roles.ListRoleIds(numberResults, filter)
+		roles.ListRoleIds(numberResults, filter, output)
 	},
 }
 
@@ -25,4 +26,5 @@ func init() {
 
 	rolesListCmd.PersistentFlags().StringVar(&numberResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	rolesListCmd.PersistentFlags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
+	rolesListCmd.PersistentFlags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
 }

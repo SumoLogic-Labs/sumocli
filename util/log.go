@@ -5,11 +5,10 @@ import "log"
 /*
 type ErrorResponse struct {
 	id string
-	errors [] // TODO: This will be an array of something objects probably type ErrorObjects struct {}
+	errors []
 }
 */
 
-// TODO: Implement a better logging solution than outputing to console
 // LogError: Logs any errors received
 func LogError(err error) {
 	if err != nil {
@@ -17,14 +16,14 @@ func LogError(err error) {
 	}
 }
 
-// TODO: Refactor the HttpError function
 func HttpError(statusCode int, responseBody string) bool {
 	if statusCode == 401 {
-		log.Fatalln("Unauthorized access please check the user exists,  are valid.")
+		log.Println("Unauthorized access please check the user exists,  are valid.")
 		apiCallSuccess := false
 		return apiCallSuccess
-	} else if statusCode == 400 {
-
+	} else if statusCode == 200 {
+		apiCallSuccess := true
+		return apiCallSuccess
 	}
 	apiCallSuccess := true
 	return apiCallSuccess

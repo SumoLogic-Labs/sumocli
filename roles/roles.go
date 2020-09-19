@@ -32,11 +32,10 @@ func GetRoleId() {
 
 }
 
-func ListRoleIds(numberOfResults string, name string) {
+func ListRoleIds(numberOfResults string, name string, output bool) {
 	var roleInfo role
 	client := util.GetHttpClient()
 
-	// TODO: Look at making the creation of the request a function that can be used across the whole code base
 	request, err := http.NewRequest("GET", util.GetApiEndpoint()+"v1/roles", nil)
 	request.Header.Add("Authorization", util.GetApiCredentials())
 	request.Header.Add("Content-Type", "application/json")
@@ -61,11 +60,13 @@ func ListRoleIds(numberOfResults string, name string) {
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
 	util.LogError(jsonErr)
 
-	// TODO: Add a flag to output to file or console, there needs to be a conditional IF statement
-	for i, _ := range roleInfo.Data {
-		roleInfoJson, err := json.MarshalIndent(roleInfo.Data[i], "", "    ")
-		util.LogError(err)
-		fmt.Print(string(roleInfoJson))
-		i++
+	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
+	util.LogError(err)
+
+	// Determines if the response should be written to a file or to console
+	if output == true {
+		util.OutputToFile(roleInfoJson)
+	} else {
+		fmt.Println(string(roleInfoJson))
 	}
 }
