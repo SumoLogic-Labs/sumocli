@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v2
-      - name: Fetch all history for all tags and branches
-        uses: git fetch --prune --unshallow
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.4
         with:
