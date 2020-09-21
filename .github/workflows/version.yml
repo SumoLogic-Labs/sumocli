@@ -1,0 +1,35 @@
+on:
+  pull_request:
+    types: closed
+    branches:
+      - main
+
+jobs:
+  create_semver:
+    name: Create Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Tag
+        id: semvertag
+        uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: main
+          release_strategy: tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      semvertag: ${{ steps.semvertag.outputs.tag }}
+
+  create_github_release:
+    name: Create GitHub Release
+    needs: create_semver
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout/@v2
+      - name: Create Release
+        id: createrelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.create_semver.outputs.semvertag }}
