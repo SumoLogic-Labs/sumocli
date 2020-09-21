@@ -13,9 +13,9 @@ Clone the sumocli repo
 
 `git clone https://github.com/wizedkyle/sumocli`
 
-Install the go dependencies (you need to ensure Go is installed and configured on your machine)
+The repo is using Go modules so you can run go build:
 
-`go get ..`
+`go build`
 
 
 
