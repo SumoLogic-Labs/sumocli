@@ -23,6 +23,7 @@ jobs:
   create_github_release:
     name: Create GitHub Release
     needs: create_semver
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout/@v2
