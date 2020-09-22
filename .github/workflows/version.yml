@@ -27,6 +27,11 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout/@v2
+      - name: Update Go Application version information
+        shell: pwsh
+        run : |
+          (Get-Content version/version.go).Replace("-version", ${{ steps.semvertag.outputs.tag }}) | Set-Content version/version.go
+          (Get-Content version/version.go).Replace("-build", $Env:GITHUB_RUN_NUMBER) | Set-Content version/version.go
       - name: Create Release
         id: createrelease
         uses: actions/create-release@v1
