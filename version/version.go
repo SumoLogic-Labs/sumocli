@@ -1,7 +1,7 @@
 package version
 
 var (
-	AppName      string = "sumocli"
-	Version      string = "-version"
-	BuildVersion string = "-build"
+	AppName string = "sumocli"
+	Version string = ""
+	Build   string = ""
 )
