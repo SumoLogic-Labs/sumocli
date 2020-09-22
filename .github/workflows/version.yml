@@ -20,37 +20,59 @@ jobs:
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
       
-  update_app_version:
-    name: Update Application Version
+  compile_windows:
+    name: Compile Windows Binary
+    needs: create_semver
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install Go Environment
+        uses: actions/setup-go@v2
+        with:
+          go_version: '1.15.2'
+      - name: Build Go Application
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags="-X 'github.com/wizedkyle/sumocli/version.Version=${{ needs.create_semver.outputs.semvertag }}' -X 'github.com/wizedkyle/sumocli/version.Build=$build' -X 'github.com/wizedkyle/sumocli/version.Time=$time'"
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli-windows
+          path: sumocli.exe
+          
+  compile_macos:
+    name: Compile macOS Binary
+    needs: create_semver
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install Go Environment
+        uses: actions/setup-go@v2
+        with:
+          go_version: '1.15.2'
+      - name: Build Go Application
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags="-X 'github.com/wizedkyle/sumocli/version.Version=${{ needs.create_semver.outputs.semvertag }}' -X 'github.com/wizedkyle/sumocli/version.Build=$build' -X 'github.com/wizedkyle/sumocli/version.Time=$time'"
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli-macos
+          path: sumocli
+
+  create_github_release:
+    name: Create GitHub Release
     needs: create_semver
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Update Go Application version information
-        shell: pwsh
-        run : |
-          (Get-Content version/version.go).Replace("-version", "${{ needs.create_semver.outputs.semvertag }}") | Set-Content version/version.go
-          (Get-Content version/version.go).Replace("-build", $Env:GITHUB_RUN_NUMBER) | Set-Content version/version.go
-      - name: Commit Go Application version information
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          branch: main
-          commit_message: update
-          commit_user_name: GitHub Actions Bot
-          commit_user_email: github-actionss-bot@thepublicclouds.com
-          commit_author: Author <actions@github.com>
-          push_options: --force
-
-  create_github_release:
-    name: Create GitHub Release
-    needs: [create_semver,update_app_version]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout/@v2
-        with:
-          ref: main
       - name: Create Release
         id: createrelease
         uses: actions/create-release@v1
