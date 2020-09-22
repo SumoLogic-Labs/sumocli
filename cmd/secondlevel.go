@@ -20,7 +20,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Displays the version of sumocli",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(version.AppName + " " + version.Version + " " + version.BuildVersion)
+		fmt.Println(version.AppName + " " + version.Version + " " + version.Build + " " + version.Time)
 	},
 }
 
