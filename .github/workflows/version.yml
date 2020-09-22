@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: Update Go Application version information
         shell: pwsh
         run : |
