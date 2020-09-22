@@ -35,6 +35,7 @@ jobs:
       - name: Commit Go Application version information
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
+          branch: main
           commit_message: update
           commit_user_name: GitHub Actions Bot
           commit_user_email: github-actionss-bot@thepublicclouds.com
