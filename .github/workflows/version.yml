@@ -19,19 +19,37 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
-
-  create_github_release:
-    name: Create GitHub Release
+      
+  update_app_version:
+    name: Update Application Version
     needs: create_semver
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout/@v2
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
       - name: Update Go Application version information
         shell: pwsh
         run : |
-          (Get-Content version/version.go).Replace("-version", "${{ steps.semvertag.outputs.tag }}") | Set-Content version/version.go
+          (Get-Content version/version.go).Replace("-version", "${{ needs.create_semver.outputs.semvertag }}") | Set-Content version/version.go
           (Get-Content version/version.go).Replace("-build", $Env:GITHUB_RUN_NUMBER) | Set-Content version/version.go
+      - name: Commit Go Application version information
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: update
+          commit_user_name: GitHub Actions Bot
+          commit_user_email: github-actionss-bot@thepublicclouds.com
+          commit_author: Author <actions@github.com>
+          push_options: --force
+
+  create_github_release:
+    name: Create GitHub Release
+    needs: [create_semver,update_app_version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout/@v2
       - name: Create Release
         id: createrelease
         uses: actions/create-release@v1
