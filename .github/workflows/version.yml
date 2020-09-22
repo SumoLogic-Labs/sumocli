@@ -24,9 +24,13 @@ jobs:
     name: Compile Windows Binary
     needs: create_semver
     runs-on: windows-latest
+    env:
+      GOPATH: ${{ github.workspace }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+        with:
+          path: ./src/github.com/${{ github.repository }}
       - name: Install Go Environment
         uses: actions/setup-go@v2
         with:
@@ -36,6 +40,7 @@ jobs:
         run: |
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
+          Write-Host $Env:GOPATH
           go build -ldflags="-X 'github.com/wizedkyle/sumocli/version.Version=${{ needs.create_semver.outputs.semvertag }}' -X 'github.com/wizedkyle/sumocli/version.Build=$build' -X 'github.com/wizedkyle/sumocli/version.Time=$time'"
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
