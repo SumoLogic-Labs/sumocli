@@ -1,10 +1,10 @@
-package users
+package create
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/wizedkyle/sumocli/util"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -35,7 +35,7 @@ type CreateUserResponse struct {
 
 func CreateUser(firstName string, lastName string, emailAddress string, roleIds []string) {
 	var createUserResponse CreateUserResponse
-	client := util.GetHttpClient()
+	client := util2.GetHttpClient()
 
 	requestBodySchema := &CreateUserRequest{
 		Firstname:    firstName,
@@ -46,24 +46,24 @@ func CreateUser(firstName string, lastName string, emailAddress string, roleIds 
 
 	requestBody, _ := json.Marshal(requestBodySchema)
 
-	request, err := http.NewRequest("POST", util.GetApiEndpoint()+"v1/users", bytes.NewBuffer(requestBody))
-	request.Header.Add("Authorization", util.GetApiCredentials())
+	request, err := http.NewRequest("POST", util2.GetApiEndpoint()+"v1/users", bytes.NewBuffer(requestBody))
+	request.Header.Add("Authorization", util2.GetApiCredentials())
 	request.Header.Add("Content-Type", "application/json")
-	util.LogError(err)
+	util2.LogError(err)
 
 	response, err := client.Do(request)
-	util.LogError(err)
+	util2.LogError(err)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 	responseString := string(responseBody)
 
-	apiCallResult := util.HttpError(response.StatusCode, responseString)
+	apiCallResult := util2.HttpError(response.StatusCode, responseString)
 	if apiCallResult == false {
 		os.Exit(0)
 	} else if apiCallResult == true {
 		jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-		util.LogError(jsonErr)
+		util2.LogError(jsonErr)
 		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
 	}
 }

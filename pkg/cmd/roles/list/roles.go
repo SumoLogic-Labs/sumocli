@@ -1,9 +1,9 @@
-package roles
+package list
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/wizedkyle/sumocli/util"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -34,12 +34,12 @@ func GetRoleId() {
 
 func ListRoleIds(numberOfResults string, name string, output bool) {
 	var roleInfo role
-	client := util.GetHttpClient()
+	client := util2.GetHttpClient()
 
-	request, err := http.NewRequest("GET", util.GetApiEndpoint()+"v1/roles", nil)
-	request.Header.Add("Authorization", util.GetApiCredentials())
+	request, err := http.NewRequest("GET", util2.GetApiEndpoint()+"v1/roles", nil)
+	request.Header.Add("Authorization", util2.GetApiCredentials())
 	request.Header.Add("Content-Type", "application/json")
-	util.LogError(err)
+	util2.LogError(err)
 
 	query := url.Values{}
 	if numberOfResults != "" {
@@ -51,21 +51,21 @@ func ListRoleIds(numberOfResults string, name string, output bool) {
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.Do(request)
-	util.LogError(err)
+	util2.LogError(err)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util.LogError(err)
+	util2.LogError(err)
 
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	util.LogError(jsonErr)
+	util2.LogError(jsonErr)
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
-	util.LogError(err)
+	util2.LogError(err)
 
 	// Determines if the response should be written to a file or to console
 	if output == true {
-		util.OutputToFile(roleInfoJson)
+		util2.OutputToFile(roleInfoJson)
 	} else {
 		fmt.Println(string(roleInfoJson))
 	}

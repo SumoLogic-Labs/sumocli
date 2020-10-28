@@ -1,8 +1,14 @@
+name: Sumocli Build
+
 on:
   pull_request:
     types: closed
     branches: 
       - main
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   create_semver:

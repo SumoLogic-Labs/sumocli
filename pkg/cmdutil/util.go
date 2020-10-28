@@ -1,4 +1,4 @@
-package util
+package cmdutil
 
 import (
 	"encoding/base64"
@@ -23,7 +23,7 @@ var (
 	ApiEndpoint string
 )
 
-// GetHttpClient: Creates a HTTP util and returns the util
+// GetHttpClient: Creates a HTTP cmdutil and returns the cmdutil
 func GetHttpClient() *http.Client {
 	client := &http.Client{
 		Timeout: time.Second * 10,

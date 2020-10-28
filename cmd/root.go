@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/util"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 )
 
 var rootCmd = &cobra.Command{
@@ -15,9 +15,9 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&util.AccessId, "id", "", "Provide a Sumo Logic access ID")
-	rootCmd.PersistentFlags().StringVar(&util.AccessKey, "key", "", "Provide a Sumo Logic access key")
-	rootCmd.PersistentFlags().StringVar(&util.ApiEndpoint, "endpoint", "", "Provide the deployment region code")
+	rootCmd.PersistentFlags().StringVar(&util2.AccessId, "id", "", "Provide a Sumo Logic access ID")
+	rootCmd.PersistentFlags().StringVar(&util2.AccessKey, "key", "", "Provide a Sumo Logic access key")
+	rootCmd.PersistentFlags().StringVar(&util2.ApiEndpoint, "endpoint", "", "Provide the deployment region code")
 }
 
 func Execute() error {

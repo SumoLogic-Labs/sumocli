@@ -1,8 +1,9 @@
-package cmd
+package roles
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/roles"
+	"github.com/wizedkyle/sumocli/cmd"
+	"github.com/wizedkyle/sumocli/pkg/cmd/roles/list"
 )
 
 var (
@@ -17,12 +18,12 @@ var rolesListCmd = &cobra.Command{
 	Long: `Lists the roles in the Sumo Logic tenancy. 
 This command supports setting the number of results and filter based on name.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		roles.ListRoleIds(numberResults, filter, output)
+		list.ListRoleIds(numberResults, filter, output)
 	},
 }
 
 func init() {
-	listCmd.AddCommand(rolesListCmd)
+	cmd.listCmd.AddCommand(rolesListCmd)
 
 	rolesListCmd.PersistentFlags().StringVar(&numberResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	rolesListCmd.PersistentFlags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
