@@ -14,7 +14,7 @@ func NewCmdRoot() *cobra.Command {
 		//Example: heredoc.Doc(),
 	}
 
-	cmd.AddCommand(loginCmd.NewCmdRoleList())
+	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 
 	return cmd
