@@ -3,6 +3,7 @@ package list
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/cobra"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
@@ -28,8 +29,17 @@ type roleData struct {
 	SystemDefined        bool     `json:"systemDefined"`
 }
 
-func GetRoleId() {
+func NewCmdRoleList() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "",
+		//Args: "",
+		//RunE: func(cmd *cobra.Command, args []string) error {
+		//	ListRoleIds()
+		//},
+	}
 
+	return cmd
 }
 
 func ListRoleIds(numberOfResults string, name string, output bool) {

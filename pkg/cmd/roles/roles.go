@@ -2,30 +2,17 @@ package roles
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/cmd"
-	"github.com/wizedkyle/sumocli/pkg/cmd/roles/list"
+	cmdRoleList "github.com/wizedkyle/sumocli/pkg/cmd/roles/list"
 )
 
-var (
-	numberResults string
-	filter        string
-	output        bool
-)
+func NewCmdRole() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "role <command>",
+		Short: "",
+		Long:  "",
+		//Example: heredoc.Doc(),
+	}
 
-var rolesListCmd = &cobra.Command{
-	Use:   "roles",
-	Short: "Lists the roles in the Sumo Logic tenancy",
-	Long: `Lists the roles in the Sumo Logic tenancy. 
-This command supports setting the number of results and filter based on name.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		list.ListRoleIds(numberResults, filter, output)
-	},
-}
-
-func init() {
-	cmd.listCmd.AddCommand(rolesListCmd)
-
-	rolesListCmd.PersistentFlags().StringVar(&numberResults, "results", "", "Specify the number of results, this is set to 100 by default.")
-	rolesListCmd.PersistentFlags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
-	rolesListCmd.PersistentFlags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
+	cmd.AddCommand(cmdRoleList.NewCmdRoleList())
+	return cmd
 }
