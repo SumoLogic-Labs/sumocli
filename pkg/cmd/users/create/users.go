@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
@@ -36,6 +37,7 @@ type CreateUserResponse struct {
 func CreateUser(firstName string, lastName string, emailAddress string, roleIds []string) {
 	var createUserResponse CreateUserResponse
 	client := util2.GetHttpClient()
+	authToken, apiEndpoint := login.ReadCredentials()
 
 	requestBodySchema := &CreateUserRequest{
 		Firstname:    firstName,
@@ -46,8 +48,8 @@ func CreateUser(firstName string, lastName string, emailAddress string, roleIds 
 
 	requestBody, _ := json.Marshal(requestBodySchema)
 
-	request, err := http.NewRequest("POST", util2.GetApiEndpoint()+"v1/users", bytes.NewBuffer(requestBody))
-	request.Header.Add("Authorization", util2.GetApiCredentials())
+	request, err := http.NewRequest("POST", apiEndpoint+"v1/users", bytes.NewBuffer(requestBody))
+	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
 	util2.LogError(err)
 

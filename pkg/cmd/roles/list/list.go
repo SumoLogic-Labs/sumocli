@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	login "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
@@ -45,9 +46,10 @@ func NewCmdRoleList() *cobra.Command {
 func ListRoleIds(numberOfResults string, name string, output bool) {
 	var roleInfo role
 	client := util2.GetHttpClient()
+	authToken, apiEndpoint := login.ReadCredentials()
 
-	request, err := http.NewRequest("GET", util2.GetApiEndpoint()+"v1/roles", nil)
-	request.Header.Add("Authorization", util2.GetApiCredentials())
+	request, err := http.NewRequest("GET", apiEndpoint+"v1/roles", nil)
+	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
 	util2.LogError(err)
 
