@@ -14,16 +14,19 @@ func NewCmdLogin() *cobra.Command {
 		Use:   "login",
 		Short: "",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			configFile := configPath()
 			fmt.Println("Sumocli requires an access key and secret key.")
 			fmt.Println("Sumocli will store the access key and secret key in plain text in" +
 				" the following file for use by subsequent commands:")
-			// TODO: Add the file path here
-			configFile := configPath()
-			fmt.Println(configFile)
+			fmt.Printf(configFile)
 			confirmation := userConfirmation()
-			fmt.Println(confirmation)
-			// TODO: Access Key and Secret
-			// TODO: write to disk with Viper
+			if confirmation == true {
+				// TODO: Access Key and Secret
+				// TODO: write to disk with Viper
+			} else {
+				os.Exit(1)
+			}
+
 			return nil
 		},
 	}
@@ -65,4 +68,5 @@ func ReadLoginFile() {
 
 func writeLoginFile() {
 	// https://github.com/spf13/viper
+	// https://medium.com/@jomzsg/the-easy-way-to-handle-configuration-file-in-golang-using-viper-6b3c88d2ee79
 }
