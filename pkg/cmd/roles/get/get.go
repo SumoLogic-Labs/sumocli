@@ -1,0 +1,5 @@
+package get
+
+func GetRoleId() {
+
+}

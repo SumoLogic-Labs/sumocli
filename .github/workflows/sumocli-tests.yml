@@ -1,0 +1,25 @@
+name: Sumocli Tests
+
+on: [pull_request, push]
+
+jobs:
+  compile_authorizer_app:
+    name: Test Go Applications
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go Environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.15.2'
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Download Dependencies
+        run: go mod download
+
+      - name: Run Tests
+        run: go test ./...
+
+      - name: Build Sumocli
+        run: go build -v ./cmd/sumocli

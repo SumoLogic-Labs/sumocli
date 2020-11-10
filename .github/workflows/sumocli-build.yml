@@ -1,8 +1,14 @@
+name: Sumocli Build
+
 on:
   pull_request:
     types: closed
     branches: 
       - main
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   create_semver:
@@ -40,36 +46,12 @@ jobs:
         run: |
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
-          Write-Host $Env:GOPATH
-          go build -ldflags="-X 'github.com/wizedkyle/sumocli/version.Version=${{ needs.create_semver.outputs.semvertag }}' -X 'github.com/wizedkyle/sumocli/version.Build=$build' -X 'github.com/wizedkyle/sumocli/version.Time=$time'"
+          go build -ldflags "-X github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}" ./cmd/sumocli
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
-          name: sumocli-windows
+          name: sumocli-winx64
           path: sumocli.exe
-          
-  compile_macos:
-    name: Compile macOS Binary
-    needs: create_semver
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Install Go Environment
-        uses: actions/setup-go@v2
-        with:
-          go_version: '1.15.2'
-      - name: Build Go Application
-        shell: pwsh
-        run: |
-          $build = $Env:GITHUB_RUN_NUMBER
-          $time = Get-Date
-          go build -ldflags="-X 'github.com/wizedkyle/sumocli/version.Version=${{ needs.create_semver.outputs.semvertag }}' -X 'github.com/wizedkyle/sumocli/version.Build=$build' -X 'github.com/wizedkyle/sumocli/version.Time=$time'"
-      - name: Upload macOS Binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sumocli-macos
-          path: sumocli
 
   create_github_release:
     name: Create GitHub Release
