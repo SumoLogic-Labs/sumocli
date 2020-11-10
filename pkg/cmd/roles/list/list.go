@@ -41,7 +41,7 @@ func NewCmdRoleList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
-			RoleIds(numberOfResults, filter, output)
+			roles(numberOfResults, filter, output)
 		},
 	}
 
@@ -52,7 +52,7 @@ func NewCmdRoleList() *cobra.Command {
 	return cmd
 }
 
-func RoleIds(numberOfResults string, name string, output bool) {
+func roles(numberOfResults string, name string, output bool) {
 	var roleInfo role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()

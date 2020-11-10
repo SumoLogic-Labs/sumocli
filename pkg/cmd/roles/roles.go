@@ -7,9 +7,9 @@ import (
 
 func NewCmdRole() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "role <command>",
-		Short: "",
-		Long:  "",
+		Use:   "roles <command>",
+		Short: "Manage roles",
+		Long:  "Work with Sumo Logic roles",
 	}
 
 	cmd.AddCommand(cmdRoleList.NewCmdRoleList())

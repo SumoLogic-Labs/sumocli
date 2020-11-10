@@ -4,7 +4,9 @@ A CLI application that lets you manage/automate your Sumo Logic tenancy.
 ## Installation
 
 ### Recommended
-Download the binary for your platform from the Releases page.
+Download the binary for your platform from the Releases page. 
+
+Automated builds are coming soon!
 
 ### Build Yourself
 You can build the sumocli application for your platform by performing the following steps:

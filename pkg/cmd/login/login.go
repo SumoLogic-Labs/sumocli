@@ -29,8 +29,10 @@ type SumoAuth struct {
 
 func NewCmdLogin() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "login",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Use:   "login",
+		Short: "Sets Sumo Logic credentials",
+		Long:  "Interactively sets the Sumo Logic Access Id, Access Key and API endpoint.",
+		Run: func(cmd *cobra.Command, args []string) {
 			configFile := configPath()
 			fmt.Println("Sumocli requires an access id and access key.")
 			fmt.Println("Sumocli will store the access id and access key in plain text in" +
@@ -42,9 +44,7 @@ func NewCmdLogin() *cobra.Command {
 			} else {
 				os.Exit(1)
 			}
-
-			ReadCredentials()
-			return nil
+			return
 		},
 	}
 
@@ -55,7 +55,6 @@ func configPath() string {
 	var filePath string = ".sumocli/credentials/creds.json"
 	homeDirectory, _ := os.UserHomeDir()
 	configFile := filepath.Join(homeDirectory, filePath)
-	fmt.Println(configFile)
 	return configFile
 }
 
@@ -144,23 +143,35 @@ func getCredentials() {
 func ReadCredentials() (string, string) {
 	viper.SetConfigName("creds")
 	viper.AddConfigPath(filepath.Dir(configPath()))
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			fmt.Println("Credentials file not found at: " + configPath())
-			fmt.Println("Please run sumocli login to continue...")
-			os.Exit(1)
-		} else {
-			log.Fatal(err)
+	viper.AutomaticEnv()
+	if _, err := os.Stat(configPath()); os.IsExist(err) {
+		if err := viper.ReadInConfig(); err != nil {
+			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+				fmt.Println("Credentials file not found at: " + configPath())
+				fmt.Println("Please run sumocli login to continue...")
+				os.Exit(1)
+			} else {
+				log.Fatal(err)
+			}
 		}
-	}
-	accessid := viper.GetString("accessid")
-	accesskey := viper.GetString("accesskey")
-	endpoint := viper.GetString("endpoint")
+		accessid := viper.GetString("accessid")
+		accesskey := viper.GetString("accesskey")
+		endpoint := viper.GetString("endpoint")
 
-	accessCredentials := accessid + ":" + accesskey
-	accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
-	accessCredentialsComplete := "Basic " + accessCredentialsEnc
-	return accessCredentialsComplete, endpoint
+		accessCredentials := accessid + ":" + accesskey
+		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
+		accessCredentialsComplete := "Basic " + accessCredentialsEnc
+		return accessCredentialsComplete, endpoint
+	} else {
+		accessidenv := viper.GetString("SUMO_ACCESS_ID")
+		accesskeyenv := viper.GetString("SUMO_ACCESS_KEY")
+		endpointenv := viper.GetString("SUMO_ENDPOINT")
+
+		accessCredentials := accessidenv + ":" + accesskeyenv
+		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
+		accessCredentialsComplete := "Basic " + accessCredentialsEnc
+		return accessCredentialsComplete, endpointenv
+	}
 }
 
 func userConfirmation() bool {

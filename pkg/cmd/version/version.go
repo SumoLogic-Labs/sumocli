@@ -1,8 +1,21 @@
 package version
 
-var (
-	AppName string = "sumocli"
-	Version string = ""
-	Build   string = ""
-	Time    string = ""
+import (
+	"fmt"
+	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/build"
 )
+
+func NewCmdVersion() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:    "version",
+		Short:  "Displays sumocli version",
+		Long:   "Displays the version and build number of sumocli.",
+		Hidden: true,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Sumocli " + build.Version + " " + build.Build + " " + build.Date)
+		},
+	}
+
+	return cmd
+}
