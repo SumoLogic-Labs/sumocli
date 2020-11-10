@@ -10,7 +10,6 @@ func NewCmdRole() *cobra.Command {
 		Use:   "role <command>",
 		Short: "",
 		Long:  "",
-		//Example: heredoc.Doc(),
 	}
 
 	cmd.AddCommand(cmdRoleList.NewCmdRoleList())

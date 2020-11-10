@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	login "github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
@@ -31,19 +31,28 @@ type roleData struct {
 }
 
 func NewCmdRoleList() *cobra.Command {
+	var (
+		numberOfResults string
+		filter          string
+		output          bool
+	)
+
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "",
-		//Args: "",
-		//RunE: func(cmd *cobra.Command, args []string) error {
-		//	ListRoleIds()
-		//},
+		Short: "Lists Sumo Logic roles",
+		Run: func(cmd *cobra.Command, args []string) {
+			RoleIds(numberOfResults, filter, output)
+		},
 	}
+
+	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
+	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
+	cmd.Flags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
 
 	return cmd
 }
 
-func ListRoleIds(numberOfResults string, name string, output bool) {
+func RoleIds(numberOfResults string, name string, output bool) {
 	var roleInfo role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
