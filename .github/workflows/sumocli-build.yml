@@ -59,8 +59,8 @@ jobs:
             --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
             --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
             --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
-            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }}`
-            --timestamp-rfc3161 http://timestamp.sectigo.com`
+            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }} `
+            --timestamp-rfc3161 http://timestamp.sectigo.com `
             --timestamp-digest sha256 `
             sumocli.exe
       - name: Upload Windows Binary
