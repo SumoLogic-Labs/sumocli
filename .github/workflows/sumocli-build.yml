@@ -90,10 +90,37 @@ jobs:
             -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
             -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
-      - name: Upload Windows Binary
+      - name: Upload Linux Binary
         uses: actions/upload-artifact@v2
         with:
           name: sumocli_linux_amd64
+          path: sumocli
+
+  build_macos:
+    name: Build macOS Binary
+    needs: create_semver
+    runs-on: macos-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_macos_amd64
           path: sumocli
 
 #  create_github_release:
