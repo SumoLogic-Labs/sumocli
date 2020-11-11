@@ -1,14 +1,10 @@
-name: Sumocli Build
+name: Sumocli Build and Release
 
 on:
   pull_request:
     types: closed
-    branches: 
+    branches:
       - main
-
-defaults:
-  run:
-    shell: bash
 
 jobs:
   create_semver:
@@ -26,44 +22,155 @@ jobs:
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
       
-  compile_windows:
-    name: Compile Windows Binary
+  build_windows:
+    name: Build Windows Binary
     needs: create_semver
     runs-on: windows-latest
-    env:
-      GOPATH: ${{ github.workspace }}
     steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '2.1.x'
+      - name: Install AzureSignTool
+        shell: pwsh
+        run: dotnet tool install --global AzureSignTool --version 2.0.17
       - name: Checkout Repo
         uses: actions/checkout@v2
-        with:
-          path: ./src/github.com/${{ github.repository }}
-      - name: Install Go Environment
-        uses: actions/setup-go@v2
-        with:
-          go_version: '1.15.2'
-      - name: Build Go Application
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
         shell: pwsh
         run: |
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
-          go build -ldflags "-X github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}" ./cmd/sumocli
+          go build -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Signing Executable
+        shell: pwsh
+        run: |
+          azuresigntool sign --description-url "https://sumocli.gitbook.io" --file-digest sha256 `
+            --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
+            --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
+            --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
+            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }} `
+            --timestamp-rfc3161 http://timestamp.sectigo.com `
+            --timestamp-digest sha256 `
+            sumocli.exe
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
-          name: sumocli-winx64
+          name: sumocli_windows_amd64
           path: sumocli.exe
 
-  create_github_release:
-    name: Create GitHub Release
+  build_linux:
+    name: Build Linux Binary
     needs: create_semver
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Upload Linux Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_amd64
+          path: sumocli
+
+  build_macos:
+    name: Build macOS Binary
+    needs: create_semver
+    runs-on: macos-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_macos_amd64
+          path: sumocli
+
+  create_github_release:
+    name: Create GitHub Release
+    needs: [create_semver, build_windows, build_linux, build_macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2
+      - name: Zip Releases
+        run: |
+          zip -r sumocli_windows_amd64.zip sumocli_windows_amd64
+          zip -r sumocli_linux_amd64.zip sumocli_linux_amd64
+          zip -r sumocli_macos_amd64.zip sumocli_macos_amd64
+      - name: List files
+        run: ls -R
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Create Release
-        id: createrelease
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ needs.create_semver.outputs.semvertag }}
+          release_name: Release ${{ needs.create_semver.outputs.semvertag }}
+          draft: false
+          prerelease: false
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_windows_amd64.zip
+          asset_name: sumocli_windows_amd64.zip
+          asset_content_type: application/zip
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_linux_amd64.zip
+          asset_name: sumocli_linux_amd64.zip
+          asset_content_type: application/zip
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_macos_amd64.zip
+          asset_name: sumocli_macos_amd64.zip
+          asset_content_type: application/zip
