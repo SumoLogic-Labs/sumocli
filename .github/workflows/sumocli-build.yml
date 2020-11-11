@@ -128,15 +128,6 @@ jobs:
     needs: [create_semver, build_windows, build_linux, build_macos]
     runs-on: ubuntu-latest
     steps:
-      #- name: Checkout Repo
-      #  uses: actions/checkout@v2
-      #- name: Create Release
-      #  id: createrelease
-      #  uses: actions/create-release@v1
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  with:
-      #    tag_name: ${{ needs.create_semver.outputs.semvertag }}
       - name: Download All Artifacts
         uses: actions/download-artifact@v2
       - name: Zip Releases
@@ -146,3 +137,42 @@ jobs:
           zip -r sumocli_macos_amd64.zip sumocli_macos_amd64
       - name: List files
         run: ls -R
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.create_semver.outputs.semvertag }}
+          release_name: Release ${{ needs.create_semver.outputs.semvertag }}
+          draft: false
+          prerelease: false
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_windows_amd64.zip
+          asset_name: sumocli_windows_amd64.zip
+          asset_content_type: application/zip
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_linux_amd64.zip
+          asset_name: sumocli_linux_amd64.zip
+          asset_content_type: application/zip
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sumocli_macos_amd64.zip
+          asset_name: sumocli_macos_amd64.zip
+          asset_content_type: application/zip
