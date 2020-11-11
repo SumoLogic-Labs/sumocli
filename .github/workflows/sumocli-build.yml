@@ -125,19 +125,19 @@ jobs:
 
   create_github_release:
     name: Create GitHub Release
-      needs: create_semver
-      runs-on: ubuntu-latest
-      steps:
-        #- name: Checkout Repo
-        #  uses: actions/checkout@v2
-        #- name: Create Release
-        #  id: createrelease
-        #  uses: actions/create-release@v1
-        #  env:
-        #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #  with:
-        #    tag_name: ${{ needs.create_semver.outputs.semvertag }}
-        - name: Download All Artifacts
-          uses: actions/download-artifact@v2
-        - name: List files
-          run: ls -R
+    needs: [create_semver, build_windows, build_linux, build_macos]
+    runs-on: ubuntu-latest
+    steps:
+      #- name: Checkout Repo
+      #  uses: actions/checkout@v2
+      #- name: Create Release
+      #  id: createrelease
+      #  uses: actions/create-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    tag_name: ${{ needs.create_semver.outputs.semvertag }}
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v2
+      - name: List files
+        run: ls -R
