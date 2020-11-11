@@ -1,14 +1,12 @@
 name: Sumocli Build
 
-on:
-  pull_request:
-    types: closed
-    branches: 
-      - main
+on: push
 
-defaults:
-  run:
-    shell: bash
+# on:
+#  pull_request:
+#    types: closed
+#    branches:
+#      - main
 
 jobs:
   create_semver:
@@ -39,31 +37,52 @@ jobs:
           path: ./src/github.com/${{ github.repository }}
       - name: Install Go Environment
         uses: actions/setup-go@v2
-        with:
-          go_version: '1.15.2'
       - name: Build Go Application
         shell: pwsh
         run: |
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
-          go build -ldflags "-X github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}" ./cmd/sumocli
+          go build -ldflags `
+            "-X github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}" `
+            "-X github.com/wizedkyle/sumocli/internal/build.Build=$build" `
+            "-X github.com/wizedkyle/sumocli/internal/build.Date=$time" `
+            ./cmd/sumocli
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: '3.1.x'
+      - name: Install AzureSignTool
+        shell: pwsh
+        run: |
+          dotnet tool install --global AzureSignTool --version 2.0.17
+      - name: Signing Executable
+        shell: pwsh
+        run: |
+          azuresigntool sign --description-url "https://sumocli.gitbook.io" --file-digest sha256 `
+            --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
+            --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
+            --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
+            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }}`
+            --timestamp-rfc3161 http://timestamp.sectigo.com`
+            --timestamp-digest sha256 `
+            sumocli.exe
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
           name: sumocli-winx64
           path: sumocli.exe
 
-  create_github_release:
-    name: Create GitHub Release
-    needs: create_semver
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: createrelease
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.create_semver.outputs.semvertag }}
+#  create_github_release:
+#    name: Create GitHub Release
+#    needs: create_semver
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Repo
+#        uses: actions/checkout@v2
+#      - name: Create Release
+#        id: createrelease
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ needs.create_semver.outputs.semvertag }}
