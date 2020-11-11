@@ -1,4 +1,4 @@
-name: Sumocli Build
+name: Sumocli Build and Release
 
 on: push
 
@@ -24,8 +24,8 @@ jobs:
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
       
-  compile_windows:
-    name: Compile Windows Binary
+  build_windows:
+    name: Build Windows Binary
     needs: create_semver
     runs-on: windows-latest
     steps:
@@ -66,8 +66,35 @@ jobs:
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v2
         with:
-          name: sumocli-winx64
+          name: sumocli_windows_amd64
           path: sumocli.exe
+
+  build_linux:
+    name: Build Linux Binary
+    needs: create_semver
+    runs_on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_amd64
+          path: sumocli
 
 #  create_github_release:
 #    name: Create GitHub Release
