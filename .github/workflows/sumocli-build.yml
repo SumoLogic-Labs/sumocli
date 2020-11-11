@@ -35,17 +35,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ./src/github.com/${{ github.repository }}
-      - name: Install Go Environment
+      - name: Setup Go
         uses: actions/setup-go@v2
-      - name: Build Go Application
+      - name: Build Sumocli
         shell: pwsh
         run: |
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
           go build -ldflags `
-            "-X github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}" `
-            "-X github.com/wizedkyle/sumocli/internal/build.Build=$build" `
-            "-X github.com/wizedkyle/sumocli/internal/build.Date=$time" `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v1
