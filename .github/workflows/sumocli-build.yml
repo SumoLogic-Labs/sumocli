@@ -1,12 +1,10 @@
 name: Sumocli Build and Release
 
-on: push
-
-# on:
-#  pull_request:
-#    types: closed
-#    branches:
-#      - main
+on:
+  pull_request:
+    types: closed
+    branches:
+      - main
 
 jobs:
   create_semver:
@@ -23,10 +21,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
+
+  create_github_release:
+    name: Create GitHub Release
+      needs: create_semver
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Repo
+          uses: actions/checkout@v2
+
+        - name: Create Release
+          id: createrelease
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ needs.create_semver.outputs.semvertag }}
       
   build_windows:
     name: Build Windows Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: windows-latest
     steps:
       - name: Setup Go
@@ -71,7 +85,7 @@ jobs:
 
   build_linux:
     name: Build Linux Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go
@@ -98,7 +112,7 @@ jobs:
 
   build_macos:
     name: Build macOS Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: macos-latest
     steps:
       - name: Setup Go
@@ -122,18 +136,3 @@ jobs:
         with:
           name: sumocli_macos_amd64
           path: sumocli
-
-#  create_github_release:
-#    name: Create GitHub Release
-#    needs: create_semver
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout Repo
-#        uses: actions/checkout@v2
-#      - name: Create Release
-#        id: createrelease
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ needs.create_semver.outputs.semvertag }}
