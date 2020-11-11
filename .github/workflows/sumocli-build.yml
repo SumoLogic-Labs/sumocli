@@ -139,5 +139,10 @@ jobs:
       #    tag_name: ${{ needs.create_semver.outputs.semvertag }}
       - name: Download All Artifacts
         uses: actions/download-artifact@v2
+      - name: Zip Releases
+        run: |
+          zip -r sumocli_windows_amd64.zip sumocli_windows_amd64
+          zip -r sumocli_linux_amd64.zip sumocli_linux_amd64
+          zip -r sumocli_macos_amd64.zip sumocli_macos_amd64
       - name: List files
         run: ls -R
