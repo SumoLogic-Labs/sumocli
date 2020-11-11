@@ -72,7 +72,7 @@ jobs:
   build_linux:
     name: Build Linux Binary
     needs: create_semver
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
