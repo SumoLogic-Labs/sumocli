@@ -4,7 +4,6 @@ on: push
 jobs:
   test_dotnet:
     name: Compile Windows Binary
-    needs: create_semver
     runs-on: windows-latest
     steps:
       - name: Setup Dotnet
