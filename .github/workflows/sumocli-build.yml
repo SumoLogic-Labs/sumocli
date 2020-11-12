@@ -1,10 +1,12 @@
 name: Sumocli Build and Release
 
-on:
-  pull_request:
-    types: closed
-    branches:
-      - main
+on: push
+
+#on:
+#  pull_request:
+#    types: closed
+#    branches:
+#      - main
 
 jobs:
   create_semver:
@@ -130,9 +132,9 @@ jobs:
         uses: actions/download-artifact@v2
       - name: Zip Releases
         run: |
-          zip -r sumocli_windows_amd64.zip sumocli_windows_amd64
-          zip -r sumocli_linux_amd64.zip sumocli_linux_amd64
-          zip -r sumocli_macos_amd64.zip sumocli_macos_amd64
+          zip -r sumocli-windows-amd64.zip sumocli_windows_amd64
+          zip -r sumocli-linux-amd64.zip sumocli_linux_amd64
+          zip -r sumocli-macos-amd64.zip sumocli_macos_amd64
       - name: List files
         run: ls -R
       - name: Checkout Repo
@@ -143,18 +145,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.create_semver.outputs.semvertag }}
+          tag_name: "v0.1.0" #${{ needs.create_semver.outputs.semvertag }}
           release_name: Release ${{ needs.create_semver.outputs.semvertag }}
           draft: false
-          prerelease: false
+          prerelease: true
       - name: Upload Windows Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_windows_amd64.zip
-          asset_name: sumocli_windows_amd64.zip
+          asset_path: sumocli-windows-amd64.zip
+          asset_name: sumocli-windows-amd64.zip
           asset_content_type: application/zip
       - name: Upload Linux Release Asset
         uses: actions/upload-release-asset@v1
@@ -162,8 +164,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_linux_amd64.zip
-          asset_name: sumocli_linux_amd64.zip
+          asset_path: sumocli-linux-amd64.zip
+          asset_name: sumocli-linux-amd64.zip
           asset_content_type: application/zip
       - name: Upload Windows Release Asset
         uses: actions/upload-release-asset@v1
@@ -171,6 +173,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_macos_amd64.zip
-          asset_name: sumocli_macos_amd64.zip
+          asset_path: sumocli-macos-amd64.zip
+          asset_name: sumocli-macos-amd64.zip
           asset_content_type: application/zip
