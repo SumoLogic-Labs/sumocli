@@ -21,10 +21,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       semvertag: ${{ steps.semvertag.outputs.tag }}
-      
+
+  create_github_release:
+    name: Create GitHub Release
+    needs: create_semver
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.create_semver.outputs.semvertag }}
+          release_name: Release ${{ needs.create_semver.outputs.semvertag }}
+          draft: false
+          prerelease: false
+    outputs:
+      releaseurl: ${{ steps.create_release.outputs.upload_url }}
+
   build_windows:
     name: Build Windows Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: windows-latest
     steps:
       - name: Setup Go
@@ -61,15 +79,23 @@ jobs:
             --timestamp-rfc3161 http://timestamp.sectigo.com `
             --timestamp-digest sha256 `
             sumocli.exe
-      - name: Upload Windows Binary
-        uses: actions/upload-artifact@v2
+      - name: Zip Release
+        shell: pwsh
+        run: |
+          Compress-Archive -Path sumocli.exe -DestinationPath sumocli-windows-amd64.zip
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: sumocli_windows_amd64
-          path: sumocli.exe
+          upload_url: ${{ needs.create_github_release.outputs.releaseurl }}
+          asset_path: ./sumocli-windows-amd64.zip
+          asset_name: sumocli-windows-amd64.zip
+          asset_content_type: application/zip
 
   build_linux:
     name: Build Linux Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go
@@ -88,15 +114,22 @@ jobs:
             -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
             -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
-      - name: Upload Linux Binary
-        uses: actions/upload-artifact@v2
+      - name: Zip Releases
+        run: |
+          zip -r sumocli-linux-amd64.zip sumocli
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: sumocli_linux_amd64
-          path: sumocli
+          upload_url: ${{ needs.create_github_release.outputs.releaseurl }}
+          asset_path: ./sumocli-linux-amd64.zip
+          asset_name: sumocli-linux-amd64.zip
+          asset_content_type: application/zip
 
   build_macos:
     name: Build macOS Binary
-    needs: create_semver
+    needs: [create_semver, create_github_release]
     runs-on: macos-latest
     steps:
       - name: Setup Go
@@ -115,62 +148,15 @@ jobs:
             -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
             -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
-      - name: Upload macOS Binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sumocli_macos_amd64
-          path: sumocli
-
-  create_github_release:
-    name: Create GitHub Release
-    needs: [create_semver, build_windows, build_linux, build_macos]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download All Artifacts
-        uses: actions/download-artifact@v2
       - name: Zip Releases
         run: |
-          zip -r sumocli_windows_amd64.zip sumocli_windows_amd64
-          zip -r sumocli_linux_amd64.zip sumocli_linux_amd64
-          zip -r sumocli_macos_amd64.zip sumocli_macos_amd64
-      - name: List files
-        run: ls -R
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.create_semver.outputs.semvertag }}
-          release_name: Release ${{ needs.create_semver.outputs.semvertag }}
-          draft: false
-          prerelease: false
+          zip -r sumocli-macos-amd64.zip sumocli
       - name: Upload Windows Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_windows_amd64.zip
-          asset_name: sumocli_windows_amd64.zip
-          asset_content_type: application/zip
-      - name: Upload Linux Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_linux_amd64.zip
-          asset_name: sumocli_linux_amd64.zip
-          asset_content_type: application/zip
-      - name: Upload Windows Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli_macos_amd64.zip
-          asset_name: sumocli_macos_amd64.zip
+          upload_url: ${{ needs.create_github_release.outputs.releaseurl }}
+          asset_path: ./sumocli-macos-amd64.zip
+          asset_name: sumocli-macos-amd64.zip
           asset_content_type: application/zip
