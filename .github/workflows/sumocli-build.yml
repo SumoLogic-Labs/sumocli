@@ -82,8 +82,9 @@ jobs:
             --timestamp-digest sha256 `
             sumocli.exe
       - name: Zip Release
+        shell: pwsh
         run: |
-          zip -r sumocli-windows-amd64.zip sumocli.exe
+          Compress-Archive -Path sumocli.exe -DestinationPath sumocli-windows-amd64.zip
       - name: Upload Windows Release Asset
         uses: actions/upload-release-asset@v1
         env:
