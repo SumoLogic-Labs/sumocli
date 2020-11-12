@@ -144,25 +144,8 @@ func ReadCredentials() (string, string) {
 	viper.SetConfigName("creds")
 	viper.AddConfigPath(filepath.Dir(configPath()))
 	viper.AutomaticEnv()
-	if _, err := os.Stat(configPath()); os.IsExist(err) {
-		if err := viper.ReadInConfig(); err != nil {
-			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-				fmt.Println("Credentials file not found at: " + configPath())
-				fmt.Println("Please run sumocli login to continue...")
-				os.Exit(1)
-			} else {
-				log.Fatal(err)
-			}
-		}
-		accessid := viper.GetString("accessid")
-		accesskey := viper.GetString("accesskey")
-		endpoint := viper.GetString("endpoint")
-
-		accessCredentials := accessid + ":" + accesskey
-		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
-		accessCredentialsComplete := "Basic " + accessCredentialsEnc
-		return accessCredentialsComplete, endpoint
-	} else {
+	err := viper.ReadInConfig()
+	if err != nil {
 		accessidenv := viper.GetString("SUMO_ACCESS_ID")
 		accesskeyenv := viper.GetString("SUMO_ACCESS_KEY")
 		endpointenv := viper.GetString("SUMO_ENDPOINT")
@@ -171,6 +154,15 @@ func ReadCredentials() (string, string) {
 		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
 		accessCredentialsComplete := "Basic " + accessCredentialsEnc
 		return accessCredentialsComplete, endpointenv
+	} else {
+		accessid := viper.GetString("accessid")
+		accesskey := viper.GetString("accesskey")
+		endpoint := viper.GetString("endpoint")
+
+		accessCredentials := accessid + ":" + accesskey
+		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
+		accessCredentialsComplete := "Basic " + accessCredentialsEnc
+		return accessCredentialsComplete, endpoint
 	}
 }
 
