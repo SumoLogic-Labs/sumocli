@@ -155,7 +155,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli-windows-amd64.zip
+          asset_path: ./sumocli-windows-amd64.zip
           asset_name: sumocli-windows-amd64.zip
           asset_content_type: application/zip
       - name: Upload Linux Release Asset
@@ -164,7 +164,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli-linux-amd64.zip
+          asset_path: ./sumocli-linux-amd64.zip
           asset_name: sumocli-linux-amd64.zip
           asset_content_type: application/zip
       - name: Upload Windows Release Asset
@@ -173,6 +173,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sumocli-macos-amd64.zip
+          asset_path: ./sumocli-macos-amd64.zip
           asset_name: sumocli-macos-amd64.zip
           asset_content_type: application/zip
