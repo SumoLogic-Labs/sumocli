@@ -25,3 +25,7 @@ func OutputToFile(data []byte) {
 	}
 	fmt.Println()
 }
+
+func JsonSelector(jsonPath string) {
+
+}

@@ -5,12 +5,30 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
-	"github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 )
+
+type role struct {
+	Data []roleData `json:"data"`
+}
+
+type roleData struct {
+	Name                 string   `json:"name"`
+	Description          string   `json:"description"`
+	FilterPredicate      string   `json:"filterPredicate"`
+	Users                []string `json:"users"`
+	Capabilities         []string `json:"capabilities"`
+	AutofillDependencies bool     `json:"autofillDependencies"`
+	CreatedAt            string   `json:"createdAt"`
+	CreatedBy            string   `json:"createdBy"`
+	ModifiedAt           string   `json:"modifiedAt"`
+	ModifiedBy           string   `json:"modifiedBy"`
+	Id                   string   `json:"id"`
+	SystemDefined        bool     `json:"systemDefined"`
+}
 
 func NewCmdRoleList() *cobra.Command {
 	var (
@@ -35,7 +53,7 @@ func NewCmdRoleList() *cobra.Command {
 }
 
 func listRoles(numberOfResults string, name string, output bool) {
-	var roleInfo roles.Role
+	var roleInfo role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
 
@@ -66,10 +84,6 @@ func listRoles(numberOfResults string, name string, output bool) {
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
 	util2.LogError(err)
 
-	// Determines if the response should be written to a file or to console
-	if output == true {
-		util2.OutputToFile(roleInfoJson)
-	} else {
-		fmt.Println(string(roleInfoJson))
-	}
+	// TODO: change the output flag to specify a JSON object and return that value
+
 }
