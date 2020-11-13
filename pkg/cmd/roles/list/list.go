@@ -5,30 +5,12 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 )
-
-type role struct {
-	Data []roleData `json:"data"`
-}
-
-type roleData struct {
-	Name                 string   `json:"name"`
-	Description          string   `json:"description"`
-	FilterPredicate      string   `json:"filterPredicate"`
-	Users                []string `json:"users"`
-	Capabilities         []string `json:"capabilities"`
-	AutofillDependencies bool     `json:"autofillDependencies"`
-	CreatedAt            string   `json:"createdAt"`
-	CreatedBy            string   `json:"createdBy"`
-	ModifiedAt           string   `json:"modifiedAt"`
-	ModifiedBy           string   `json:"modifiedBy"`
-	Id                   string   `json:"id"`
-	SystemDefined        bool     `json:"systemDefined"`
-}
 
 func NewCmdRoleList() *cobra.Command {
 	var (
@@ -41,7 +23,7 @@ func NewCmdRoleList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
-			roles(numberOfResults, filter, output)
+			listRoles(numberOfResults, filter, output)
 		},
 	}
 
@@ -52,8 +34,8 @@ func NewCmdRoleList() *cobra.Command {
 	return cmd
 }
 
-func roles(numberOfResults string, name string, output bool) {
-	var roleInfo role
+func listRoles(numberOfResults string, name string, output bool) {
+	var roleInfo roles.Role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
 
