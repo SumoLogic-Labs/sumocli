@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type role struct {
@@ -34,12 +36,20 @@ func NewCmdRoleList() *cobra.Command {
 	var (
 		numberOfResults string
 		filter          string
-		output          bool
+		output          string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
+		Long: `The following fields can be exported using the --output command:
+name
+description
+filterPredicate
+users
+capabilities
+id
+`,
 		Run: func(cmd *cobra.Command, args []string) {
 			listRoles(numberOfResults, filter, output)
 		},
@@ -47,12 +57,12 @@ func NewCmdRoleList() *cobra.Command {
 
 	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
-	cmd.Flags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func listRoles(numberOfResults string, name string, output bool) {
+func listRoles(numberOfResults string, name string, output string) {
 	var roleInfo role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
@@ -84,6 +94,25 @@ func listRoles(numberOfResults string, name string, output bool) {
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
 	util2.LogError(err)
 
-	// TODO: change the output flag to specify a JSON object and return that value
+	if validateOutput(output) == true {
+		value := gjson.Get(string(roleInfoJson), "#."+output)
+		formattedValue := strings.Trim(value.String(), `"[]"`)
+		fmt.Println(formattedValue)
+	} else {
+		fmt.Println(string(roleInfoJson))
+	}
+}
 
+func validateOutput(output string) bool {
+	switch output {
+	case
+		"name",
+		"description",
+		"filterPredicate",
+		"users",
+		"capabilities",
+		"id":
+		return true
+	}
+	return false
 }
