@@ -9,10 +9,12 @@ import (
 )
 
 func NewCmdRoot() *cobra.Command {
+
 	cmd := &cobra.Command{
 		Use:   "sumocli <command> <subcommand> [flags]",
 		Short: "Sumo Logic CLI",
 		Long:  "Manage Sumo Logic from the command line.",
+		TraverseChildren: true,
 	}
 
 	// Add subcommands
@@ -20,6 +22,9 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
+
+	// Add global, persistent flags - these apply for all commands and their subcommands
+	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available.")
 
 	return cmd
 }

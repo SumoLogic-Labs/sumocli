@@ -3,9 +3,11 @@ package list
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -41,7 +43,10 @@ func NewCmdRoleList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
-			roles(numberOfResults, filter, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role list request started.")
+			roles(numberOfResults, filter, output, logger)
+			logger.Debug().Msg("Role list request finished.")
 		},
 	}
 
@@ -52,7 +57,7 @@ func NewCmdRoleList() *cobra.Command {
 	return cmd
 }
 
-func roles(numberOfResults string, name string, output bool) {
+func roles(numberOfResults string, name string, output bool, logger zerolog.Logger, ) {
 	var roleInfo role
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
@@ -60,7 +65,7 @@ func roles(numberOfResults string, name string, output bool) {
 	request, err := http.NewRequest("GET", apiEndpoint+"v1/roles", nil)
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Creating authorization header failed, please review the credentials supplied in sumocli login.", err, logger)
 
 	query := url.Values{}
 	if numberOfResults != "" {
@@ -72,19 +77,20 @@ func roles(numberOfResults string, name string, output bool) {
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Authorization was not successful, please review your connectivity and credentials.", err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Reading the response body was not successful.", err, logger)
 
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	util2.LogError(jsonErr)
+	logging.LogErrorWithMessage("Parsing the response body as JSON was not successful.", jsonErr, logger)
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Formatting the role info as JSON was not successful.", jsonErr, logger)
 
 	// Determines if the response should be written to a file or to console
+	// TODO we may be able to use zerolog for this
 	if output == true {
 		util2.OutputToFile(roleInfoJson)
 	} else {

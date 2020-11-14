@@ -6,8 +6,7 @@ import (
 )
 
 func GetHttpClient() *http.Client {
-	client := &http.Client{
+	return &http.Client{
 		Timeout: time.Second * 10,
 	}
-	return client
 }

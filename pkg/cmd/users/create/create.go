@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -47,7 +49,10 @@ func NewCmdUserCreate() *cobra.Command {
 		Short: "Creates a Sumo Logic user account",
 		Long:  "Creates a Sumo Logic user by specifying the first name, last name, email and roleIds",
 		Run: func(cmd *cobra.Command, args []string) {
-			user(firstName, lastName, emailAddress, roleIds)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User create request started.")
+			user(firstName, lastName, emailAddress, roleIds, logger)
+			logger.Debug().Msg("User create request finished.")
 		},
 	}
 
@@ -59,7 +64,7 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string, logger zerolog.Logger) {
 	var createUserResponse CreateUserResponse
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
@@ -76,21 +81,21 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	request, err := http.NewRequest("POST", apiEndpoint+"v1/users", bytes.NewBuffer(requestBody))
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Creating authorization header failed, please review the credentials supplied in sumocli login.", err, logger)
 
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Authorization was not successful, please review your connectivity and credentials.", err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 	responseString := string(responseBody)
 
-	apiCallResult := util2.HttpError(response.StatusCode, responseString)
+	apiCallResult := logging.HttpError(response.StatusCode, responseString)
 	if apiCallResult == false {
 		os.Exit(0)
 	} else if apiCallResult == true {
 		jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
 	}
 }
