@@ -1,1 +1,5 @@
 package factory
+
+func NewHttpClient() {
+
+}
