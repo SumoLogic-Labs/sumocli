@@ -24,7 +24,8 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
-	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available.")
+	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available. Off by default.")
+	cmd.PersistentFlags().BoolP("quiet", "q", false, "Suppress any levelled log messages. General command output will still output to console. Off by default.")
 
 	return cmd
 }

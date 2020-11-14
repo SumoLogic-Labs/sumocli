@@ -36,12 +36,18 @@ func HttpError(statusCode int, responseBody string) bool {
 
 func GetLoggerForCommand(command *cobra.Command) zerolog.Logger {
 	verbose, _ := command.Root().PersistentFlags().GetBool("verbose")
+	suppressLogging, _ := command.Root().PersistentFlags().GetBool("quiet")
 
-	if verbose {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	if suppressLogging {
+		zerolog.SetGlobalLevel(zerolog.Disabled)
 	} else {
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		if verbose {
+			zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		} else {
+			zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		}
 	}
+
 	log.Logger = log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.RFC3339,
