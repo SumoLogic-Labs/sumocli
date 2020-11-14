@@ -5,35 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
-
-type CreateUserRequest struct {
-	Firstname    string   `json:"firstName"`
-	Lastname     string   `json:"lastName"`
-	Emailaddress string   `json:"email"`
-	Roleids      []string `json:"roleIds"`
-}
-
-type CreateUserResponse struct {
-	Firstname          string   `json:"firstname"`
-	Lastname           string   `json:"lastname"`
-	Email              string   `json:"email"`
-	RoleIds            []string `json:"roleIds"`
-	CreatedAt          string   `json:"createdAt"`
-	CreatedBy          string   `json:"createdBy"`
-	ModifiedAt         string   `json:"modifiedAt"`
-	ModifiedBy         string   `json:"modifiedBy"`
-	Id                 string   `json:"id"`
-	IsActive           bool     `json:"isActive"`
-	IsLocked           bool     `json:"isLocked"`
-	IsMfaEnabled       bool     `json:"isMfaEnabled"`
-	LastLoginTimestamp string   `json:"lastLoginTimeStamp"`
-}
 
 func NewCmdUserCreate() *cobra.Command {
 	var (
@@ -45,7 +23,6 @@ func NewCmdUserCreate() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
-		Long:  "Creates a Sumo Logic user by specifying the first name, last name, email and roleIds",
 		Run: func(cmd *cobra.Command, args []string) {
 			user(firstName, lastName, emailAddress, roleIds)
 		},
@@ -60,11 +37,11 @@ func NewCmdUserCreate() *cobra.Command {
 }
 
 func user(firstName string, lastName string, emailAddress string, roleIds []string) {
-	var createUserResponse CreateUserResponse
+	var createUserResponse api.CreateUserResponse
 	client := util2.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
 
-	requestBodySchema := &CreateUserRequest{
+	requestBodySchema := &api.CreateUserRequest{
 		Firstname:    firstName,
 		Lastname:     lastName,
 		Emailaddress: emailAddress,
