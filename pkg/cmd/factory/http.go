@@ -1,7 +1,9 @@
 package factory
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/wizedkyle/sumocli/internal/build"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"net/http"
 	"time"
@@ -14,10 +16,25 @@ func newHttpClient() *http.Client {
 	return client
 }
 
-func NewHttpRequest(method string, ) *http.Request {
+// TODO: Add logging to the http.NewRequest
+func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) {
 	client := newHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
-	if
+	authToken, endpoint := login.ReadCredentials()
+	request, _ := http.NewRequest(method, endpoint+apiUrl, nil)
+	request.Header.Add("Authorization", authToken)
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	return client, request
+}
+
+func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Client, *http.Request) {
+	client := newHttpClient()
+	authToken, endpoint := login.ReadCredentials()
+	request, _ := http.NewRequest(method, endpoint+apiUrl, bytes.NewBuffer(body))
+	request.Header.Add("Authorization", authToken)
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	return client, request
 }
 
 func HttpError(statusCode int) bool {

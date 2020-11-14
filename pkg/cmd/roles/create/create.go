@@ -1,16 +1,13 @@
 package create
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
-	"net/http"
 	"os"
 )
 
@@ -36,8 +33,6 @@ func NewCmdRoleCreate() *cobra.Command {
 
 func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool) {
 	var createRoleResponse api.RoleData
-	client := util2.GetHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
 
 	for i, capability := range capabilities {
 		if validateCapabilities(capability) == false {
@@ -55,11 +50,7 @@ func createRole(name string, description string, filter string, users []string, 
 		AutoFillDependencies: autofill,
 	}
 	requestBody, _ := json.Marshal(requestBodySchema)
-	request, err := http.NewRequest("POST", apiEndpoint+"v1/roles", bytes.NewBuffer(requestBody))
-	request.Header.Add("Authorization", authToken)
-	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
-
+	client, request := factory.NewHttpRequestWithBody("POST", "v1/roles", requestBody)
 	response, err := client.Do(request)
 	util2.LogError(err)
 
