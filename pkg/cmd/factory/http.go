@@ -2,10 +2,22 @@ package factory
 
 import (
 	"fmt"
+	"github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"net/http"
+	"time"
 )
 
-func NewHttpClient() {
+func newHttpClient() *http.Client {
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	return client
+}
 
+func NewHttpRequest(method string, ) *http.Request {
+	client := newHttpClient()
+	authToken, apiEndpoint := login.ReadCredentials()
+	if
 }
 
 func HttpError(statusCode int) bool {
