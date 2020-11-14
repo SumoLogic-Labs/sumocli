@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
@@ -60,9 +61,8 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	responseString := string(responseBody)
 
-	apiCallResult := util2.HttpError(response.StatusCode, responseString)
+	apiCallResult := factory.HttpError(response.StatusCode)
 	if apiCallResult == false {
 		os.Exit(0)
 	} else if apiCallResult == true {

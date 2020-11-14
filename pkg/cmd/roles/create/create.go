@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func NewCmdRoleCreate() *cobra.Command {
@@ -63,8 +65,15 @@ func createRole(name string, description string, filter string, users []string, 
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	responseString := string(responseBody)
 
+	apiCallResult := factory.HttpError(response.StatusCode)
+	if apiCallResult == false {
+		os.Exit(0)
+	} else if apiCallResult == true {
+		jsonErr := json.Unmarshal(responseBody, &createRoleResponse)
+		util2.LogError(jsonErr)
+		fmt.Println(createRoleResponse.Name + " role successfully created")
+	}
 }
 
 func validateCapabilities(capability string) bool {
