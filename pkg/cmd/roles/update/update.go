@@ -94,7 +94,10 @@ func updateRole(id string, name string, description string, filter string, users
 		if reflect.DeepEqual(roleInfo.Users, users) {
 			requestBodySchema.Users = roleInfo.Users
 		} else {
-			requestBodySchema = append(requestBodySchema.Users, roleInfo.Users)
+			fmt.Println(requestBodySchema.Users)
+			requestBodySchema.Users = append(requestBodySchema.Users, roleInfo.Users...)
+			requestBodySchema.Users = append(requestBodySchema.Users, users...)
+			fmt.Println(requestBodySchema.Users)
 		}
 
 		if reflect.DeepEqual(roleInfo.Capabilities, capabilities) {
