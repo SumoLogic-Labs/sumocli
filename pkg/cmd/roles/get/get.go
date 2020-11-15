@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
-	"net/http"
+	"os"
 	"strings"
 )
 
@@ -43,15 +43,14 @@ id
 
 func getRole(id string, output string) {
 	var roleInfo api.RoleData
-	client := util2.GetHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
-	requestUrl := apiEndpoint + "v1/roles/" + id
 
-	request, err := http.NewRequest("GET", requestUrl, nil)
-	request.Header.Add("Authorization", authToken)
-	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
+	if id == "" {
+		fmt.Println("--id field needs to be specified.")
+		os.Exit(0)
+	}
 
+	requestUrl := "v1/roles/" + id
+	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	util2.LogError(err)
 

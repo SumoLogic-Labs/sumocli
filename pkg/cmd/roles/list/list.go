@@ -6,10 +6,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -46,14 +45,8 @@ id
 
 func listRoles(numberOfResults string, name string, output string) {
 	var roleInfo api.Role
-	client := util2.GetHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
 
-	request, err := http.NewRequest("GET", apiEndpoint+"v1/roles", nil)
-	request.Header.Add("Authorization", authToken)
-	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
-
+	client, request := factory.NewHttpRequest("GET", "v1/roles")
 	query := url.Values{}
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
