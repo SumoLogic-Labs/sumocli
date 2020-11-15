@@ -3,11 +3,13 @@ package list
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	cmdUtil "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	logging "github.com/wizedkyle/sumocli/pkg/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +48,10 @@ func NewCmdControllersList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic collectors",
 		Run: func(cmd *cobra.Command, args []string) {
-			collectors(numberOfResults, filter, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Collector list request started.")
+			collectors(numberOfResults, filter, output, logger)
+			logger.Debug().Msg("Collector list request finished.")
 		},
 	}
 
@@ -57,7 +62,7 @@ func NewCmdControllersList() *cobra.Command {
 	return cmd
 }
 
-func collectors(numberOfResults string, name string, output bool) {
+func collectors(numberOfResults string, name string, output bool, logger zerolog.Logger) {
 	var collector collector
 	client := cmdUtil.GetHttpClient()
 	authToken, apiEndpoint := login.ReadCredentials()
@@ -65,7 +70,7 @@ func collectors(numberOfResults string, name string, output bool) {
 	request, err := http.NewRequest("GET", apiEndpoint+"v1/collectors", nil)
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	cmdUtil.LogError(err)
+	logging.LogError(err, logger)
 	query := url.Values{}
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
@@ -75,17 +80,17 @@ func collectors(numberOfResults string, name string, output bool) {
 	}
 	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
-	cmdUtil.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	cmdUtil.LogError(err)
+	logging.LogError(err, logger)
 
 	jsonErr := json.Unmarshal(responseBody, &collector)
-	cmdUtil.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	collectorsJson, err := json.MarshalIndent(collector.Collectors, "", "    ")
-	cmdUtil.LogError(err)
+	logging.LogError(err, logger)
 
 	// Determines if the response should be written to a file or to console
 	if output == true {

@@ -2,7 +2,7 @@ package collectors
 
 import (
 	"github.com/spf13/cobra"
-	cmdRoleList "github.com/wizedkyle/sumocli/pkg/cmd/roles/list"
+	cmdCollectorsList "github.com/wizedkyle/sumocli/pkg/cmd/collectors/list"
 )
 
 func NewCmdCollector() *cobra.Command {
@@ -12,6 +12,6 @@ func NewCmdCollector() *cobra.Command {
 		Long:  "Work with Sumo Logic collectors",
 	}
 
-	cmd.AddCommand(cmdRoleList.NewCmdRoleList())
+	cmd.AddCommand(cmdCollectorsList.NewCmdControllersList())
 	return cmd
 }
