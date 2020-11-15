@@ -1,28 +1,28 @@
-package get
+package assign
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"os"
 	"strings"
 )
 
-func NewCmdRoleGet() *cobra.Command {
+func NewCmdRoleAssign() *cobra.Command {
 	var (
-		id     string
+		roleId string
+		userId string
 		output string
 	)
 
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic role",
+		Use:   "assign",
+		Short: "Assigns the specified Sumo Logic user to the role.",
 		Long: `The following fields can be exported using the --output command:
 name
 description
@@ -32,41 +32,39 @@ capabilities
 id
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role get request started.")
-			getRole(id, output, logger)
-			logger.Debug().Msg("Role get request finished.")
+			assignRole(roleId, userId, output)
 		},
 	}
 
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to get")
+	cmd.Flags().StringVar(&roleId, "roleid", "", "Specify the id of the role")
+	cmd.Flags().StringVar(&userId, "userid", "", "Specify the id of the user to remove")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func getRole(id string, output string, logger zerolog.Logger) {
+func assignRole(roleId string, userId string, output string) {
 	var roleInfo api.RoleData
 
-	if id == "" {
-		fmt.Println("--id field needs to be specified.")
+	if roleId == "" || userId == "" {
+		fmt.Println("--roleid and --userid fields need to be set")
 		os.Exit(0)
 	}
 
-	requestUrl := "v1/roles/" + id
-	client, request := factory.NewHttpRequest("GET", requestUrl)
+	requestUrl := "v1/roles/" + roleId + "/users/" + userId
+	client, request := factory.NewHttpRequest("PUT", requestUrl)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	util2.LogError(err)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	util2.LogError(err)
 
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	logging.LogError(jsonErr, logger)
+	util2.LogError(jsonErr)
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-	logging.LogError(err, logger)
+	util2.LogError(err)
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)

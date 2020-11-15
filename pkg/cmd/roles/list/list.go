@@ -73,12 +73,16 @@ func listRoles(numberOfResults string, name string, output string, logger zerolo
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
 	logging.LogErrorWithMessage("Formatting the role info as JSON was not successful.", jsonErr, logger)
 
-	if validateOutput(output) == true {
-		value := gjson.Get(string(roleInfoJson), "#."+output)
-		formattedValue := strings.Trim(value.String(), `"[]"`)
-		fmt.Println(formattedValue)
+	if response.StatusCode != 200 {
+		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		fmt.Println(string(roleInfoJson))
+		if validateOutput(output) == true {
+			value := gjson.Get(string(roleInfoJson), "#."+output)
+			formattedValue := strings.Trim(value.String(), `"[]"`)
+			fmt.Println(formattedValue)
+		} else {
+			fmt.Println(string(roleInfoJson))
+		}
 	}
 }
 
