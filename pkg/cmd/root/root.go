@@ -2,6 +2,7 @@ package root
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -22,6 +23,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
+	cmd.AddCommand(collectors.NewCmdCollector())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
 	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available. Off by default.")
