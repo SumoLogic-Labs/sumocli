@@ -21,19 +21,6 @@ func LogErrorWithMessage(msg string, err error, log zerolog.Logger) {
 	}
 }
 
-func HttpError(statusCode int, responseBody string) bool {
-	if statusCode == 401 {
-		//log.Println("Unauthorized access please check the user exists,  are valid.")
-		apiCallSuccess := false
-		return apiCallSuccess
-	} else if statusCode == 200 {
-		apiCallSuccess := true
-		return apiCallSuccess
-	}
-	apiCallSuccess := true
-	return apiCallSuccess
-}
-
 func GetLoggerForCommand(command *cobra.Command) zerolog.Logger {
 	verbose, _ := command.Root().PersistentFlags().GetBool("verbose")
 	suppressLogging, _ := command.Root().PersistentFlags().GetBool("quiet")

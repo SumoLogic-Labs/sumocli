@@ -5,68 +5,52 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/tidwall/gjson"
+	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"net/http"
 	"net/url"
+	"strings"
 )
-
-type role struct {
-	Data []roleData `json:"data"`
-}
-
-type roleData struct {
-	Name                 string   `json:"name"`
-	Description          string   `json:"description"`
-	FilterPredicate      string   `json:"filterPredicate"`
-	Users                []string `json:"users"`
-	Capabilities         []string `json:"capabilities"`
-	AutofillDependencies bool     `json:"autofillDependencies"`
-	CreatedAt            string   `json:"createdAt"`
-	CreatedBy            string   `json:"createdBy"`
-	ModifiedAt           string   `json:"modifiedAt"`
-	ModifiedBy           string   `json:"modifiedBy"`
-	Id                   string   `json:"id"`
-	SystemDefined        bool     `json:"systemDefined"`
-}
 
 func NewCmdRoleList() *cobra.Command {
 	var (
 		numberOfResults string
 		filter          string
-		output          bool
+		output          string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
+		Long: `The following fields can be exported using the --output command:
+name
+description
+filterPredicate
+users
+capabilities
+id
+`,
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
 			logger.Debug().Msg("Role list request started.")
-			roles(numberOfResults, filter, output, logger)
+			listRoles(numberOfResults, filter, output, logger)
 			logger.Debug().Msg("Role list request finished.")
 		},
 	}
 
 	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
-	cmd.Flags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func roles(numberOfResults string, name string, output bool, logger zerolog.Logger, ) {
-	var roleInfo role
-	client := util2.GetHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
+func listRoles(numberOfResults string, name string, output string, logger zerolog.Logger) {
+	var roleInfo api.Role
 
-	request, err := http.NewRequest("GET", apiEndpoint+"v1/roles", nil)
-	request.Header.Add("Authorization", authToken)
-	request.Header.Add("Content-Type", "application/json")
-	logging.LogErrorWithMessage("Creating authorization header failed, please review the credentials supplied in sumocli login.", err, logger)
-
+	client, request := factory.NewHttpRequest("GET", "v1/roles")
 	query := url.Values{}
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
@@ -89,11 +73,25 @@ func roles(numberOfResults string, name string, output bool, logger zerolog.Logg
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
 	logging.LogErrorWithMessage("Formatting the role info as JSON was not successful.", jsonErr, logger)
 
-	// Determines if the response should be written to a file or to console
-	// TODO we may be able to use zerolog for this
-	if output == true {
-		util2.OutputToFile(roleInfoJson)
+	if validateOutput(output) == true {
+		value := gjson.Get(string(roleInfoJson), "#."+output)
+		formattedValue := strings.Trim(value.String(), `"[]"`)
+		fmt.Println(formattedValue)
 	} else {
 		fmt.Println(string(roleInfoJson))
 	}
+}
+
+func validateOutput(output string) bool {
+	switch output {
+	case
+		"name",
+		"description",
+		"filterPredicate",
+		"users",
+		"capabilities",
+		"id":
+		return true
+	}
+	return false
 }

@@ -8,25 +8,13 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-type SumoApiEndpoint struct {
-	Name     string
-	Code     string
-	Endpoint string
-}
-
-type SumoAuth struct {
-	AccessId  string `json:"accessid"`
-	AccessKey string `json:"accesskey"`
-	Region    string `json:"region"`
-	Endpoint  string `json:"endpoint"`
-}
 
 var Logger zerolog.Logger
 func NewCmdLogin() *cobra.Command {
@@ -64,9 +52,9 @@ func configPath() string {
 }
 
 func getCredentials() {
-	var credentials SumoAuth
+	var credentials api.SumoAuth
 
-	sumoApiEndpoints := []SumoApiEndpoint{
+	sumoApiEndpoints := []api.SumoApiEndpoint{
 		{Name: "Australia", Code: "au", Endpoint: "https://api.au.sumologic.com/api/"},
 		{Name: "Canada", Code: "ca", Endpoint: "https://api.ca.sumologic.com/api/"},
 		{Name: "Germany", Code: "de", Endpoint: "https://api.de.sumologic.com/api/"},
