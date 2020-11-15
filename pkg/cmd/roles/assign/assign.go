@@ -1,4 +1,4 @@
-package list
+package assign
 
 import (
 	"encoding/json"
@@ -9,20 +9,20 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
-	"net/url"
+	"os"
 	"strings"
 )
 
-func NewCmdRoleList() *cobra.Command {
+func NewCmdRoleAssign() *cobra.Command {
 	var (
-		numberOfResults string
-		filter          string
-		output          string
+		roleId string
+		userId string
+		output string
 	)
 
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "Lists Sumo Logic roles",
+		Use:   "assign",
+		Short: "Assigns the specified Sumo Logic user to the role.",
 		Long: `The following fields can be exported using the --output command:
 name
 description
@@ -32,30 +32,27 @@ capabilities
 id
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			listRoles(numberOfResults, filter, output)
+			assignRole(roleId, userId, output)
 		},
 	}
 
-	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
-	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
+	cmd.Flags().StringVar(&roleId, "roleid", "", "Specify the id of the role")
+	cmd.Flags().StringVar(&userId, "userid", "", "Specify the id of the user to remove")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func listRoles(numberOfResults string, name string, output string) {
-	var roleInfo api.Role
+func assignRole(roleId string, userId string, output string) {
+	var roleInfo api.RoleData
 
-	client, request := factory.NewHttpRequest("GET", "v1/roles")
-	query := url.Values{}
-	if numberOfResults != "" {
-		query.Add("limit", numberOfResults)
+	if roleId == "" || userId == "" {
+		fmt.Println("--roleid and --userid fields need to be set")
+		os.Exit(0)
 	}
-	if name != "" {
-		query.Add("name", name)
-	}
-	request.URL.RawQuery = query.Encode()
 
+	requestUrl := "v1/roles/" + roleId + "/users/" + userId
+	client, request := factory.NewHttpRequest("PUT", requestUrl)
 	response, err := client.Do(request)
 	util2.LogError(err)
 
@@ -66,14 +63,14 @@ func listRoles(numberOfResults string, name string, output string) {
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
 	util2.LogError(jsonErr)
 
-	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
+	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
 	util2.LogError(err)
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
 		if validateOutput(output) == true {
-			value := gjson.Get(string(roleInfoJson), "#."+output)
+			value := gjson.Get(string(roleInfoJson), output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)
 		} else {

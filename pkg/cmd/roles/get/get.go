@@ -64,12 +64,16 @@ func getRole(id string, output string) {
 	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
 	util2.LogError(err)
 
-	if validateOutput(output) == true {
-		value := gjson.Get(string(roleInfoJson), output)
-		formattedValue := strings.Trim(value.String(), `"[]"`)
-		fmt.Println(formattedValue)
+	if response.StatusCode != 200 {
+		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		fmt.Println(string(roleInfoJson))
+		if validateOutput(output) == true {
+			value := gjson.Get(string(roleInfoJson), output)
+			formattedValue := strings.Trim(value.String(), `"[]"`)
+			fmt.Println(formattedValue)
+		} else {
+			fmt.Println(string(roleInfoJson))
+		}
 	}
 }
 
