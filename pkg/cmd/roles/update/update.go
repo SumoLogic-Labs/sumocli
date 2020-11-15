@@ -1,7 +1,10 @@
 package update
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/api"
+	"os"
 )
 
 func NewCmdRoleUpdate() *cobra.Command {
@@ -37,5 +40,12 @@ func NewCmdRoleUpdate() *cobra.Command {
 }
 
 func updateRole(id string, name string, description string, filterPredicate string, users []string, capabilities []string, autofill bool, append bool) {
+	if id == "" {
+		fmt.Println("--id field needs to be set.")
+		os.Exit(0)
+	}
+
+	var roleInfo api.RoleData
+	requestUrl := "v1/roles/" + id
 
 }
