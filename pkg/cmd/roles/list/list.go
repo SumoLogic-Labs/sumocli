@@ -4,64 +4,49 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
+	"github.com/tidwall/gjson"
+	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
-	"net/http"
 	"net/url"
+	"strings"
 )
-
-type role struct {
-	Data []roleData `json:"data"`
-}
-
-type roleData struct {
-	Name                 string   `json:"name"`
-	Description          string   `json:"description"`
-	FilterPredicate      string   `json:"filterPredicate"`
-	Users                []string `json:"users"`
-	Capabilities         []string `json:"capabilities"`
-	AutofillDependencies bool     `json:"autofillDependencies"`
-	CreatedAt            string   `json:"createdAt"`
-	CreatedBy            string   `json:"createdBy"`
-	ModifiedAt           string   `json:"modifiedAt"`
-	ModifiedBy           string   `json:"modifiedBy"`
-	Id                   string   `json:"id"`
-	SystemDefined        bool     `json:"systemDefined"`
-}
 
 func NewCmdRoleList() *cobra.Command {
 	var (
 		numberOfResults string
 		filter          string
-		output          bool
+		output          string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
+		Long: `The following fields can be exported using the --output command:
+name
+description
+filterPredicate
+users
+capabilities
+id
+`,
 		Run: func(cmd *cobra.Command, args []string) {
-			roles(numberOfResults, filter, output)
+			listRoles(numberOfResults, filter, output)
 		},
 	}
 
 	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
 	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
-	cmd.Flags().BoolVar(&output, "output", false, "Output results to a file, defaults to false")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func roles(numberOfResults string, name string, output bool) {
-	var roleInfo role
-	client := util2.GetHttpClient()
-	authToken, apiEndpoint := login.ReadCredentials()
+func listRoles(numberOfResults string, name string, output string) {
+	var roleInfo api.Role
 
-	request, err := http.NewRequest("GET", apiEndpoint+"v1/roles", nil)
-	request.Header.Add("Authorization", authToken)
-	request.Header.Add("Content-Type", "application/json")
-	util2.LogError(err)
-
+	client, request := factory.NewHttpRequest("GET", "v1/roles")
 	query := url.Values{}
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
@@ -84,10 +69,25 @@ func roles(numberOfResults string, name string, output bool) {
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
 	util2.LogError(err)
 
-	// Determines if the response should be written to a file or to console
-	if output == true {
-		util2.OutputToFile(roleInfoJson)
+	if validateOutput(output) == true {
+		value := gjson.Get(string(roleInfoJson), "#."+output)
+		formattedValue := strings.Trim(value.String(), `"[]"`)
+		fmt.Println(formattedValue)
 	} else {
 		fmt.Println(string(roleInfoJson))
 	}
+}
+
+func validateOutput(output string) bool {
+	switch output {
+	case
+		"name",
+		"description",
+		"filterPredicate",
+		"users",
+		"capabilities",
+		"id":
+		return true
+	}
+	return false
 }
