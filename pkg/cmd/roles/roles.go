@@ -8,6 +8,7 @@ import (
 	cmdRoleGet "github.com/wizedkyle/sumocli/pkg/cmd/roles/get"
 	cmdRoleList "github.com/wizedkyle/sumocli/pkg/cmd/roles/list"
 	cmdRoleRemove "github.com/wizedkyle/sumocli/pkg/cmd/roles/remove"
+	cmdRoleUpdate "github.com/wizedkyle/sumocli/pkg/cmd/roles/update"
 )
 
 func NewCmdRole() *cobra.Command {
@@ -23,5 +24,6 @@ func NewCmdRole() *cobra.Command {
 	cmd.AddCommand(cmdRoleGet.NewCmdRoleGet())
 	cmd.AddCommand(cmdRoleList.NewCmdRoleList())
 	cmd.AddCommand(cmdRoleRemove.NewCmdRoleRemoveUser())
+	cmd.AddCommand(cmdRoleUpdate.NewCmdRoleUpdate())
 	return cmd
 }
