@@ -1,7 +1,16 @@
 package list
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
+	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"io/ioutil"
+	"net/url"
+	"strings"
 )
 
 func NewCmdUserList() *cobra.Command {
@@ -26,6 +35,9 @@ isLocked
 isMfaEnabled
 lastLoginTimestamp
 `,
+		Run: func(cmd *cobra.Command, args []string) {
+			listUsers(email, numberOfResults, sortBy, output)
+		},
 	}
 
 	cmd.Flags().StringVar(&email, "email", "", "Specify the email address of the user")
@@ -36,10 +48,48 @@ lastLoginTimestamp
 	return cmd
 }
 
-func listUsers() {
+func listUsers(email string, numberOfResults string, sortBy string, output string) {
+	var userInfo api.Users
 
-}
+	client, request := factory.NewHttpRequest("GET", "v1/users")
+	query := url.Values{}
+	if numberOfResults != "" {
+		query.Add("limit", numberOfResults)
+	}
+	if sortBy != "" {
+		if factory.ValidateUserSortBy(sortBy) == false {
+			fmt.Println(sortBy + "is an invalid field to sort by. Available fields are firstName, lastName or email. ")
+		} else {
+			query.Add("sortBy", sortBy)
+		}
+	}
+	if email != "" {
+		query.Add("email", email)
+	}
+	request.URL.RawQuery = query.Encode()
 
-func validateSort() {
+	response, err := client.Do(request)
+	util2.LogError(err)
 
+	defer response.Body.Close()
+	responseBody, err := ioutil.ReadAll(response.Body)
+	util2.LogError(err)
+
+	jsonErr := json.Unmarshal(responseBody, &userInfo)
+	util2.LogError(jsonErr)
+
+	userInfoJson, err := json.MarshalIndent(userInfo.Data, "", "    ")
+	util2.LogError(err)
+
+	if response.StatusCode != 200 {
+		factory.HttpError(response.StatusCode, responseBody)
+	} else {
+		if factory.ValidateUserOutput(output) == true {
+			value := gjson.Get(string(userInfoJson), "#."+output)
+			formattedValue := strings.Trim(value.String(), `"[]"`)
+			fmt.Println(formattedValue)
+		} else {
+			fmt.Println(string(userInfoJson))
+		}
+	}
 }

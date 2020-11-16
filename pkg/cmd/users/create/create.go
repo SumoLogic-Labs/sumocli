@@ -38,7 +38,7 @@ func NewCmdUserCreate() *cobra.Command {
 }
 
 func user(firstName string, lastName string, emailAddress string, roleIds []string, output string) {
-	var createUserResponse api.CreateUserResponse
+	var createUserResponse api.UserResponse
 
 	requestBodySchema := &api.CreateUserRequest{
 		Firstname:    firstName,
@@ -64,7 +64,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		if factory.ValidateOutput(output) == true {
+		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(createUserResponseJson), output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)

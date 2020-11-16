@@ -45,7 +45,7 @@ lastLoginTimestamp
 }
 
 func getUser(id string, output string) {
-	var userInfo api.GetUserResponse
+	var userInfo api.UserResponse
 
 	if id == "" {
 		fmt.Println("--id field needs to be specified.")

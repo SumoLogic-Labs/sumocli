@@ -14,6 +14,17 @@ func ValidateRoleOutput(output string) bool {
 	return false
 }
 
+func ValidateUserSortBy(sortBy string) bool {
+	switch sortBy {
+	case
+		"firstName",
+		"lastName",
+		"email":
+		return true
+	}
+	return false
+}
+
 func ValidateUserOutput(output string) bool {
 	switch output {
 	case
