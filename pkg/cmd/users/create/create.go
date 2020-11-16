@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
+	"strings"
 )
 
 func NewCmdUserCreate() *cobra.Command {
@@ -17,6 +19,7 @@ func NewCmdUserCreate() *cobra.Command {
 		lastName     string
 		emailAddress string
 		roleIds      []string
+		output       string
 	)
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -33,6 +36,7 @@ func NewCmdUserCreate() *cobra.Command {
 	cmd.Flags().StringVar(&lastName, "lastname", "", "Last name of the user")
 	cmd.Flags().StringVar(&emailAddress, "email", "", "Email address of the user")
 	cmd.Flags().StringSliceVar(&roleIds, "roleids", []string{}, "Comma deliminated list of Role Ids")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
@@ -55,11 +59,22 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
+	jsonErr := json.Unmarshal(responseBody, &createUserResponse)
+	util2.LogError(jsonErr)
+
+	createUserResponseJson, err := json.MarshalIndent(createUserResponse, "", "    ")
+	util2.LogError(err)
+
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
-		jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-		logging.LogError(jsonErr, logger)
-		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
+		if factory.ValidateOutput(output) == true {
+			value := gjson.Get(string(createUserResponseJson), output)
+			formattedValue := strings.Trim(value.String(), `"[]"`)
+			fmt.Println(formattedValue)
+		} else {
+			fmt.Println(string(createUserResponseJson))
+			fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
+		}
 	}
 }

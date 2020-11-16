@@ -3,6 +3,9 @@ package users
 import (
 	"github.com/spf13/cobra"
 	cmdUserCreate "github.com/wizedkyle/sumocli/pkg/cmd/users/create"
+	cmdUserGet "github.com/wizedkyle/sumocli/pkg/cmd/users/get"
+	cmdUserList "github.com/wizedkyle/sumocli/pkg/cmd/users/list"
+	cmdUserUnlock "github.com/wizedkyle/sumocli/pkg/cmd/users/unlock"
 )
 
 func NewCmdUser() *cobra.Command {
@@ -13,5 +16,8 @@ func NewCmdUser() *cobra.Command {
 	}
 
 	cmd.AddCommand(cmdUserCreate.NewCmdUserCreate())
+	cmd.AddCommand(cmdUserGet.NewCmdGetUser())
+	cmd.AddCommand(cmdUserList.NewCmdUserList())
+	cmd.AddCommand(cmdUserUnlock.NewCmdUnlockUser())
 	return cmd
 }

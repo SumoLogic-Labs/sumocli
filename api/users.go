@@ -22,3 +22,19 @@ type CreateUserResponse struct {
 	IsMfaEnabled       bool     `json:"isMfaEnabled"`
 	LastLoginTimestamp string   `json:"lastLoginTimeStamp"`
 }
+
+type GetUserResponse struct {
+	Firstname          string   `json:"firstName"`
+	Lastname           string   `json:"lastName"`
+	Email              string   `json:"email"`
+	RoleIds            []string `json:"roleIds"`
+	CreatedAt          string   `json:"createdAt"`
+	CreatedBy          string   `json:"createdBy"`
+	ModifiedAt         string   `json:"modifiedAt"`
+	ModifiedBy         string   `json:"modifiedBy"`
+	Id                 string   `json:"id"`
+	IsActive           bool     `json:"isActive"`
+	IsLocked           bool     `json:"isLocked"`
+	IsMfaEnabled       bool     `json:"isMfaEnabled"`
+	LastLoginTimestamp string   `json:"lastLoginTimestamp"`
+}

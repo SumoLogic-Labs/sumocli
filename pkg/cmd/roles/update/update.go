@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
@@ -23,13 +24,14 @@ func NewCmdRoleUpdate() *cobra.Command {
 		capabilities []string
 		autofill     bool
 		merge        bool
+		output       string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Updates a Sumo Logic role",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateRole(id, name, description, filter, users, capabilities, autofill, merge)
+			updateRole(id, name, description, filter, users, capabilities, autofill, merge, output)
 		},
 	}
 
@@ -40,12 +42,13 @@ func NewCmdRoleUpdate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&users, "users", []string{}, "Comma deliminated list of user ids to add to the role")
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
-	cmd.Flags().BoolVar(&merge, "append", true, "Is set to true by default, if set to false it will overwrite the role")
+	cmd.Flags().BoolVar(&merge, "merge", true, "Is set to true by default, if set to false it will overwrite the role")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool) {
+func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, output string) {
 	var roleInfo api.RoleData
 	if id == "" {
 		fmt.Println("--id field needs to be set.")
@@ -72,7 +75,7 @@ func updateRole(id string, name string, description string, filter string, users
 
 		// Building body payload to update the role based on the differences
 		// between the current role settings and the desired settings
-		requestBodySchema := &api.CreateRoleRequest{}
+		requestBodySchema := &api.UpdateRoleRequest{}
 		if strings.EqualFold(roleInfo.Name, name) {
 			requestBodySchema.Name = roleInfo.Name
 		} else {
@@ -94,18 +97,15 @@ func updateRole(id string, name string, description string, filter string, users
 		if reflect.DeepEqual(roleInfo.Users, users) {
 			requestBodySchema.Users = roleInfo.Users
 		} else {
-			fmt.Println(requestBodySchema.Users)
 			requestBodySchema.Users = append(requestBodySchema.Users, roleInfo.Users...)
 			requestBodySchema.Users = append(requestBodySchema.Users, users...)
-			fmt.Println(requestBodySchema.Users)
 		}
 
 		if reflect.DeepEqual(roleInfo.Capabilities, capabilities) {
-			fmt.Println(roleInfo.Capabilities)
-			fmt.Println(capabilities)
+			requestBodySchema.Capabilities = roleInfo.Capabilities
 		} else {
-			fmt.Println(roleInfo.Capabilities)
-			fmt.Println(capabilities)
+			requestBodySchema.Capabilities = append(requestBodySchema.Capabilities, roleInfo.Capabilities...)
+			requestBodySchema.Capabilities = append(requestBodySchema.Capabilities, capabilities...)
 		}
 
 		if roleInfo.AutofillDependencies == autofill {
@@ -114,14 +114,33 @@ func updateRole(id string, name string, description string, filter string, users
 			requestBodySchema.AutoFillDependencies = autofill
 		}
 
-		/*
-			requestBody, _ := json.Marshal(requestBodySchema)
-			putClient, putRequest := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
-			putResponse, err := client.Do(request)
-			util2.LogError(err)
-		*/
+		requestBody, _ := json.Marshal(requestBodySchema)
+		client, request = factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
+		response, err = client.Do(request)
+		util2.LogError(err)
+
+		defer response.Body.Close()
+		responseBody, err = ioutil.ReadAll(response.Body)
+
+		jsonErr = json.Unmarshal(responseBody, &roleInfo)
+		util2.LogError(jsonErr)
+
+		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+		util2.LogError(err)
+
+		if response.StatusCode != 200 {
+			factory.HttpError(response.StatusCode, responseBody)
+		} else {
+			if factory.ValidateRoleOutput(output) == true {
+				value := gjson.Get(string(roleInfoJson), output)
+				formattedValue := strings.Trim(value.String(), `"[]"`)
+				fmt.Println(formattedValue)
+			} else {
+				fmt.Println(string(roleInfoJson))
+			}
+		}
 	} else {
-		requestBodySchema := &api.CreateRoleRequest{
+		requestBodySchema := &api.UpdateRoleRequest{
 			Name:                 name,
 			Description:          description,
 			FilterPredicate:      filter,
@@ -139,12 +158,22 @@ func updateRole(id string, name string, description string, filter string, users
 		defer response.Body.Close()
 		responseBody, err := ioutil.ReadAll(response.Body)
 
+		jsonErr := json.Unmarshal(responseBody, &roleInfo)
+		util2.LogError(jsonErr)
+
+		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+		util2.LogError(err)
+
 		if response.StatusCode != 200 {
 			factory.HttpError(response.StatusCode, responseBody)
 		} else {
-			jsonErr := json.Unmarshal(responseBody, &roleInfo)
-			util2.LogError(jsonErr)
-			fmt.Println(roleInfo.Name + " role successfully updated")
+			if factory.ValidateRoleOutput(output) == true {
+				value := gjson.Get(string(roleInfoJson), output)
+				formattedValue := strings.Trim(value.String(), `"[]"`)
+				fmt.Println(formattedValue)
+			} else {
+				fmt.Println(string(roleInfoJson))
+			}
 		}
 	}
 }

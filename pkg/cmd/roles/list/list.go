@@ -55,8 +55,8 @@ func listRoles(numberOfResults string, name string, output string, logger zerolo
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
 	}
-	if name != "" {
-		query.Add("name", name)
+	if filter != "" {
+		query.Add("name", filter)
 	}
 	request.URL.RawQuery = query.Encode()
 
@@ -76,7 +76,7 @@ func listRoles(numberOfResults string, name string, output string, logger zerolo
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		if validateOutput(output) == true {
+		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(roleInfoJson), "#."+output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)

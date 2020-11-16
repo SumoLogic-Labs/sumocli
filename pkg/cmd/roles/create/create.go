@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 func NewCmdRoleCreate() *cobra.Command {
@@ -20,6 +22,7 @@ func NewCmdRoleCreate() *cobra.Command {
 		users        []string
 		capabilities []string
 		autofill     bool
+		output       string
 	)
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -38,6 +41,7 @@ func NewCmdRoleCreate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&users, "users", []string{}, "Comma deliminated list of user ids to add to the role")
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
@@ -73,6 +77,12 @@ func createRole(name string, description string, filter string, users []string, 
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
+
+	jsonErr := json.Unmarshal(responseBody, &createRoleResponse)
+	util2.LogError(jsonErr)
+
+	createRoleResponseJson, err := json.MarshalIndent(createRoleResponse, "", "    ")
+	util2.LogError(err)
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, logger)
