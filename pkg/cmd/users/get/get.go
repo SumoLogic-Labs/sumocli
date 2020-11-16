@@ -1,4 +1,4 @@
-package assign
+package get
 
 import (
 	"encoding/json"
@@ -13,46 +13,47 @@ import (
 	"strings"
 )
 
-func NewCmdRoleAssign() *cobra.Command {
+func NewCmdGetUser() *cobra.Command {
 	var (
-		roleId string
-		userId string
+		id     string
 		output string
 	)
 
 	cmd := &cobra.Command{
-		Use:   "assign",
-		Short: "Assigns the specified Sumo Logic user to the role.",
+		Use:   "get",
+		Short: "Gets a Sumo Logic user",
 		Long: `The following fields can be exported using the --output command:
-name
-description
-filterPredicate
-users
-capabilities
+firstName
+lastName
+email
+roleIds
 id
+isActive
+isLocked
+isMfaEnabled
+lastLoginTimestamp
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			assignRole(roleId, userId, output)
+			getUser(id, output)
 		},
 	}
 
-	cmd.Flags().StringVar(&roleId, "roleid", "", "Specify the id of the role")
-	cmd.Flags().StringVar(&userId, "userid", "", "Specify the id of the user to remove")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to get")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd
 }
 
-func assignRole(roleId string, userId string, output string) {
-	var roleInfo api.RoleData
+func getUser(id string, output string) {
+	var userInfo api.GetUserResponse
 
-	if roleId == "" || userId == "" {
-		fmt.Println("--roleid and --userid fields need to be set")
+	if id == "" {
+		fmt.Println("--id field needs to be specified.")
 		os.Exit(0)
 	}
 
-	requestUrl := "v1/roles/" + roleId + "/users/" + userId
-	client, request := factory.NewHttpRequest("PUT", requestUrl)
+	requestUrl := "v1/users/" + id
+	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	util2.LogError(err)
 
@@ -60,21 +61,21 @@ func assignRole(roleId string, userId string, output string) {
 	responseBody, err := ioutil.ReadAll(response.Body)
 	util2.LogError(err)
 
-	jsonErr := json.Unmarshal(responseBody, &roleInfo)
+	jsonErr := json.Unmarshal(responseBody, &userInfo)
 	util2.LogError(jsonErr)
 
-	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+	userInfoJson, err := json.MarshalIndent(userInfo, "", "    ")
 	util2.LogError(err)
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		if factory.ValidateRoleOutput(output) == true {
-			value := gjson.Get(string(roleInfoJson), output)
+		if factory.ValidateUserOutput(output) == true {
+			value := gjson.Get(string(userInfoJson), output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)
 		} else {
-			fmt.Println(string(roleInfoJson))
+			fmt.Println(string(userInfoJson))
 		}
 	}
 }

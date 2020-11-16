@@ -67,7 +67,7 @@ func getRole(id string, output string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		if validateOutput(output) == true {
+		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(roleInfoJson), output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)
@@ -75,18 +75,4 @@ func getRole(id string, output string) {
 			fmt.Println(string(roleInfoJson))
 		}
 	}
-}
-
-func validateOutput(output string) bool {
-	switch output {
-	case
-		"name",
-		"description",
-		"filterPredicate",
-		"users",
-		"capabilities",
-		"id":
-		return true
-	}
-	return false
 }

@@ -27,3 +27,12 @@ type RoleData struct {
 	Id                   string   `json:"id"`
 	SystemDefined        bool     `json:"systemDefined"`
 }
+
+type UpdateRoleRequest struct {
+	Name                 string   `json:"name"`
+	Description          string   `json:"description"`
+	FilterPredicate      string   `json:"filterPredicate"`
+	Users                []string `json:"users,omitempty"`
+	Capabilities         []string `json:"capabilities,omitempty"`
+	AutoFillDependencies bool     `json:"autoFillDependencies,omitempty"`
+}

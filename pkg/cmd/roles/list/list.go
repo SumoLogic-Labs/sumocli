@@ -43,7 +43,7 @@ id
 	return cmd
 }
 
-func listRoles(numberOfResults string, name string, output string) {
+func listRoles(numberOfResults string, filter string, output string) {
 	var roleInfo api.Role
 
 	client, request := factory.NewHttpRequest("GET", "v1/roles")
@@ -51,8 +51,8 @@ func listRoles(numberOfResults string, name string, output string) {
 	if numberOfResults != "" {
 		query.Add("limit", numberOfResults)
 	}
-	if name != "" {
-		query.Add("name", name)
+	if filter != "" {
+		query.Add("name", filter)
 	}
 	request.URL.RawQuery = query.Encode()
 
@@ -72,7 +72,7 @@ func listRoles(numberOfResults string, name string, output string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		if validateOutput(output) == true {
+		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(roleInfoJson), "#."+output)
 			formattedValue := strings.Trim(value.String(), `"[]"`)
 			fmt.Println(formattedValue)
@@ -80,18 +80,4 @@ func listRoles(numberOfResults string, name string, output string) {
 			fmt.Println(string(roleInfoJson))
 		}
 	}
-}
-
-func validateOutput(output string) bool {
-	switch output {
-	case
-		"name",
-		"description",
-		"filterPredicate",
-		"users",
-		"capabilities",
-		"id":
-		return true
-	}
-	return false
 }
