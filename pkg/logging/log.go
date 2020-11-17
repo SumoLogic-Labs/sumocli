@@ -5,10 +5,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"os"
+	"runtime"
 	"time"
 )
 
-// TODO need to learn some better golang to avoid having to pass in log. Ideally could extend the zeroLog.Logger instance somehow (inheritance / extension methods?)
 func LogError(err error, log zerolog.Logger) {
 	if err != nil {
 		log.Error().Err(err)
@@ -34,11 +34,14 @@ func GetLoggerForCommand(command *cobra.Command) zerolog.Logger {
 			zerolog.SetGlobalLevel(zerolog.InfoLevel)
 		}
 	}
-
+	useColour := true
+	if runtime.GOOS == "windows" {
+		useColour = false
+	}
 	log.Logger = log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.RFC3339,
+		NoColor:    useColour,
 	}).With().Caller().Str("command", command.Name()).Logger()
-
 	return log.Logger
 }
