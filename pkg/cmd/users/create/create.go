@@ -3,12 +3,11 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"strings"
 )
@@ -25,10 +24,7 @@ func NewCmdUserCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User create request started.")
-			user(firstName, lastName, emailAddress, roleIds, logger)
-			logger.Debug().Msg("User create request finished.")
+			user(firstName, lastName, emailAddress, roleIds, output)
 		},
 	}
 
@@ -41,8 +37,8 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string, logger zerolog.Logger) {
-	var createUserResponse api.CreateUserResponse
+func user(firstName string, lastName string, emailAddress string, roleIds []string, output string) {
+	var createUserResponse api.UserResponse
 
 	requestBodySchema := &api.CreateUserRequest{
 		Firstname:    firstName,
@@ -54,7 +50,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	fmt.Println(string(requestBody))
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/users", requestBody)
 	response, err := client.Do(request)
-	logging.LogErrorWithMessage("Creating a user was not successful.", err, logger)
+	util2.LogError(err)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
@@ -66,7 +62,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	util2.LogError(err)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody)
 	} else {
 		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(createUserResponseJson), output)

@@ -3,12 +3,11 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
+	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -28,10 +27,7 @@ func NewCmdRoleCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic role",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role create request started.")
-			createRole(name, description, filter, users, capabilities, autofill, logger)
-			logger.Debug().Msg("Role create request finished.")
+			createRole(name, description, filter, users, capabilities, autofill, output)
 		},
 	}
 
@@ -46,7 +42,7 @@ func NewCmdRoleCreate() *cobra.Command {
 	return cmd
 }
 
-func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, logger zerolog.Logger) {
+func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, output string) {
 	var createRoleResponse api.RoleData
 
 	if name == "" {
@@ -73,7 +69,7 @@ func createRole(name string, description string, filter string, users []string, 
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/roles", requestBody)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	util2.LogError(err)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
@@ -85,11 +81,16 @@ func createRole(name string, description string, filter string, users []string, 
 	util2.LogError(err)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody)
 	} else {
-		jsonErr := json.Unmarshal(responseBody, &createRoleResponse)
-		logging.LogError(jsonErr, logger)
-		fmt.Println(createRoleResponse.Name + " role successfully created")
+		if factory.ValidateRoleOutput(output) == true {
+			value := gjson.Get(string(createRoleResponseJson), output)
+			formattedValue := strings.Trim(value.String(), `"[]"`)
+			fmt.Println(formattedValue)
+		} else {
+			fmt.Println(string(createRoleResponseJson))
+			fmt.Println(createRoleResponse.Name + " role successfully created")
+		}
 	}
 }
 
