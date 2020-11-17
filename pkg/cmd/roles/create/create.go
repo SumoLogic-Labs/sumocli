@@ -3,11 +3,12 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -27,22 +28,25 @@ func NewCmdRoleCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic role",
 		Run: func(cmd *cobra.Command, args []string) {
-			createRole(name, description, filter, users, capabilities, autofill, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role create request started.")
+			createRole(name, description, filter, users, capabilities, autofill, output, logger)
+			logger.Debug().Msg("Role create request finished.")
 		},
 	}
 
-	cmd.Flags().StringVar(&name, "name", "", "Name of the role")
-	cmd.Flags().StringVar(&description, "description", "", "Description for the role")
-	cmd.Flags().StringVar(&filter, "filter", "", "Search filter for the role")
-	cmd.Flags().StringSliceVar(&users, "users", []string{}, "Comma deliminated list of user ids to add to the role")
-	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities")
+	cmd.Flags().StringVar(&name, "name", "", "Name of the role.")
+	cmd.Flags().StringVar(&description, "description", "", "Description for the role.")
+	cmd.Flags().StringVar(&filter, "filter", "", "Search filter for the role.")
+	cmd.Flags().StringSliceVar(&users, "users", []string{}, "Comma deliminated list of user ids to add to the role.")
+	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities.")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
+	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from.")
 
 	return cmd
 }
 
-func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, output string) {
+func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, output string, logger zerolog.Logger) {
 	var createRoleResponse api.RoleData
 
 	if name == "" {
@@ -69,19 +73,19 @@ func createRole(name string, description string, filter string, users []string, 
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/roles", requestBody)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
 	jsonErr := json.Unmarshal(responseBody, &createRoleResponse)
-	util2.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	createRoleResponseJson, err := json.MarshalIndent(createRoleResponse, "", "    ")
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(createRoleResponseJson), output)

@@ -3,11 +3,12 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"strings"
 )
@@ -24,7 +25,10 @@ func NewCmdUserCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			user(firstName, lastName, emailAddress, roleIds, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User create request started.")
+			user(firstName, lastName, emailAddress, roleIds, output, logger)
+			logger.Debug().Msg("User create request finished.")
 		},
 	}
 
@@ -37,7 +41,7 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string, output string) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string, output string, logger zerolog.Logger) {
 	var createUserResponse api.UserResponse
 
 	requestBodySchema := &api.CreateUserRequest{
@@ -50,19 +54,19 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	fmt.Println(string(requestBody))
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/users", requestBody)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
 	jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-	util2.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	createUserResponseJson, err := json.MarshalIndent(createUserResponse, "", "    ")
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(createUserResponseJson), output)
