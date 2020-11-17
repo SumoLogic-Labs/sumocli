@@ -30,11 +30,19 @@ type collectorData struct {
 	Links []linkData `json:"links"`
 	CollectorVersion string `json:"collectorVersion"`
 	Ephemeral bool `json:"ephemeral"`
-	Description string `json:"description"`
-	OsName string `json:"osName"`
-	OsArch string `json:"osArch"`
-	OsVersion string `json:"osVersion"`
-	Category string `json:"category"`
+	Description string `json:"description,omitempty"`
+	OsName string `json:"osName,omitempty"`
+	OsArch string `json:"osArch,omitempty"`
+	OsVersion string `json:"osVersion,omitempty"`
+	Category string `json:"category,omitempty"`
+	CutoffRelativeTime string `json:"cutoffRelativeTime,omitempty"`
+	CutoffTimestamp int64 `json:"cutoffTimestamp,omitempty"`
+	HostName string `json:"hostName,omitempty"`
+	LastSeenAlive int64 `json:"lastSeenAlive,omitempty"`
+	SourceSyncMode string `json:"sourceSyncMode,omitempty"`
+	TimeZone string `json:"timeZone,omitempty"`
+	TargetCpu int64 `json:"targetCpu,omitempty"`
+	Fields string `json:"fields,omitempty"`
 }
 
 func NewCmdControllersList() *cobra.Command {
