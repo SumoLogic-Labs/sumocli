@@ -23,7 +23,7 @@ type linkData struct {
 }
 
 type collectorData struct {
-	Id string `json:"id"`
+	Id int64 `json:"id"`
 	Name string `json:"name"`
 	CollectorType string `json:"collectorType"`
 	Alive bool `json:"alive"`
