@@ -3,10 +3,11 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 )
@@ -24,7 +25,10 @@ func NewCmdRoleCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic role",
 		Run: func(cmd *cobra.Command, args []string) {
-			createRole(name, description, filter, users, capabilities, autofill)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role create request started.")
+			createRole(name, description, filter, users, capabilities, autofill, logger)
+			logger.Debug().Msg("Role create request finished.")
 		},
 	}
 
@@ -38,7 +42,7 @@ func NewCmdRoleCreate() *cobra.Command {
 	return cmd
 }
 
-func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool) {
+func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, logger zerolog.Logger) {
 	var createRoleResponse api.RoleData
 
 	if name == "" {
@@ -65,16 +69,16 @@ func createRole(name string, description string, filter string, users []string, 
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/roles", requestBody)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		jsonErr := json.Unmarshal(responseBody, &createRoleResponse)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 		fmt.Println(createRoleResponse.Name + " role successfully created")
 	}
 }

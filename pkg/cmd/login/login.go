@@ -5,22 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/manifoldco/promptui"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
+var Logger zerolog.Logger
 func NewCmdLogin() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
 		Short: "Sets Sumo Logic credentials",
 		Long:  "Interactively sets the Sumo Logic Access Id, Access Key and API endpoint.",
 		Run: func(cmd *cobra.Command, args []string) {
+			Logger = logging.GetLoggerForCommand(cmd)
+			Logger.Debug().Msg("Credential setup started.")
 			configFile := configPath()
 			fmt.Println("Sumocli requires an access id and access key.")
 			fmt.Println("Sumocli will store the access id and access key in plain text in" +
@@ -32,6 +36,7 @@ func NewCmdLogin() *cobra.Command {
 			} else {
 				os.Exit(1)
 			}
+			Logger.Debug().Msg("Credential setup finished.")
 			return
 		},
 	}
@@ -114,13 +119,13 @@ func getCredentials() {
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 		err := os.MkdirAll(configFilePath, 0755)
 		if err != nil {
-			log.Fatal(err)
+			Logger.Fatal().Err(err)
 		}
 	}
 	credentialFile, _ := json.MarshalIndent(credentials, "", "  ")
 	err = ioutil.WriteFile(configPath(), credentialFile, 0644)
 	if err != nil {
-		log.Fatal(err)
+		Logger.Fatal().Err(err)
 	} else {
 		fmt.Println("Credentials file saved to: " + configPath())
 	}

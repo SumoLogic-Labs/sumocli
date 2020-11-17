@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/internal/build"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"net/http"
 	"time"
 )
@@ -39,11 +40,11 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	return client, request
 }
 
-func HttpError(statusCode int, errorMessage []byte) {
+func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 	if statusCode == 400 {
 		var responseError api.ResponseError
 		jsonErr := json.Unmarshal(errorMessage, &responseError)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 		fmt.Println(responseError.Errors[0].Message)
 	} else if statusCode == 401 {
 		fmt.Println("Unauthorized access please check the user exists,  are valid.")

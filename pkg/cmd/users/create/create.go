@@ -3,10 +3,11 @@ package create
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 )
 
@@ -21,7 +22,10 @@ func NewCmdUserCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			user(firstName, lastName, emailAddress, roleIds)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User create request started.")
+			user(firstName, lastName, emailAddress, roleIds, logger)
+			logger.Debug().Msg("User create request finished.")
 		},
 	}
 
@@ -33,7 +37,7 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string, logger zerolog.Logger) {
 	var createUserResponse api.CreateUserResponse
 
 	requestBodySchema := &api.CreateUserRequest{
@@ -46,16 +50,16 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	fmt.Println(string(requestBody))
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/users", requestBody)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogErrorWithMessage("Creating a user was not successful.", err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
 	}
 }
