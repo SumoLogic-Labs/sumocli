@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/tidwall/gjson"
+	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"io/ioutil"
 	"net/url"
@@ -13,39 +14,9 @@ import (
 	"strings"
 )
 
-type collector struct {
-	Collectors []collectorData `json:"collectors"`
-}
 
-type linkData struct {
-	Rel string `json:"rel"`
-	Href string `json:"href"`
-}
 
-type collectorData struct {
-	Id int64 `json:"id"`
-	Name string `json:"name"`
-	CollectorType string `json:"collectorType"`
-	Alive bool `json:"alive"`
-	Links []linkData `json:"links"`
-	CollectorVersion string `json:"collectorVersion"`
-	Ephemeral bool `json:"ephemeral"`
-	Description string `json:"description,omitempty"`
-	OsName string `json:"osName,omitempty"`
-	OsArch string `json:"osArch,omitempty"`
-	OsVersion string `json:"osVersion,omitempty"`
-	Category string `json:"category,omitempty"`
-	CutoffRelativeTime string `json:"cutoffRelativeTime,omitempty"`
-	CutoffTimestamp int64 `json:"cutoffTimestamp,omitempty"`
-	HostName string `json:"hostName,omitempty"`
-	LastSeenAlive int64 `json:"lastSeenAlive,omitempty"`
-	SourceSyncMode string `json:"sourceSyncMode,omitempty"`
-	TimeZone string `json:"timeZone,omitempty"`
-	TargetCpu int64 `json:"targetCpu,omitempty"`
-	Fields string `json:"fields,omitempty"`
-}
-
-func NewCmdControllersList() *cobra.Command {
+func NewCmdCollectorsList() *cobra.Command {
 	var (
 		numberOfResults string
 		filter          string
@@ -65,9 +36,9 @@ collectorVersion
 `,
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Collector list request started.")
+			logger.Debug().Msg("Collectors list request started.")
 			collectors(numberOfResults, filter, output, logger)
-			logger.Debug().Msg("Collector list request finished.")
+			logger.Debug().Msg("Collectors list request finished.")
 		},
 	}
 
@@ -79,7 +50,7 @@ collectorVersion
 }
 
 func collectors(numberOfResults string, name string, output string, logger zerolog.Logger) {
-	var collector collector
+	var collectorList api.CollectorListResponse
 	client, request := factory.NewHttpRequest("GET", "v1/collectors")
 	query := url.Values{}
 	if numberOfResults != "" {
@@ -96,10 +67,10 @@ func collectors(numberOfResults string, name string, output string, logger zerol
 	responseBody, err := ioutil.ReadAll(response.Body)
 	logging.LogError(err, logger)
 
-	jsonErr := json.Unmarshal(responseBody, &collector)
+	jsonErr := json.Unmarshal(responseBody, &collectorList)
 	logging.LogError(jsonErr, logger)
 
-	collectorsJson, err := json.MarshalIndent(collector.Collectors, "", "    ")
+	collectorsJson, err := json.MarshalIndent(collectorList.Collectors, "", "    ")
 	logging.LogError(err, logger)
 
 	// Determines if the response should be written to a file or to console
