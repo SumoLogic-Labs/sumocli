@@ -8,7 +8,7 @@ import (
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"net/url"
+	"io/ioutil"
 	"os"
 )
 
@@ -51,8 +51,18 @@ func userChangeEmail(id string, email string, logger zerolog.Logger) {
 	requestBody, _ := json.Marshal(requestBodySchema)
 	requestUrl := "v1/users/" + id + "/email/requestChange"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
-
 	response, err := client.Do(request)
 	logging.LogError(err, logger)
 
+	defer response.Body.Close()
+	responseBody, err := ioutil.ReadAll(response.Body)
+	logging.LogError(err, logger)
+
+	if response.StatusCode != 204 {
+		var responseError api.ResponseError
+		jsonErr := json.Unmarshal(responseBody, &responseError)
+		logging.LogError(jsonErr, logger)
+	} else {
+		fmt.Println("Users email address successfully updated to: " + email)
+	}
 }
