@@ -7,6 +7,10 @@ type CreateUserRequest struct {
 	Roleids      []string `json:"roleIds"`
 }
 
+type UpdateUserEmail struct {
+	Email string `json:"email"`
+}
+
 type UserResponse struct {
 	Firstname          string   `json:"firstName"`
 	Lastname           string   `json:"lastName"`
