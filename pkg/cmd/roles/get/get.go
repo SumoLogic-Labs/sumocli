@@ -69,7 +69,7 @@ func getRole(id string, output string, logger zerolog.Logger) {
 	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(roleInfoJson), output)

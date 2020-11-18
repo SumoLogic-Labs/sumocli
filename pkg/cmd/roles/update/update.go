@@ -3,11 +3,12 @@ package update
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -31,7 +32,10 @@ func NewCmdRoleUpdate() *cobra.Command {
 		Use:   "update",
 		Short: "Updates a Sumo Logic role",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateRole(id, name, description, filter, users, capabilities, autofill, merge, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role update request started.")
+			updateRole(id, name, description, filter, users, capabilities, autofill, merge, output, logger)
+			logger.Debug().Msg("Role update request finished.")
 		},
 	}
 
@@ -48,7 +52,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, output string) {
+func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, output string, logger zerolog.Logger) {
 	var roleInfo api.RoleData
 	if id == "" {
 		fmt.Println("--id field needs to be set.")
@@ -59,17 +63,17 @@ func updateRole(id string, name string, description string, filter string, users
 		requestUrl := "v1/roles/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		defer response.Body.Close()
 		responseBody, err := ioutil.ReadAll(response.Body)
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		jsonErr := json.Unmarshal(responseBody, &roleInfo)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody)
+			factory.HttpError(response.StatusCode, responseBody, logger)
 			os.Exit(0)
 		}
 
@@ -117,19 +121,19 @@ func updateRole(id string, name string, description string, filter string, users
 		requestBody, _ := json.Marshal(requestBodySchema)
 		client, request = factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err = client.Do(request)
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		defer response.Body.Close()
 		responseBody, err = ioutil.ReadAll(response.Body)
 
 		jsonErr = json.Unmarshal(responseBody, &roleInfo)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 
 		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody)
+			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
 			if factory.ValidateRoleOutput(output) == true {
 				value := gjson.Get(string(roleInfoJson), output)
@@ -153,19 +157,19 @@ func updateRole(id string, name string, description string, filter string, users
 		requestUrl := "v1/roles/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		defer response.Body.Close()
 		responseBody, err := ioutil.ReadAll(response.Body)
 
 		jsonErr := json.Unmarshal(responseBody, &roleInfo)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 
 		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-		util2.LogError(err)
+		logging.LogError(err, logger)
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody)
+			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
 			if factory.ValidateRoleOutput(output) == true {
 				value := gjson.Get(string(roleInfoJson), output)

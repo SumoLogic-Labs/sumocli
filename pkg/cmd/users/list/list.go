@@ -3,11 +3,12 @@ package list
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"net/url"
 	"strings"
@@ -36,7 +37,10 @@ isMfaEnabled
 lastLoginTimestamp
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			listUsers(email, numberOfResults, sortBy, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User list request started.")
+			listUsers(email, numberOfResults, sortBy, output, logger)
+			logger.Debug().Msg("User list request finished.")
 		},
 	}
 
@@ -48,7 +52,7 @@ lastLoginTimestamp
 	return cmd
 }
 
-func listUsers(email string, numberOfResults string, sortBy string, output string) {
+func listUsers(email string, numberOfResults string, sortBy string, output string, logger zerolog.Logger) {
 	var userInfo api.Users
 
 	client, request := factory.NewHttpRequest("GET", "v1/users")
@@ -69,20 +73,20 @@ func listUsers(email string, numberOfResults string, sortBy string, output strin
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	jsonErr := json.Unmarshal(responseBody, &userInfo)
-	util2.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	userInfoJson, err := json.MarshalIndent(userInfo.Data, "", "    ")
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(userInfoJson), "#."+output)

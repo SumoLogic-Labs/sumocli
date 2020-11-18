@@ -3,10 +3,11 @@ package remove
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 )
@@ -21,7 +22,10 @@ func NewCmdRoleRemoveUser() *cobra.Command {
 		Use:   "remove user",
 		Short: "Removes the specified Sumo Logic user from the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			removeUserRole(roleId, userId)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role remove request started.")
+			removeUserRole(roleId, userId, logger)
+			logger.Debug().Msg("Role remove request finished.")
 		},
 	}
 
@@ -31,7 +35,7 @@ func NewCmdRoleRemoveUser() *cobra.Command {
 	return cmd
 }
 
-func removeUserRole(roleId string, userId string) {
+func removeUserRole(roleId string, userId string, logger zerolog.Logger) {
 	if roleId == "" || userId == "" {
 		fmt.Println("--roleid and --userid fields need to be set")
 		os.Exit(0)
@@ -40,16 +44,16 @@ func removeUserRole(roleId string, userId string) {
 	requestUrl := "v1/roles/" + roleId + "/users/" + userId
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
 		jsonErr := json.Unmarshal(responseBody, &responseError)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 		fmt.Println(responseError.Errors[0].Message)
 	} else {
 		fmt.Println("User: " + userId + " was removed from role: " + roleId)

@@ -3,10 +3,12 @@ package assign
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -31,7 +33,10 @@ capabilities
 id
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			assignRole(roleId, userId, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("Role assign request started.")
+			assignRole(roleId, userId, output, logger)
+			logger.Debug().Msg("Role assign request finished.")
 		},
 	}
 
@@ -42,7 +47,7 @@ id
 	return cmd
 }
 
-func assignRole(roleId string, userId string, output string) {
+func assignRole(roleId string, userId string, output string, logger zerolog.Logger) {
 	var roleInfo api.RoleData
 
 	if roleId == "" || userId == "" {
@@ -53,20 +58,20 @@ func assignRole(roleId string, userId string, output string) {
 	requestUrl := "v1/roles/" + roleId + "/users/" + userId
 	client, request := factory.NewHttpRequest("PUT", requestUrl)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	util2.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateRoleOutput(output) == true {
 			value := gjson.Get(string(roleInfoJson), output)

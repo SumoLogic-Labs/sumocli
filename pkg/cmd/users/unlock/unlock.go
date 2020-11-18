@@ -3,10 +3,11 @@ package unlock
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 )
@@ -18,7 +19,10 @@ func NewCmdUnlockUser() *cobra.Command {
 		Use:   "unlock",
 		Short: "Unlocks a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			unlockUser(id)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User unlock request started.")
+			unlockUser(id, logger)
+			logger.Debug().Msg("User unlock request finished.")
 		},
 	}
 
@@ -27,7 +31,7 @@ func NewCmdUnlockUser() *cobra.Command {
 	return cmd
 }
 
-func unlockUser(id string) {
+func unlockUser(id string, logger zerolog.Logger) {
 	if id == "" {
 		fmt.Println("--id field needs to be specified.")
 		os.Exit(0)
@@ -36,16 +40,16 @@ func unlockUser(id string) {
 	requestUrl := "v1/users/" + id + "/unlock"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
 		jsonErr := json.Unmarshal(responseBody, &responseError)
-		util2.LogError(jsonErr)
+		logging.LogError(jsonErr, logger)
 	} else {
 		fmt.Println("User account was unlocked.")
 	}

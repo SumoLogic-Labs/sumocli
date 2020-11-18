@@ -3,11 +3,12 @@ package get
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	util2 "github.com/wizedkyle/sumocli/pkg/cmdutil"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -34,7 +35,10 @@ isMfaEnabled
 lastLoginTimestamp
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			getUser(id, output)
+			logger := logging.GetLoggerForCommand(cmd)
+			logger.Debug().Msg("User get request started.")
+			getUser(id, output, logger)
+			logger.Debug().Msg("User get request finished.")
 		},
 	}
 
@@ -44,7 +48,7 @@ lastLoginTimestamp
 	return cmd
 }
 
-func getUser(id string, output string) {
+func getUser(id string, output string, logger zerolog.Logger) {
 	var userInfo api.UserResponse
 
 	if id == "" {
@@ -55,20 +59,20 @@ func getUser(id string, output string) {
 	requestUrl := "v1/users/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	jsonErr := json.Unmarshal(responseBody, &userInfo)
-	util2.LogError(jsonErr)
+	logging.LogError(jsonErr, logger)
 
 	userInfoJson, err := json.MarshalIndent(userInfo, "", "    ")
-	util2.LogError(err)
+	logging.LogError(err, logger)
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody)
+		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
 		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(userInfoJson), output)
