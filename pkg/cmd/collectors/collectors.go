@@ -2,9 +2,10 @@ package collectors
 
 import (
 	"github.com/spf13/cobra"
-	cmdCollectorsList "github.com/wizedkyle/sumocli/pkg/cmd/collectors/list"
-	cmdCollectorGet "github.com/wizedkyle/sumocli/pkg/cmd/collectors/get"
 	cmdCollectorCreate "github.com/wizedkyle/sumocli/pkg/cmd/collectors/create"
+	cmdCollectorDelete "github.com/wizedkyle/sumocli/pkg/cmd/collectors/delete"
+	cmdCollectorGet "github.com/wizedkyle/sumocli/pkg/cmd/collectors/get"
+	cmdCollectorsList "github.com/wizedkyle/sumocli/pkg/cmd/collectors/list"
 )
 
 func NewCmdCollector() *cobra.Command {
@@ -17,6 +18,7 @@ func NewCmdCollector() *cobra.Command {
 	cmd.AddCommand(cmdCollectorsList.NewCmdCollectorsList())
 	cmd.AddCommand(cmdCollectorGet.NewCmdCollectorGet())
 	cmd.AddCommand(cmdCollectorCreate.NewCmdCollectorCreate())
+	cmd.AddCommand(cmdCollectorDelete.NewCmdCollectorDelete())
 
 	return cmd
 }
