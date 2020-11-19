@@ -5,5 +5,5 @@ import (
 )
 
 func TestUserChangeEmail(t *testing.T) {
-
+	userChangeEmail()
 }

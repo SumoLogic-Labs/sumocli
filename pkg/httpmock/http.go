@@ -1,11 +1,10 @@
 package httpmock
 
-import "net/http"
+import (
+	"net/http"
+	"net/http/httptest"
+)
 
-type RoundTripFunc func(req *http.Client) *http.Response
-
-func NewTestClient(fn RoundTripFunc) *http.Client {
-	return &http.Client{
-		Transport: RoundTripFunc(fn),
-	}
+func mockServer() *httptest.Server {
+	handler := http.NewServeMux()
 }
