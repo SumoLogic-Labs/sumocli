@@ -62,6 +62,9 @@ func userChangeEmail(id string, email string, logger zerolog.Logger) {
 		var responseError api.ResponseError
 		jsonErr := json.Unmarshal(responseBody, &responseError)
 		logging.LogError(jsonErr, logger)
+		if responseError.Errors[0].Code == "um1:unverified_email" {
+			fmt.Println(responseError.Errors[0].Message)
+		}
 	} else {
 		fmt.Println("Users email address successfully updated to: " + email)
 	}
