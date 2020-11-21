@@ -51,7 +51,6 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 		Roleids:      roleIds,
 	}
 	requestBody, _ := json.Marshal(requestBodySchema)
-	fmt.Println(string(requestBody))
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/users", requestBody)
 	response, err := client.Do(request)
 	logging.LogError(err, logger)
