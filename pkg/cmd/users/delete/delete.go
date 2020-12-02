@@ -9,7 +9,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 )
 
 func NewCmdUserDelete() *cobra.Command {
@@ -29,18 +28,13 @@ func NewCmdUserDelete() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to delete.")
+	cmd.PersistentFlags().StringVar(&id, "id", "", "Specify the id of the user to delete.")
 	cmd.Flags().StringVar(&transferTo, "transferto", "", "Specify the id of the user to transfer data to.")
 
 	return cmd
 }
 
 func deleteUser(id string, transferTo string, logger zerolog.Logger) {
-	if id == "" {
-		fmt.Println("--id field needs to be set.")
-		os.Exit(0)
-	}
-
 	requestUrl := "v1/users/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)

@@ -7,6 +7,11 @@ type CreateUserRequest struct {
 	Roleids      []string `json:"roleIds"`
 }
 
+type DisableUserMfa struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type UpdateUserEmail struct {
 	Email string `json:"email"`
 }
