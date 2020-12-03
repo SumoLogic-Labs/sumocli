@@ -16,6 +16,13 @@ type UpdateUserEmail struct {
 	Email string `json:"email"`
 }
 
+type UpdateUserRequest struct {
+	Firstname string   `json:"firstName"`
+	Lastname  string   `json:"lastName"`
+	IsActive  bool     `json:"isActive"`
+	Roleids   []string `json:"roleIds"`
+}
+
 type UserResponse struct {
 	Firstname          string   `json:"firstName"`
 	Lastname           string   `json:"lastName"`

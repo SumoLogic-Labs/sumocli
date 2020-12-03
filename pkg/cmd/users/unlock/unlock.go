@@ -9,7 +9,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 )
 
 func NewCmdUnlockUser() *cobra.Command {
@@ -27,16 +26,11 @@ func NewCmdUnlockUser() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user account to unlock")
-
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
 func unlockUser(id string, logger zerolog.Logger) {
-	if id == "" {
-		fmt.Println("--id field needs to be specified.")
-		os.Exit(0)
-	}
-
 	requestUrl := "v1/users/" + id + "/unlock"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)

@@ -41,9 +41,9 @@ lastLoginTimestamp
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&id, "id", "", "Specify the id of the user to get")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to get")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
-
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 

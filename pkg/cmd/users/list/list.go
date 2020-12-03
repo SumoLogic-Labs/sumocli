@@ -90,7 +90,8 @@ func listUsers(email string, numberOfResults string, sortBy string, output strin
 	} else {
 		if factory.ValidateUserOutput(output) == true {
 			value := gjson.Get(string(userInfoJson), "#."+output)
-			formattedValue := strings.Trim(value.String(), `"[]"`)
+			formattedValue := strings.Trim(value.String(), `[]`)
+			formattedValue = strings.ReplaceAll(formattedValue, "\"", "")
 			fmt.Println(formattedValue)
 		} else {
 			fmt.Println(string(userInfoJson))

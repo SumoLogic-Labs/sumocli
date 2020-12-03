@@ -28,8 +28,10 @@ func NewCmdUserChangeEmail() *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&id, "id", "", "Specify the id of the user that needs to have the email changed.")
-	cmd.PersistentFlags().StringVar(&email, "email", "", "Specify the users new email address.")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user that needs to have the email changed.")
+	cmd.Flags().StringVar(&email, "email", "", "Specify the users new email address.")
+	cmd.MarkFlagRequired("id")
+	cmd.MarkFlagRequired("email")
 
 	return cmd
 }

@@ -37,6 +37,10 @@ func NewCmdUserCreate() *cobra.Command {
 	cmd.Flags().StringVar(&emailAddress, "email", "", "Email address of the user")
 	cmd.Flags().StringSliceVar(&roleIds, "roleids", []string{}, "Comma deliminated list of Role Ids")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
+	cmd.MarkFlagRequired("firstname")
+	cmd.MarkFlagRequired("lastname")
+	cmd.MarkFlagRequired("email")
+	cmd.MarkFlagRequired("roleids")
 
 	return cmd
 }
