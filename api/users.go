@@ -7,8 +7,20 @@ type CreateUserRequest struct {
 	Roleids      []string `json:"roleIds"`
 }
 
+type DisableUserMfa struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type UpdateUserEmail struct {
 	Email string `json:"email"`
+}
+
+type UpdateUserRequest struct {
+	Firstname string   `json:"firstName"`
+	Lastname  string   `json:"lastName"`
+	IsActive  bool     `json:"isActive"`
+	Roleids   []string `json:"roleIds"`
 }
 
 type UserResponse struct {

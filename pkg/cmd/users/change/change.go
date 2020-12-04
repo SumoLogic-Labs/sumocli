@@ -9,7 +9,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 )
 
 func NewCmdUserChangeEmail() *cobra.Command {
@@ -31,20 +30,13 @@ func NewCmdUserChangeEmail() *cobra.Command {
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user that needs to have the email changed.")
 	cmd.Flags().StringVar(&email, "email", "", "Specify the users new email address.")
+	cmd.MarkFlagRequired("id")
+	cmd.MarkFlagRequired("email")
 
 	return cmd
 }
 
 func userChangeEmail(id string, email string, logger zerolog.Logger) {
-	if id == "" {
-		fmt.Println("--id field needs to be set.")
-		os.Exit(0)
-	}
-	if email == "" {
-		fmt.Println("--email field needs to be set.")
-		os.Exit(0)
-	}
-
 	requestBodySchema := &api.UpdateUserEmail{
 		Email: email,
 	}

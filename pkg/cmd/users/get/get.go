@@ -10,7 +10,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -44,17 +43,12 @@ lastLoginTimestamp
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to get")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
-
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
 func getUser(id string, output string, logger zerolog.Logger) {
 	var userInfo api.UserResponse
-
-	if id == "" {
-		fmt.Println("--id field needs to be specified.")
-		os.Exit(0)
-	}
 
 	requestUrl := "v1/users/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)

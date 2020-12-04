@@ -1,4 +1,4 @@
-package unlock
+package reset
 
 import (
 	"encoding/json"
@@ -11,27 +11,28 @@ import (
 	"io/ioutil"
 )
 
-func NewCmdUnlockUser() *cobra.Command {
+func NewCmdUserResetPassword() *cobra.Command {
 	var id string
 
 	cmd := &cobra.Command{
-		Use:   "unlock",
-		Short: "Unlocks a Sumo Logic user account",
+		Use:   "reset password",
+		Short: "Initiates a password reset for a Sumo Logic user.",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User unlock request started.")
-			unlockUser(id, logger)
-			logger.Debug().Msg("User unlock request finished.")
+			logger.Debug().Msg("User reset password request started.")
+			userResetPassword(id, logger)
+			logger.Debug().Msg("User reset password request finished.")
 		},
 	}
 
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user account to unlock")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user which requires a password reset.")
 	cmd.MarkFlagRequired("id")
+
 	return cmd
 }
 
-func unlockUser(id string, logger zerolog.Logger) {
-	requestUrl := "v1/users/" + id + "/unlock"
+func userResetPassword(id string, logger zerolog.Logger) {
+	requestUrl := "v1/users/" + id + "/password/reset"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	logging.LogError(err, logger)
@@ -43,8 +44,12 @@ func unlockUser(id string, logger zerolog.Logger) {
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
 		jsonErr := json.Unmarshal(responseBody, &responseError)
+		fmt.Println(responseBody)
 		logging.LogError(jsonErr, logger)
+		if responseError.Errors[0].Message != "" {
+			fmt.Println(responseError.Errors[0].Message)
+		}
 	} else {
-		fmt.Println("User account was unlocked.")
+		fmt.Println("Password reset request completed.")
 	}
 }
