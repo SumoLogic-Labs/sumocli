@@ -20,13 +20,19 @@ func newHttpClient() *http.Client {
 	return client
 }
 
+func userAgent() string {
+	var userAgent string
+	userAgent = "Sumocli " + build.Version
+	return userAgent
+}
+
 func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) {
 	client := newHttpClient()
 	authToken, endpoint := login.ReadCredentials()
 	request, _ := http.NewRequest(method, endpoint+apiUrl, nil)
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	request.Header.Add("User-Agent", userAgent())
 	return client, request
 }
 
@@ -36,7 +42,7 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	request, _ := http.NewRequest(method, endpoint+apiUrl, bytes.NewBuffer(body))
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	request.Header.Add("User-Agent", userAgent())
 	return client, request
 }
 

@@ -2,6 +2,7 @@ package root
 
 import (
 	"github.com/spf13/cobra"
+	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -11,13 +12,14 @@ import (
 func NewCmdRoot() *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "sumocli <command> <subcommand> [flags]",
-		Short: "Sumo Logic CLI",
-		Long:  "Manage Sumo Logic from the command line.",
+		Use:              "sumocli <command> <subcommand> [flags]",
+		Short:            "Sumo Logic CLI",
+		Long:             "Manage Sumo Logic from the command line.",
 		TraverseChildren: true,
 	}
 
 	// Add subcommands
+	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(usersCmd.NewCmdUser())
