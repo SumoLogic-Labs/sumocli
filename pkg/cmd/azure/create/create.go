@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/resources/mgmt/features"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/storage/mgmt/storage"
+	"github.com/Azure/azure-service-bus-go"
 	"github.com/Azure/go-autorest/autorest/to"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
@@ -24,9 +26,10 @@ func NewCmdAzureCreate() *cobra.Command {
 		Short: "Create Azure infrastructure to collect logs or metrics",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
+			log := logging.GetConsoleLogger()
 			logger.Debug().Msg("Create Azure infrastructure request started")
 			if blob == true {
-				azureCreateBlobCollection(prefix)
+				azureCreateBlobCollection(prefix, log)
 			} else if metrics == true {
 
 			} else if diagnostic == true {
@@ -43,19 +46,21 @@ func NewCmdAzureCreate() *cobra.Command {
 	return cmd
 }
 
-func azureCreateBlobCollection(prefix string) {
+func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	ctx := context.Background()
 	logsName := "scliblob"
 	rgName := logsName + prefix
 	sgName := logsName + prefix + "logs"
+	nsName := logsName + prefix + "logs"
 
-	createResourceGroup(ctx, rgName)
-	sgAccount, err := createStorageAccount(ctx, rgName, sgName)
+	createResourceGroup(ctx, rgName, log)
+	sgAccount, err := createStorageAccount(ctx, rgName, sgName, log)
 	if err != nil {
-		fmt.Errorf("error creating storage account: %v", err)
+		log.Error().Err(err).Msg("error creating storage account")
 	}
-	fmt.Println(to.String(sgAccount.Name))
-	createStorageAccountTable(ctx, rgName, sgName)
+	fmt.Println(to.String(sgAccount.Name)) // TODO: Remove this line
+	createStorageAccountTable(ctx, rgName, sgName, log)
+	createServiceBusNamespace(nsName, log)
 }
 
 /*
@@ -66,8 +71,8 @@ func azureCreateMetricCollection() {
 }
 */
 
-func createResourceGroup(ctx context.Context, rgName string) {
-	fmt.Println("Creating or updating resource group " + rgName)
+func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger) {
+	log.Info().Msg("Creating or updating resource group " + rgName)
 	rgClient := factory.GetResourceGroupClient()
 	_, err := rgClient.CreateOrUpdate(
 		ctx,
@@ -79,13 +84,13 @@ func createResourceGroup(ctx context.Context, rgName string) {
 		})
 
 	if err != nil {
-		fmt.Errorf("cannot create resource group %v: %v", rgName, err)
+		log.Error().Err(err).Msg("cannot create resource group " + rgName)
 	}
-	fmt.Println("Created or updated resource group " + rgName)
+	log.Info().Msg("Created or updated resource group " + rgName)
 }
 
-func createStorageAccount(ctx context.Context, rgName string, sgName string) (storage.Account, error) {
-	fmt.Println("Creating or updating storage account " + sgName)
+func createStorageAccount(ctx context.Context, rgName string, sgName string, log zerolog.Logger) (storage.Account, error) {
+	log.Info().Msg("Creating or updating storage account " + sgName)
 	sgClient := factory.GetStorageClient()
 	sgAccount, err := sgClient.Create(
 		ctx,
@@ -102,20 +107,20 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string) (st
 		})
 
 	if err != nil {
-		fmt.Errorf("cannot create resource group %v: %v", sgName, err)
+		log.Error().Err(err).Msg("cannot create resource group " + sgName)
 	}
 
 	err = sgAccount.WaitForCompletionRef(ctx, sgClient.Client)
 	if err != nil {
-		fmt.Errorf("cannot create resource group %v: %v", sgName, err)
+		log.Error().Err(err).Msg("cannot create resource group " + sgName)
 	}
 
-	fmt.Println("Created or updated storage account " + rgName)
+	log.Info().Msg("Created or updated storage account " + rgName)
 	return sgAccount.Result(sgClient)
 }
 
-func createStorageAccountTable(ctx context.Context, rgName string, sgName string) {
-	fmt.Println("Creating or updating FileOffsetMap table")
+func createStorageAccountTable(ctx context.Context, rgName string, sgName string, log zerolog.Logger) {
+	log.Info().Msg("Creating FileOffsetMap table")
 	tableClient := factory.GetStorageTableClient()
 	_, err := tableClient.Create(
 		ctx,
@@ -124,8 +129,16 @@ func createStorageAccountTable(ctx context.Context, rgName string, sgName string
 		"FileOffsetMap")
 
 	if err != nil {
-		fmt.Errorf("cannot create FileOffsetMap table %v", err)
+		log.Error().Err(err).Msg("cannot create FileOffsetMap table")
 	}
 
-	fmt.Println("Created or updated FileOffsetMap table")
+	log.Info().Msg("Created FileOffsetMap table")
+}
+
+func createServiceBusNamespace(nsName string, log zerolog.Logger) {
+	log.Info().Msg("Creating Service Bus namespace " + nsName)
+	namespace, err := servicebus.NewNamespace(
+		servicebus.NamespaceWithAzureEnvironment(
+			nsName,
+			factory.Cloud))
 }

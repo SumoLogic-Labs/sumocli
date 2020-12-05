@@ -1,11 +1,13 @@
 package logging
 
 import (
+	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -15,14 +17,11 @@ func LogError(err error, log zerolog.Logger) {
 	}
 }
 
-func LogErrorWithMessage(msg string, err error, log zerolog.Logger) {
-	if err != nil {
-		log.Error().Err(err).Msg(msg)
-	}
-}
-
 func GetConsoleLogger() zerolog.Logger {
 	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
+	output.FormatLevel = func(i interface{}) string {
+		return strings.ToUpper(fmt.Sprintf("|  %-6s|", i))
+	}
 	log := zerolog.New(output).With().Timestamp().Logger()
 	return log
 }
