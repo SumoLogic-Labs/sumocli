@@ -29,13 +29,16 @@ func NewCmdAzureCreate() *cobra.Command {
 				azureCreateBlobCollection(prefix)
 			} else if metrics == true {
 
+			} else if diagnostic == true {
+
 			} else {
-				fmt.Println("Please select either --logs or --metrics")
+				fmt.Println("Please select either --diagnostic, --logs or --metrics")
 			}
 			logger.Debug().Msg("Create Azure infrastructure request finished.")
 		},
 	}
 
+	cmd.Flags().BoolVar(&blob, "blob", false, "Deploys infrastructure for Azure Blob collection.")
 	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
 	return cmd
 }
@@ -45,8 +48,14 @@ func azureCreateBlobCollection(prefix string) {
 	logsName := "scliblob"
 	rgName := logsName + prefix
 	sgName := logsName + prefix + "logs"
+
 	createResourceGroup(ctx, rgName)
 	sgAccount, err := createStorageAccount(ctx, rgName, sgName)
+	if err != nil {
+		fmt.Errorf("error creating storage account: %v", err)
+	}
+	fmt.Println(to.String(sgAccount.Name))
+	createStorageAccountTable(ctx, rgName, sgName)
 }
 
 /*
@@ -77,16 +86,17 @@ func createResourceGroup(ctx context.Context, rgName string) {
 
 func createStorageAccount(ctx context.Context, rgName string, sgName string) (storage.Account, error) {
 	fmt.Println("Creating or updating storage account " + sgName)
-	var sku *storage.Sku
-	sku.Name = "Standard_LRS"
-	sku.Tier = "Standard"
 	sgClient := factory.GetStorageClient()
 	sgAccount, err := sgClient.Create(
 		ctx,
 		rgName,
 		sgName,
 		storage.AccountCreateParameters{
-			Sku:      sku,
+			Sku: &storage.Sku{
+				Name: storage.StandardLRS,
+				Tier: storage.Standard,
+			},
+			Kind:     storage.StorageV2,
 			Location: to.StringPtr(factory.Location),
 			Tags:     factory.AzureLogTags(),
 		})
@@ -95,10 +105,27 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string) (st
 		fmt.Errorf("cannot create resource group %v: %v", sgName, err)
 	}
 
-	sgAccount.WaitForCompletionRef(ctx, sgClient.Client)
+	err = sgAccount.WaitForCompletionRef(ctx, sgClient.Client)
 	if err != nil {
 		fmt.Errorf("cannot create resource group %v: %v", sgName, err)
 	}
 
+	fmt.Println("Created or updated storage account " + rgName)
 	return sgAccount.Result(sgClient)
+}
+
+func createStorageAccountTable(ctx context.Context, rgName string, sgName string) {
+	fmt.Println("Creating or updating FileOffsetMap table")
+	tableClient := factory.GetStorageTableClient()
+	_, err := tableClient.Create(
+		ctx,
+		rgName,
+		sgName,
+		"FileOffsetMap")
+
+	if err != nil {
+		fmt.Errorf("cannot create FileOffsetMap table %v", err)
+	}
+
+	fmt.Println("Created or updated FileOffsetMap table")
 }

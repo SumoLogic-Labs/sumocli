@@ -21,6 +21,12 @@ func LogErrorWithMessage(msg string, err error, log zerolog.Logger) {
 	}
 }
 
+func GetConsoleLogger() zerolog.Logger {
+	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
+	log := zerolog.New(output).With().Timestamp().Logger()
+	return log
+}
+
 func GetLoggerForCommand(command *cobra.Command) zerolog.Logger {
 	verbose, _ := command.Root().PersistentFlags().GetBool("verbose")
 	suppressLogging, _ := command.Root().PersistentFlags().GetBool("quiet")
