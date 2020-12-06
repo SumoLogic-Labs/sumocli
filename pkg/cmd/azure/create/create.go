@@ -104,10 +104,11 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 		web.AppServicePlan{
 			AppServicePlanProperties: nil,
 			Sku: &web.SkuDescription{
-				Name: to.StringPtr("FunctionApp"),
+				Name: to.StringPtr("Y1"),
 				Tier: to.StringPtr("Dynamic"),
 				Size: to.StringPtr("Y1"),
 			},
+			Kind:     to.StringPtr("FunctionApp"),
 			Location: to.StringPtr(factory.Location),
 			Tags:     factory.AzureLogTags(),
 		})
