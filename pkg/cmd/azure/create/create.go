@@ -9,6 +9,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/eventgrid/mgmt/2020-06-01/eventgrid"
 	"github.com/Azure/azure-sdk-for-go/services/eventhub/mgmt/2017-04-01/eventhub"
 	"github.com/Azure/azure-sdk-for-go/services/servicebus/mgmt/2017-04-01/servicebus"
+	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-06-01/web"
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -66,6 +67,7 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	topicName := logsName + prefix
 	eventSubName := logsName + prefix
 	insightsName := logsName + prefix
+	appPlanName := logsName + prefix
 
 	createResourceGroup(ctx, rgName, log)
 	createStorageAccount(ctx, rgName, sgName, log)
@@ -81,6 +83,7 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	createEventGridTopic(ctx, rgName, topicName, log)
 	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, log)
 	createApplicationInsight(ctx, rgName, insightsName, log)
+	createAppServicePlan(ctx, rgName, appPlanName, log)
 }
 
 /*
@@ -90,6 +93,38 @@ func azureCreateLogCollection() {
 func azureCreateMetricCollection() {
 }
 */
+
+func createAppServicePlan(ctx context.Context, rgName string, appPlanName string, log zerolog.Logger) (web.AppServicePlan, error) {
+	log.Info().Msg("Creating or updating App Service Plan " + appPlanName)
+	appClient := factory.GetAppServicePlanClient()
+	appPlan, err := appClient.CreateOrUpdate(
+		ctx,
+		rgName,
+		appPlanName,
+		web.AppServicePlan{
+			AppServicePlanProperties: nil,
+			Sku: &web.SkuDescription{
+				Name: to.StringPtr("FunctionApp"),
+				Tier: to.StringPtr("Dynamic"),
+				Size: to.StringPtr("Y1"),
+			},
+			Location: to.StringPtr(factory.Location),
+			Tags:     factory.AzureLogTags(),
+		})
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create or update App Service Plan " + appPlanName)
+		os.Exit(0)
+	}
+
+	err = appPlan.WaitForCompletionRef(ctx, appClient.Client)
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create or update App Service Plan " + appPlanName)
+	}
+
+	log.Info().Msg("Created or updated App Service Plan " + appPlanName)
+	return appPlan.Result(appClient)
+}
 
 func createEventGridSubscription(ctx context.Context, scope string, eventSubName string, eventhub eventhub.Model, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
 	log.Info().Msg("Creating or updating Event Grid Subscription " + eventSubName)
@@ -263,7 +298,27 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 		rgName,
 		insightsName,
 		insights.ApplicationInsightsComponent{
-			Kind:     to.StringPtr("web"),
+			Kind: to.StringPtr("web"),
+			ApplicationInsightsComponentProperties: &insights.ApplicationInsightsComponentProperties{
+				ApplicationID:              nil,
+				AppID:                      nil,
+				ApplicationType:            "",
+				FlowType:                   "",
+				RequestSource:              "",
+				InstrumentationKey:         nil,
+				CreationDate:               nil,
+				TenantID:                   nil,
+				HockeyAppID:                nil,
+				HockeyAppToken:             nil,
+				ProvisioningState:          nil,
+				SamplingPercentage:         nil,
+				ConnectionString:           nil,
+				RetentionInDays:            nil,
+				DisableIPMasking:           nil,
+				ImmediatePurgeDataOn30Days: nil,
+				PrivateLinkScopedResources: nil,
+				IngestionMode:              "",
+			},
 			Location: to.StringPtr(factory.Location),
 			Tags:     factory.AzureLogTags(),
 		})

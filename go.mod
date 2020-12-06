@@ -10,6 +10,7 @@ require (
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/manifoldco/promptui v0.8.0
 	github.com/rs/zerolog v1.20.0
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/tidwall/gjson v1.6.3

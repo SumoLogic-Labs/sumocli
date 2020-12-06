@@ -7,7 +7,16 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/eventgrid/mgmt/2020-06-01/eventgrid"
 	"github.com/Azure/azure-sdk-for-go/services/eventhub/mgmt/2017-04-01/eventhub"
 	"github.com/Azure/azure-sdk-for-go/services/servicebus/mgmt/2017-04-01/servicebus"
+	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-06-01/web"
 )
+
+func GetAppServicePlanClient() web.AppServicePlansClient {
+	appClient := web.NewAppServicePlansClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	appClient.Authorizer = auth
+	appClient.AddToUserAgent(userAgent())
+	return appClient
+}
 
 func GetConsumerGroupsClient() eventhub.ConsumerGroupsClient {
 	csClient := eventhub.NewConsumerGroupsClient(SubscriptionId)
