@@ -3,7 +3,75 @@ package factory
 import (
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/resources/mgmt/features"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/storage/mgmt/storage"
+	"github.com/Azure/azure-sdk-for-go/services/appinsights/mgmt/2015-05-01/insights"
+	"github.com/Azure/azure-sdk-for-go/services/eventgrid/mgmt/2020-06-01/eventgrid"
+	"github.com/Azure/azure-sdk-for-go/services/eventhub/mgmt/2017-04-01/eventhub"
+	"github.com/Azure/azure-sdk-for-go/services/servicebus/mgmt/2017-04-01/servicebus"
 )
+
+func GetConsumerGroupsClient() eventhub.ConsumerGroupsClient {
+	csClient := eventhub.NewConsumerGroupsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	csClient.Authorizer = auth
+	csClient.AddToUserAgent(userAgent())
+	return csClient
+}
+
+func GetEventGridSubscriptionClient() eventgrid.EventSubscriptionsClient {
+	egSubClient := eventgrid.NewEventSubscriptionsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	egSubClient.Authorizer = auth
+	egSubClient.AddToUserAgent(userAgent())
+	return egSubClient
+}
+
+func GetEventGridTopicClient() eventgrid.TopicsClient {
+	egClient := eventgrid.NewTopicsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	egClient.Authorizer = auth
+	egClient.AddToUserAgent(userAgent())
+	return egClient
+}
+
+func GetEventHubClient() eventhub.EventHubsClient {
+	ehClient := eventhub.NewEventHubsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	ehClient.Authorizer = auth
+	ehClient.AddToUserAgent(userAgent())
+	return ehClient
+}
+
+func GetEventHubNamespaceClient() eventhub.NamespacesClient {
+	ehClient := eventhub.NewNamespacesClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	ehClient.Authorizer = auth
+	ehClient.AddToUserAgent(userAgent())
+	return ehClient
+}
+
+func GetInsightsClient() insights.ComponentsClient {
+	insightsClient := insights.NewComponentsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	insightsClient.Authorizer = auth
+	insightsClient.AddToUserAgent(userAgent())
+	return insightsClient
+}
+
+func GetNamespaceClient() servicebus.NamespacesClient {
+	nsClient := servicebus.NewNamespacesClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	nsClient.Authorizer = auth
+	nsClient.AddToUserAgent(userAgent())
+	return nsClient
+}
+
+func GetQueueClient() servicebus.QueuesClient {
+	queueClient := servicebus.NewQueuesClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	queueClient.Authorizer = auth
+	queueClient.AddToUserAgent(userAgent())
+	return queueClient
+}
 
 func GetResourceGroupClient() features.ResourceGroupsClient {
 	rgClient := features.NewResourceGroupsClient(SubscriptionId)
