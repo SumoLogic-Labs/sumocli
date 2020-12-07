@@ -10,6 +10,14 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-06-01/web"
 )
 
+func GetAppServiceClient() web.AppsClient {
+	appClient := web.NewAppsClient(SubscriptionId)
+	auth, _ := AzureRMAuth()
+	appClient.Authorizer = auth
+	appClient.AddToUserAgent(userAgent())
+	return appClient
+}
+
 func GetAppServicePlanClient() web.AppServicePlansClient {
 	appClient := web.NewAppServicePlansClient(SubscriptionId)
 	auth, _ := AzureRMAuth()
