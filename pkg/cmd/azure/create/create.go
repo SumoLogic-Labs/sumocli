@@ -68,22 +68,66 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	eventSubName := logsName + prefix
 	insightsName := logsName + prefix
 	appPlanName := logsName + prefix
+	functionName := logsName + prefix
+	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
+	branch := "master"
+	/*
+	consumerAppSettings := &[]web.NameValuePair{
+		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
+		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/") },
+		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+	}
+	dlqAppSettings := &[]web.NameValuePair{
+		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
+		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/") },
+		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr(" TASKQUEUE_NAME"), Value: to.StringPtr("")},
+		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+	}
+	 */
+
 
 	createResourceGroup(ctx, rgName, log)
-	createStorageAccount(ctx, rgName, sgName, log)
+	functionSgAcc, _ := createStorageAccount(ctx, rgName, sgName, log)
 	sourceSgAcc, _ := createStorageAccount(ctx, rgName, sourceSgName, log)
 	createStorageAccountTable(ctx, rgName, sgName, log)
 	createServiceBusNamespace(ctx, rgName, nsName, log)
-	createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
+	sbAuthRule := createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
 	createServiceBusQueue(ctx, rgName, nsName, queueName, log)
 	createEventHubNamespace(ctx, rgName, ehNsName, log)
 	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
-	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	ehAuthRule := createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
 	createEventGridTopic(ctx, rgName, topicName, log)
 	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, log)
-	createApplicationInsight(ctx, rgName, insightsName, log)
-	createAppServicePlan(ctx, rgName, appPlanName, log)
+	appInsights := createApplicationInsight(ctx, rgName, insightsName, log)
+	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
+
+	// Creates each function app, adds source control integration and provides custom App Settings
+	// Blob collection requires three apps:  blob reader, consumer, dlq (dead letter queue)
+	readerAppSettings := []web.NameValuePair{
+		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
+		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/producer_build/") },
+		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(functionSgAcc)},
+		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
+		{ Name: to.StringPtr("TABLE_NAME"), Value: to.StringPtr("FileOffsetMap")},
+		{ Name: to.StringPtr("AzureEventHubConnectionString"), Value: ehAuthRule.},
+		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: sbAuthRule.},
+		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+	}
+	readerFunctionName := functionName + "reader"
+	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, readerFunctionName, appRepoUrl, branch, log)
 }
 
 /*
@@ -288,10 +332,10 @@ func createEventHub(ctx context.Context, rgName string, ehNsName string, ehName 
 	return eh
 }
 
-func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string, ehName string, ehAuthName string, log zerolog.Logger) {
+func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string, ehName string, ehAuthName string, log zerolog.Logger) eventhub.AuthorizationRule {
 	log.Info().Msg("creating or updating event hub authorization rule " + ehAuthName)
 	ehClient := factory.GetEventHubClient()
-	_, err := ehClient.CreateOrUpdateAuthorizationRule(
+	ehAuthRule, err := ehClient.CreateOrUpdateAuthorizationRule(
 		ctx,
 		rgName,
 		ehNsName,
@@ -310,7 +354,9 @@ func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string,
 		log.Error().Err(err).Msg("cannot create or update event hub authorization rule " + ehAuthName)
 		os.Exit(0)
 	}
+
 	log.Info().Msg("created or updated event hub authorization rule " + ehAuthName)
+	return ehAuthRule
 }
 
 func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName string, ehName string, cgName string, log zerolog.Logger) {
@@ -333,7 +379,7 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 	log.Info().Msg("created or updated event hub consumer group " + cgName)
 }
 
-func createFunctionApp(ctx context.Context, rgName string, functionName string, appSerivceId string, log zerolog.Logger) {
+func createFunctionApp(ctx context.Context, rgName string, functionName string, appSerivceId web.AppServicePlan, appSettings []web.NameValuePair, log zerolog.Logger) web.AppsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating azure function " + functionName)
 	appClient := factory.GetAppServiceClient()
 	functionApp, err := appClient.CreateOrUpdate(
@@ -342,109 +388,67 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 		functionName,
 		web.Site{
 			SiteProperties: &web.SiteProperties{
-				State:               nil,
-				HostNames:           nil,
-				RepositorySiteName:  nil,
-				UsageState:          "",
 				Enabled:             to.BoolPtr(true),
-				EnabledHostNames:    nil,
-				AvailabilityState:   "",
-				HostNameSslStates:   nil,
-				ServerFarmID:        to.StringPtr(appSerivceId),
-				Reserved:            nil,
-				IsXenon:             nil,
-				HyperV:              nil,
-				LastModifiedTimeUtc: nil,
+				ServerFarmID:        appSerivceId.ID,
 				SiteConfig: &web.SiteConfig{
-					NumberOfWorkers:                  nil,
-					DefaultDocuments:                 nil,
-					NetFrameworkVersion:              nil,
-					PhpVersion:                       nil,
-					PythonVersion:                    nil,
-					NodeVersion:                      nil,
-					PowerShellVersion:                nil,
-					LinuxFxVersion:                   nil,
-					WindowsFxVersion:                 nil,
-					RequestTracingEnabled:            nil,
-					RequestTracingExpirationTime:     nil,
-					RemoteDebuggingEnabled:           nil,
-					RemoteDebuggingVersion:           nil,
-					HTTPLoggingEnabled:               nil,
-					LogsDirectorySizeLimit:           nil,
-					DetailedErrorLoggingEnabled:      nil,
-					PublishingUsername:               nil,
-					AppSettings:                      nil,
-					ConnectionStrings:                nil,
-					MachineKey:                       nil,
-					HandlerMappings:                  nil,
-					DocumentRoot:                     nil,
-					ScmType:                          "",
-					Use32BitWorkerProcess:            nil,
-					WebSocketsEnabled:                nil,
-					AlwaysOn:                         nil,
-					JavaVersion:                      nil,
-					JavaContainer:                    nil,
-					JavaContainerVersion:             nil,
-					AppCommandLine:                   nil,
-					ManagedPipelineMode:              "",
-					VirtualApplications:              nil,
-					LoadBalancing:                    "",
-					Experiments:                      nil,
-					Limits:                           nil,
-					AutoHealEnabled:                  nil,
-					AutoHealRules:                    nil,
-					TracingOptions:                   nil,
-					VnetName:                         nil,
-					VnetRouteAllEnabled:              nil,
-					VnetPrivatePortsCount:            nil,
-					Cors:                             nil,
-					Push:                             nil,
-					APIDefinition:                    nil,
-					APIManagementConfig:              nil,
-					AutoSwapSlotName:                 nil,
-					LocalMySQLEnabled:                nil,
-					ManagedServiceIdentityID:         nil,
-					XManagedServiceIdentityID:        nil,
-					IPSecurityRestrictions:           nil,
-					ScmIPSecurityRestrictions:        nil,
-					ScmIPSecurityRestrictionsUseMain: nil,
-					HTTP20Enabled:                    nil,
-					MinTLSVersion:                    "",
-					ScmMinTLSVersion:                 "",
-					FtpsState:                        "",
-					PreWarmedInstanceCount:           nil,
-					HealthCheckPath:                  nil,
+					AppSettings: &appSettings,
+					ScmType: web.ScmTypeNone,
 				},
-				TrafficManagerHostNames:     nil,
-				ScmSiteAlsoStopped:          nil,
-				TargetSwapSlot:              nil,
-				HostingEnvironmentProfile:   nil,
 				ClientAffinityEnabled:       to.BoolPtr(true),
-				ClientCertEnabled:           nil,
-				ClientCertMode:              "",
-				ClientCertExclusionPaths:    nil,
-				HostNamesDisabled:           nil,
-				CustomDomainVerificationID:  nil,
-				OutboundIPAddresses:         nil,
-				PossibleOutboundIPAddresses: nil,
-				ContainerSize:               nil,
-				DailyMemoryTimeQuota:        to.Int32Ptr(),
-				SuspendedTill:               nil,
-				MaxNumberOfWorkers:          nil,
-				CloningInfo:                 nil,
-				ResourceGroup:               nil,
-				IsDefaultContainer:          nil,
-				DefaultHostName:             nil,
-				SlotSwapStatus:              nil,
+				DailyMemoryTimeQuota:        to.Int32Ptr(1000),
 				HTTPSOnly:                   to.BoolPtr(true),
-				RedundancyMode:              "",
-				InProgressOperationID:       nil,
 			},
-			Identity: nil,
+			Identity: &web.ManagedServiceIdentity{
+				Type: web.ManagedServiceIdentityTypeSystemAssigned,
+			},
 			Kind:     to.StringPtr("FunctionApp"),
 			Location: to.StringPtr(factory.Location),
 			Tags:     factory.AzureLogTags(),
 		})
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
+		os.Exit(0)
+	}
+
+	err = functionApp.WaitForCompletionRef(ctx, appClient.Client)
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
+		os.Exit(0)
+	}
+
+	log.Info().Msg("created or updated azure function app " + functionName)
+	return functionApp
+}
+
+func createFunctionAppSourceControl(ctx context.Context, rgName string, functionName string, appRepoUrl string, branch string, log zerolog.Logger) web.AppsCreateOrUpdateSourceControlFuture {
+	log.Info().Msg("creating or updating source control for function app " + functionName)
+	appClient := factory.GetAppServiceClient()
+	functionAppSc, err := appClient.CreateOrUpdateSourceControl(
+		ctx,
+		rgName,
+		functionName,
+		web.SiteSourceControl{
+			SiteSourceControlProperties: &web.SiteSourceControlProperties{
+				RepoURL: to.StringPtr(appRepoUrl),
+				Branch: to.StringPtr(branch),
+				IsManualIntegration: to.BoolPtr(true),
+			},
+		})
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
+		os.Exit(0)
+	}
+
+	err = functionAppSc.WaitForCompletionRef(ctx, appClient.Client)
+	if err != nil {
+		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
+		os.Exit(0)
+	}
+
+	log.Info().Msg("created or updated source control settings on function app " + functionName)
+	return functionAppSc
 }
 
 func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger) features.ResourceGroup {
@@ -546,10 +550,10 @@ func createServiceBusNamespace(ctx context.Context, rgName string, nsName string
 	return ns.Result(nsClient)
 }
 
-func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string, nsAuthName string, log zerolog.Logger) {
+func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string, nsAuthName string, log zerolog.Logger) servicebus.SBAuthorizationRule {
 	log.Info().Msg("creating or updating service bus namespace authorization rule " + nsAuthName)
 	nsClient := factory.GetNamespaceClient()
-	_, err := nsClient.CreateOrUpdateAuthorizationRule(
+	sbAuthRule, err := nsClient.CreateOrUpdateAuthorizationRule(
 		ctx,
 		rgName,
 		nsName,
@@ -568,7 +572,9 @@ func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string,
 		log.Error().Err(err).Msg("cannot create service bus namespace authorization rule " + nsAuthName)
 		os.Exit(0)
 	}
+
 	log.Info().Msg("created or updated service bus namespace authorization rule " + nsAuthName)
+	return sbAuthRule
 }
 
 func createServiceBusQueue(ctx context.Context, rgName string, nsName string, queueName string, log zerolog.Logger) {
