@@ -63,9 +63,9 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	ehNsName := logsName + prefix + "ehns"
 	ehName := logsName + prefix + "eh"
 	ehAuthName := logsName + prefix + "ehrule"
-	cgName := logsName + prefix
-	topicName := logsName + prefix
-	eventSubName := logsName + prefix
+	cgName := logsName + prefix + "cg"
+	topicName := logsName + prefix + "topic"
+	eventSubName := logsName + prefix + "sub"
 	insightsName := logsName + prefix
 	appPlanName := logsName + prefix
 	functionName := logsName + prefix
@@ -107,7 +107,7 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
 	createEventGridTopic(ctx, rgName, topicName, log)
-	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, log)
+	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, topicName, log)
 	appInsights := createApplicationInsight(ctx, rgName, insightsName, log)
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
@@ -212,7 +212,7 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 	return appPlan.Result(appClient)
 }
 
-func createEventGridSubscription(ctx context.Context, scope string, eventSubName string, eventhub eventhub.Model, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
+func createEventGridSubscription(ctx context.Context, scope string, eventSubName string, eventhub eventhub.Model, topicName string, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating event grid subscription " + eventSubName)
 	egSubClient := factory.GetEventGridSubscriptionClient()
 	subscription, err := egSubClient.CreateOrUpdate(
@@ -221,13 +221,13 @@ func createEventGridSubscription(ctx context.Context, scope string, eventSubName
 		eventSubName,
 		eventgrid.EventSubscription{
 			EventSubscriptionProperties: &eventgrid.EventSubscriptionProperties{
-				Destination: eventgrid.BasicEventSubscriptionDestination(
-					eventgrid.EventHubEventSubscriptionDestination{
-						EventHubEventSubscriptionDestinationProperties: &eventgrid.EventHubEventSubscriptionDestinationProperties{
-							ResourceID: eventhub.ID,
-						},
-						EndpointType: eventgrid.EndpointTypeEventHub,
-					}),
+				Topic: to.StringPtr(topicName),
+				Destination: eventgrid.EventHubEventSubscriptionDestination{
+					EventHubEventSubscriptionDestinationProperties: &eventgrid.EventHubEventSubscriptionDestinationProperties{
+						ResourceID: eventhub.ID,
+					},
+					EndpointType: eventgrid.EndpointTypeEventHub,
+				},
 				Filter: &eventgrid.EventSubscriptionFilter{
 					IncludedEventTypes: &[]string{
 						"Microsoft.Storage.BlobCreated",
