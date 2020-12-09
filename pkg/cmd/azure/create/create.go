@@ -72,40 +72,39 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
 	branch := "master"
 	/*
-	consumerAppSettings := &[]web.NameValuePair{
-		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
-		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/") },
-		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-	}
-	dlqAppSettings := &[]web.NameValuePair{
-		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
-		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/") },
-		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr(" TASKQUEUE_NAME"), Value: to.StringPtr("")},
-		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-	}
-	 */
-
+		consumerAppSettings := &[]web.NameValuePair{
+			{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
+			{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/") },
+			{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+			{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+			{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		}
+		dlqAppSettings := &[]web.NameValuePair{
+			{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
+			{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/") },
+			{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+			{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr(" TASKQUEUE_NAME"), Value: to.StringPtr("")},
+			{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+			{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		}
+	*/
 
 	createResourceGroup(ctx, rgName, log)
-	functionSgAcc, _ := createStorageAccount(ctx, rgName, sgName, log)
+	createStorageAccount(ctx, rgName, sgName, log)
 	sourceSgAcc, _ := createStorageAccount(ctx, rgName, sourceSgName, log)
 	createStorageAccountTable(ctx, rgName, sgName, log)
 	createServiceBusNamespace(ctx, rgName, nsName, log)
-	sbAuthRule := createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
+	createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
 	createServiceBusQueue(ctx, rgName, nsName, queueName, log)
 	createEventHubNamespace(ctx, rgName, ehNsName, log)
 	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
-	ehAuthRule := createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
 	createEventGridTopic(ctx, rgName, topicName, log)
 	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, log)
@@ -115,15 +114,15 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	// Creates each function app, adds source control integration and provides custom App Settings
 	// Blob collection requires three apps:  blob reader, consumer, dlq (dead letter queue)
 	readerAppSettings := []web.NameValuePair{
-		{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
-		{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/producer_build/") },
-		{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(functionSgAcc)},
-		{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
-		{ Name: to.StringPtr("TABLE_NAME"), Value: to.StringPtr("FileOffsetMap")},
-		{ Name: to.StringPtr("AzureEventHubConnectionString"), Value: ehAuthRule.},
-		{ Name: to.StringPtr("TaskQueueConnectionString"), Value: sbAuthRule.},
-		{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
+		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/producer_build/")},
+		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
+		{Name: to.StringPtr("TABLE_NAME"), Value: to.StringPtr("FileOffsetMap")},
+		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: to.StringPtr("ehAuthRule.")}, //TODO: fix this
+		{Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("sbAuthRule.")},     //TODO: fix this
+		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
 	}
 	readerFunctionName := functionName + "reader"
 	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
@@ -379,6 +378,10 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 	log.Info().Msg("created or updated event hub consumer group " + cgName)
 }
 
+func getEventHubConnectionString(ctx context.Context, log zerolog.Logger) {
+	log.Info().Msg("getting event hub connection string for ")
+}
+
 func createFunctionApp(ctx context.Context, rgName string, functionName string, appSerivceId web.AppServicePlan, appSettings []web.NameValuePair, log zerolog.Logger) web.AppsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating azure function " + functionName)
 	appClient := factory.GetAppServiceClient()
@@ -388,15 +391,15 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 		functionName,
 		web.Site{
 			SiteProperties: &web.SiteProperties{
-				Enabled:             to.BoolPtr(true),
-				ServerFarmID:        appSerivceId.ID,
+				Enabled:      to.BoolPtr(true),
+				ServerFarmID: appSerivceId.ID,
 				SiteConfig: &web.SiteConfig{
 					AppSettings: &appSettings,
-					ScmType: web.ScmTypeNone,
+					ScmType:     web.ScmTypeNone,
 				},
-				ClientAffinityEnabled:       to.BoolPtr(true),
-				DailyMemoryTimeQuota:        to.Int32Ptr(1000),
-				HTTPSOnly:                   to.BoolPtr(true),
+				ClientAffinityEnabled: to.BoolPtr(true),
+				DailyMemoryTimeQuota:  to.Int32Ptr(1000),
+				HTTPSOnly:             to.BoolPtr(true),
 			},
 			Identity: &web.ManagedServiceIdentity{
 				Type: web.ManagedServiceIdentityTypeSystemAssigned,
@@ -430,8 +433,8 @@ func createFunctionAppSourceControl(ctx context.Context, rgName string, function
 		functionName,
 		web.SiteSourceControl{
 			SiteSourceControlProperties: &web.SiteSourceControlProperties{
-				RepoURL: to.StringPtr(appRepoUrl),
-				Branch: to.StringPtr(branch),
+				RepoURL:             to.StringPtr(appRepoUrl),
+				Branch:              to.StringPtr(branch),
 				IsManualIntegration: to.BoolPtr(true),
 			},
 		})
@@ -474,6 +477,8 @@ func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger)
 func createStorageAccount(ctx context.Context, rgName string, sgName string, log zerolog.Logger) (storage.Account, error) {
 	log.Info().Msg("creating or updating storage account " + sgName)
 	sgClient := factory.GetStorageClient()
+
+	// TODO: add storage account name check
 	sgAccount, err := sgClient.Create(
 		ctx,
 		rgName,
@@ -518,6 +523,23 @@ func createStorageAccountTable(ctx context.Context, rgName string, sgName string
 	}
 
 	log.Info().Msg("created FileOffsetMap table")
+}
+
+func getStorageAccountConnectionString(ctx context.Context, rgName string, sgName string, log zerolog.Logger) string {
+	log.Info().Msg("getting storage account connection string for " + sgName)
+	sgClient := factory.GetStorageClient()
+	sgKey, err := sgClient.ListKeys(
+		ctx,
+		rgName,
+		sgName,
+		storage.Kerb)
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot get storage account keys")
+		os.Exit(0)
+	}
+	log.Info().Msg("connection string obtained for storage account " + sgName)
+	return fmt.Sprintf("DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net", sgName, to.String((*sgKey.Keys)[0].Value))
 }
 
 func createServiceBusNamespace(ctx context.Context, rgName string, nsName string, log zerolog.Logger) (servicebus.SBNamespace, error) {
