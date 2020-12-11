@@ -64,7 +64,6 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	ehName := logsName + prefix + "eh"
 	ehAuthName := logsName + prefix + "ehrule"
 	cgName := logsName + prefix + "cg"
-	topicName := logsName + prefix + "topic"
 	eventSubName := logsName + prefix + "sub"
 	insightsName := logsName + prefix
 	appPlanName := logsName + prefix
@@ -101,13 +100,14 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	createStorageAccountTable(ctx, rgName, sgName, log)
 	createServiceBusNamespace(ctx, rgName, nsName, log)
 	createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
+	sbKey := getServiceBusConnectionString(ctx, rgName, nsName, nsAuthName, log)
 	createServiceBusQueue(ctx, rgName, nsName, queueName, log)
 	createEventHubNamespace(ctx, rgName, ehNsName, log)
 	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
 	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
-	createEventGridTopic(ctx, rgName, topicName, log)
-	createEventGridSubscription(ctx, to.String(sourceSgAcc.ID), eventSubName, eh, topicName, log)
+	createEventGridSubscription(ctx, sourceSgAcc, eventSubName, eh, log)
 	appInsights := createApplicationInsight(ctx, rgName, insightsName, log)
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
@@ -116,13 +116,16 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	readerAppSettings := []web.NameValuePair{
 		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
 		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/producer_build/")},
+		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
 		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
 		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
 		{Name: to.StringPtr("TABLE_NAME"), Value: to.StringPtr("FileOffsetMap")},
-		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: to.StringPtr("ehAuthRule.")}, //TODO: fix this
-		{Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("sbAuthRule.")},     //TODO: fix this
+		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: ehKey.PrimaryConnectionString},
+		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
 		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
 		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
 	}
 	readerFunctionName := functionName + "reader"
 	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
@@ -212,16 +215,15 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 	return appPlan.Result(appClient)
 }
 
-func createEventGridSubscription(ctx context.Context, scope string, eventSubName string, eventhub eventhub.Model, topicName string, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
+func createEventGridSubscription(ctx context.Context, scope storage.Account, eventSubName string, eventhub eventhub.Model, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating event grid subscription " + eventSubName)
 	egSubClient := factory.GetEventGridSubscriptionClient()
 	subscription, err := egSubClient.CreateOrUpdate(
 		ctx,
-		scope,
+		to.String(scope.ID),
 		eventSubName,
 		eventgrid.EventSubscription{
 			EventSubscriptionProperties: &eventgrid.EventSubscriptionProperties{
-				Topic: to.StringPtr(topicName),
 				Destination: eventgrid.EventHubEventSubscriptionDestination{
 					EventHubEventSubscriptionDestinationProperties: &eventgrid.EventHubEventSubscriptionDestinationProperties{
 						ResourceID: eventhub.ID,
@@ -378,8 +380,23 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 	log.Info().Msg("created or updated event hub consumer group " + cgName)
 }
 
-func getEventHubConnectionString(ctx context.Context, log zerolog.Logger) {
-	log.Info().Msg("getting event hub connection string for ")
+func getEventHubConnectionString(ctx context.Context, rgName string, ehNsName string, ehName string, ehAuthName string, log zerolog.Logger) eventhub.AccessKeys {
+	log.Info().Msg("getting event hub keys for " + ehAuthName)
+	ehClient := factory.GetEventHubClient()
+	ehKey, err := ehClient.ListKeys(
+		ctx,
+		rgName,
+		ehNsName,
+		ehName,
+		ehAuthName)
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot get event hub keys for " + ehAuthName)
+		os.Exit(0)
+	}
+
+	log.Info().Msg("obtained event hub keys for " + ehAuthName)
+	return ehKey
 }
 
 func createFunctionApp(ctx context.Context, rgName string, functionName string, appSerivceId web.AppServicePlan, appSettings []web.NameValuePair, log zerolog.Logger) web.AppsCreateOrUpdateFuture {
@@ -390,7 +407,7 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 		rgName,
 		functionName,
 		web.Site{
-			SiteProperties: &web.SiteProperties{
+			SiteProperties: &web.SiteProperties{ // TODO: See if I can add storage account id and key
 				Enabled:      to.BoolPtr(true),
 				ServerFarmID: appSerivceId.ID,
 				SiteConfig: &web.SiteConfig{
@@ -538,6 +555,7 @@ func getStorageAccountConnectionString(ctx context.Context, rgName string, sgNam
 		log.Error().Err(err).Msg("cannot get storage account keys")
 		os.Exit(0)
 	}
+
 	log.Info().Msg("connection string obtained for storage account " + sgName)
 	return fmt.Sprintf("DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net", sgName, to.String((*sgKey.Keys)[0].Value))
 }
@@ -597,6 +615,24 @@ func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string,
 
 	log.Info().Msg("created or updated service bus namespace authorization rule " + nsAuthName)
 	return sbAuthRule
+}
+
+func getServiceBusConnectionString(ctx context.Context, rgName string, nsName string, nsAuthName string, log zerolog.Logger) servicebus.AccessKeys {
+	log.Info().Msg("getting service bus connection string for " + nsAuthName)
+	nsClient := factory.GetNamespaceClient()
+	sbKeys, err := nsClient.ListKeys(
+		ctx,
+		rgName,
+		nsName,
+		nsAuthName)
+
+	if err != nil {
+		log.Error().Err(err).Msg("cannot get keys for service bus " + nsAuthName)
+		os.Exit(0)
+	}
+
+	log.Info().Msg("obtained service bus connection string for " + nsAuthName)
+	return sbKeys
 }
 
 func createServiceBusQueue(ctx context.Context, rgName string, nsName string, queueName string, log zerolog.Logger) {
