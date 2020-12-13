@@ -3,6 +3,7 @@ package root
 import (
 	"github.com/spf13/cobra"
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
+	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -20,6 +21,7 @@ func NewCmdRoot() *cobra.Command {
 
 	// Add subcommands
 	cmd.AddCommand(azureCmd.NewCmdAzure())
+	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(usersCmd.NewCmdUser())
