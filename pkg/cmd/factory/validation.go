@@ -1,5 +1,17 @@
 package factory
 
+func ValidateCollectorFilter(filter string) bool {
+	switch filter {
+	case
+		"installed",
+		"hosted",
+		"dead",
+		"alive":
+		return true
+	}
+	return false
+}
+
 func ValidateRoleOutput(output string) bool {
 	switch output {
 	case

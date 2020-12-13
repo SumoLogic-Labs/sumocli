@@ -3,7 +3,9 @@ package list
 import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
+	"net/url"
 )
 
 func NewCmdCollectorList() *cobra.Command {
@@ -19,7 +21,7 @@ func NewCmdCollectorList() *cobra.Command {
 		Short: "Lists Sumo Logic collectors",
 		Run: func(cmd *cobra.Command, args []string) {
 			log := logging.GetConsoleLogger()
-			listCollectors(offline, log)
+			listCollectors(filter, limit, offset, offline, log)
 		},
 	}
 
@@ -30,8 +32,21 @@ func NewCmdCollectorList() *cobra.Command {
 	return cmd
 }
 
-func listCollectors(offline bool, log zerolog.Logger) {
+func listCollectors(filter string, limit int, offset int, offline bool, log zerolog.Logger) {
+	var requestUrl string
 	if offline == true {
+		requestUrl = "v1/collectors/offline"
+	} else {
+		requestUrl = "v1/collectors"
+	}
 
+	client, request := factory.NewHttpRequest("GET", requestUrl)
+	query := url.Values{}
+	if filter != "" {
+		if factory.ValidateCollectorFilter(filter) == false {
+			log.Fatal().Msg(filter + "is an invalid field to filter by. Available fields are installed, hosted, dead or alive.")
+		} else {
+			query.Add("filter", filter)
+		}
 	}
 }
