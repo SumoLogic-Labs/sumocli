@@ -48,6 +48,7 @@ func NewCmdAzureCreate() *cobra.Command {
 
 	cmd.Flags().BoolVar(&blob, "blob", false, "Deploys infrastructure for Azure Blob collection.")
 	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
+	cmd.MarkFlagRequired("prefix")
 	return cmd
 }
 
@@ -71,28 +72,8 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
 	branch := "master"
 	/*
-		consumerAppSettings := &[]web.NameValuePair{
-			{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
-			{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/") },
-			{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-			{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-			{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-		}
-		dlqAppSettings := &[]web.NameValuePair{
-			{ Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1") },
-			{ Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/") },
-			{ Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-			{ Name: to.StringPtr("TaskQueueConnectionString"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr(" TASKQUEUE_NAME"), Value: to.StringPtr("")},
-			{ Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-			{ Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-		}
-	*/
+
+	 */
 
 	createResourceGroup(ctx, rgName, log)
 	createStorageAccount(ctx, rgName, sgName, log)
@@ -130,10 +111,45 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	readerFunctionName := functionName + "reader"
 	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, readerFunctionName, appRepoUrl, branch, log)
+
+	consumerAppSettings := []web.NameValuePair{
+		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
+		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/")},
+		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
+		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
+		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
+	}
+	consumerFunctionName := functionName + "consumer"
+	createFunctionApp(ctx, rgName, consumerFunctionName, appServicePlan, consumerAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, consumerFunctionName, appRepoUrl, branch, log)
+
+	dlqAppSettings := []web.NameValuePair{
+		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
+		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/")},
+		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
+		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
+		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
+		{Name: to.StringPtr("TASKQUEUE_NAME"), Value: to.StringPtr("")}, // TODO : Need to add this
+		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
+		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
+		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
+		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
+	}
+	dlqFunctionName := functionName + "dlq"
+	createFunctionApp(ctx, rgName, dlqFunctionName, appServicePlan, dlqAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, dlqFunctionName, appRepoUrl, branch, log)
 }
 
 /*
-func azureCreateLogCollection() {
+func azureCreateDiagLogCollection() {
 }
 
 func azureCreateMetricCollection() {
@@ -407,7 +423,7 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 		rgName,
 		functionName,
 		web.Site{
-			SiteProperties: &web.SiteProperties{ // TODO: See if I can add storage account id and key
+			SiteProperties: &web.SiteProperties{
 				Enabled:      to.BoolPtr(true),
 				ServerFarmID: appSerivceId.ID,
 				SiteConfig: &web.SiteConfig{
