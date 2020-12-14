@@ -11,8 +11,8 @@ import (
 func NewCmdCollectorList() *cobra.Command {
 	var (
 		filter  string
-		limit   int
-		offset  int
+		limit   string
+		offset  string
 		offline bool
 	)
 
@@ -26,13 +26,13 @@ func NewCmdCollectorList() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&filter, "filter", "", "Filters the collectors returned using either installed, hosted, dead or alive")
-	cmd.Flags().IntVar(&limit, "limit", 1000, "Maximum number of collectors returned")
-	cmd.Flags().IntVar(&offset, "offset", 0, "Offset into the list of collectors")
+	cmd.Flags().StringVar(&limit, "limit", "", "Maximum number of collectors returned")
+	cmd.Flags().StringVar(&offset, "offset", "", "Offset into the list of collectors")
 	cmd.Flags().BoolVar(&offline, "offline", false, "Lists offline collectors")
 	return cmd
 }
 
-func listCollectors(filter string, limit int, offset int, offline bool, log zerolog.Logger) {
+func listCollectors(filter string, limit string, offset string, offline bool, log zerolog.Logger) {
 	var requestUrl string
 	if offline == true {
 		requestUrl = "v1/collectors/offline"
@@ -42,11 +42,19 @@ func listCollectors(filter string, limit int, offset int, offline bool, log zero
 
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
-	if filter != "" {
+	if filter != "" && offline == false {
 		if factory.ValidateCollectorFilter(filter) == false {
 			log.Fatal().Msg(filter + "is an invalid field to filter by. Available fields are installed, hosted, dead or alive.")
 		} else {
 			query.Add("filter", filter)
 		}
+	}
+	if limit != "" && offline == false {
+		// TODO: Add validation that string is a number
+		query.Add("limit", limit)
+	}
+	if offset != "" && offline == false {
+		// TODO: Validate something?
+		query.Add("offset", offset)
 	}
 }
