@@ -57,4 +57,5 @@ func listCollectors(filter string, limit string, offset string, offline bool, lo
 		// TODO: Validate something?
 		query.Add("offset", offset)
 	}
+
 }
