@@ -31,9 +31,9 @@ func NewCmdCollectorCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
-	cmd.Flags().StringVar(&description, "name", "", "Specify a description for the collector")
+	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the collector")
 	cmd.Flags().StringVar(&category, "category", "", "Source category for the collector, this will overwrite the categories on configured sources")
-	cmd.Flags().StringVar(&fields, "fields", "", "Specify fields for the collector")
+	cmd.Flags().StringVar(&fields, "fields", "", "Specify fields for the collector, they need to be formatted as field1:value1,field2:value2")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 	cmd.MarkFlagRequired("name")
 	return cmd
@@ -51,10 +51,19 @@ func createCollector(name string, description string, category string, fields st
 	}
 
 	if fields != "" {
-		splitString := strings.Split(fields, ",")
-
+		fieldsMap := make(map[string]string)
+		splitStrings := strings.Split(fields, ",")
+		for i, splitString := range splitStrings {
+			fmt.Println(splitString) //TODO: remove this
+			components := strings.Split(splitString, ":")
+			fieldsMap[components[0]] = components[1]
+			fmt.Println(components[0]) //TODO: remove this
+			fmt.Println(components[1]) //TODO: remove this
+			i++
+		}
 		requestBodySchema.Fields = fieldsMap
 	}
+	fmt.Println(requestBodySchema.Fields) // TODO: remove this
 
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/collectors", requestBody)
