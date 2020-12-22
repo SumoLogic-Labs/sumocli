@@ -12,6 +12,16 @@ func ValidateCollectorFilter(filter string) bool {
 	return false
 }
 
+func ValidateCollectorOutput(output string) bool {
+	switch output {
+	case
+		"name",
+		"id":
+		return true
+	}
+	return false
+}
+
 func ValidateRoleOutput(output string) bool {
 	switch output {
 	case

@@ -3,6 +3,7 @@ package collectors
 import (
 	"github.com/spf13/cobra"
 	cmdCollectorCreate "github.com/wizedkyle/sumocli/pkg/cmd/collectors/create"
+	cmdCollectorList "github.com/wizedkyle/sumocli/pkg/cmd/collectors/list"
 )
 
 func NewCmdCollectors() *cobra.Command {
@@ -12,5 +13,6 @@ func NewCmdCollectors() *cobra.Command {
 	}
 
 	cmd.AddCommand(cmdCollectorCreate.NewCmdCollectorCreate())
+	cmd.AddCommand(cmdCollectorList.NewCmdCollectorList())
 	return cmd
 }

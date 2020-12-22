@@ -1,5 +1,17 @@
 package api
 
+type Collectors struct {
+	Data []CollectorsResponse `json:"collectors"`
+}
+
+type CreateCollectorRequest struct {
+	CollectorType string            `json:"collectorType"`
+	Name          string            `json:"name"`
+	Description   string            `json:"description,omitempty"`
+	Category      string            `json:"category,omitempty"`
+	Fields        map[string]string `fields:"fields,omitempty"`
+}
+
 type CollectorsResponse struct {
 	Alive              bool              `json:"alive"`
 	Category           string            `json:"category,omitempty"`
@@ -10,6 +22,7 @@ type CollectorsResponse struct {
 	Description        string            `json:"description,omitempty"`
 	Ephemeral          bool              `json:"ephemeral"`
 	Fields             map[string]string `json:"fields,omitempty"`
+	Links              []collectorLinks  `json:"links,omitempty"`
 	HostName           string            `json:"hostName,omitempty"`
 	Id                 int               `json:"id"`
 	LastSeenAlive      int               `json:"lastSeenAlive,omitempty"`
@@ -21,4 +34,9 @@ type CollectorsResponse struct {
 	OsVersion          string            `json:"osVersion,omitempty"`
 	OsArch             string            `json:"osArch,omitempty"`
 	OsTime             int               `json:"osTime,omitempty"`
+}
+
+type collectorLinks struct {
+	Rel  string `json:"rel"`
+	Href string `json:"href"`
 }

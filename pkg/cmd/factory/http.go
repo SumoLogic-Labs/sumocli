@@ -46,6 +46,7 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	return client, request
 }
 
+// TODO: update this to use log.Error().Msg("")
 func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 	if statusCode == 400 {
 		var responseError api.ResponseError
