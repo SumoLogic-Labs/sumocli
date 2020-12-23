@@ -5,11 +5,19 @@ type Collectors struct {
 }
 
 type CreateCollectorRequest struct {
+	Collector CreateCollector `json:"collector"`
+}
+
+type CreateCollector struct {
 	CollectorType string            `json:"collectorType"`
 	Name          string            `json:"name"`
 	Description   string            `json:"description,omitempty"`
 	Category      string            `json:"category,omitempty"`
-	Fields        map[string]string `fields:"fields,omitempty"`
+	Fields        map[string]string `json:"fields,omitempty"`
+}
+
+type CollectorResponse struct {
+	Collector CollectorsResponse `json:"collector"`
 }
 
 type CollectorsResponse struct {

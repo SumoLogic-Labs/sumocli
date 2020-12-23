@@ -26,7 +26,7 @@ func NewCmdCollectorCreate() *cobra.Command {
 		Short: "Creates a Sumo Logic Hosted Collector",
 		Run: func(cmd *cobra.Command, args []string) {
 			log := logging.GetConsoleLogger()
-			createCollector(name, description, category, fields, output, log)
+			CreateCollector(name, description, category, fields, output, log)
 		},
 	}
 
@@ -39,31 +39,29 @@ func NewCmdCollectorCreate() *cobra.Command {
 	return cmd
 }
 
-func createCollector(name string, description string, category string, fields string, output string, log zerolog.Logger) {
-	var createCollectorResponse api.CollectorsResponse
+func CreateCollector(name string, description string, category string, fields string, output string, log zerolog.Logger) {
+	var createCollectorResponse api.CollectorResponse
 
 	requestBodySchema := &api.CreateCollectorRequest{
-		CollectorType: "Hosted",
-		Name:          name,
-		Description:   description,
-		Category:      category,
-		Fields:        nil, //TODO: get fields from string into map
+		Collector: api.CreateCollector{
+			CollectorType: "Hosted",
+			Name:          name,
+			Description:   description,
+			Category:      category,
+			Fields:        nil,
+		},
 	}
 
 	if fields != "" {
 		fieldsMap := make(map[string]string)
 		splitStrings := strings.Split(fields, ",")
 		for i, splitString := range splitStrings {
-			fmt.Println(splitString) //TODO: remove this
 			components := strings.Split(splitString, ":")
 			fieldsMap[components[0]] = components[1]
-			fmt.Println(components[0]) //TODO: remove this
-			fmt.Println(components[1]) //TODO: remove this
 			i++
 		}
-		requestBodySchema.Fields = fieldsMap
+		requestBodySchema.Collector.Fields = fieldsMap
 	}
-	fmt.Println(requestBodySchema.Fields) // TODO: remove this
 
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewHttpRequestWithBody("POST", "v1/collectors", requestBody)
@@ -85,7 +83,7 @@ func createCollector(name string, description string, category string, fields st
 
 	createCollectorResponseJson, err := json.MarshalIndent(createCollectorResponse, "", "    ")
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != 201 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		if factory.ValidateCollectorOutput(output) == true {
@@ -94,7 +92,7 @@ func createCollector(name string, description string, category string, fields st
 			fmt.Println(formattedValue)
 		} else {
 			fmt.Println(string(createCollectorResponseJson))
-			log.Info().Msg(createCollectorResponse.Name + " collector successfully created")
+			log.Info().Msg(createCollectorResponse.Collector.Name + " collector successfully created")
 		}
 	}
 }
