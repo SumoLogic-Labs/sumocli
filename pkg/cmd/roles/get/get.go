@@ -22,7 +22,7 @@ func NewCmdRoleGet() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Gets a Sumo Logic role",
+		Short: "Gets a Sumo Logic role information",
 		Long: `The following fields can be exported using the --output command:
 name
 description
