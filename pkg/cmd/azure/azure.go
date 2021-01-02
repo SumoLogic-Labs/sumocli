@@ -2,6 +2,7 @@ package azure
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/config"
 	cmdAzureCreate "github.com/wizedkyle/sumocli/pkg/cmd/azure/create"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 )
@@ -11,6 +12,8 @@ func NewCmdAzure() *cobra.Command {
 		Use:   "azure <command>",
 		Short: "Creates and deletes Azure infrastructure for log and metric collection",
 	}
+
+	config.AddAzureFlags(cmd)
 
 	cmd.PersistentFlags().StringVar(&factory.ApplicationId, "appid", "", "Specify the Azure Application Registration Id")
 	cmd.PersistentFlags().StringVar(&factory.ApplicationSecret, "appsecret", "", "Specify the Azure Application Registration secret")

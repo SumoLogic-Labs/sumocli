@@ -19,8 +19,6 @@ The repo is using Go modules so you can run go build:
 
 ## Documentation
 
-All detailed documentation for Sumocli is located in [Gitbook](https://sumocli.gitbook.io)
-
 ## Contributing
 
 

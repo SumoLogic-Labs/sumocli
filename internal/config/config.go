@@ -1,0 +1,66 @@
+package config
+
+import (
+	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/pkg/logging"
+)
+
+var (
+	clientId        string
+	clientSecret    string
+	tenantId        string
+	subscriptionId  string
+	defaultLocation string
+	cloudName       string = "AzurePublicCloud"
+	useDeviceFlow   bool
+	userAgent       string = "Sumocli"
+	environment     *azure.Environment
+)
+
+func AddAzureFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&clientId, "clientId", "", "Specify the client ID of the Azure AD Application")
+	cmd.PersistentFlags().StringVar(&tenantId, "tenantId", "", "Specify the tenant ID of the Azure AD tenant")
+	cmd.PersistentFlags().BoolVar(&useDeviceFlow, "useDeviceFlow", false, "Uses device flow authentication, requires clientId and tenantId")
+}
+
+func GetClientId() string {
+	return clientId
+}
+
+func GetClientSecret() string {
+	return clientSecret
+}
+
+func GetTenantId() string {
+	return tenantId
+}
+
+func GetSubscriptionId() string {
+	return subscriptionId
+}
+
+func GetDefaultLocation() string {
+	return defaultLocation
+}
+
+func GetUseDeviceFlow() bool {
+	return useDeviceFlow
+}
+
+func GetUserAgent() string {
+	return userAgent
+}
+
+func Environment() *azure.Environment {
+	log := logging.GetConsoleLogger()
+	if environment != nil {
+		return environment
+	}
+	env, err := azure.EnvironmentFromName(cloudName)
+	if err != nil {
+		log.Error().Err(err).Msg("unable to retrieve Azure environment name")
+	}
+	environment = &env
+	return environment
+}
