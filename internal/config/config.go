@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/build"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 )
 
@@ -12,9 +13,9 @@ var (
 	tenantId        string
 	subscriptionId  string
 	defaultLocation string
-	cloudName       string = "AzurePublicCloud"
+	cloudName       = "AzurePublicCloud"
 	useDeviceFlow   bool
-	userAgent       string = "Sumocli"
+	userAgent       = "Sumocli " + build.Version
 	environment     *azure.Environment
 )
 
