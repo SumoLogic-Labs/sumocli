@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/internal/config"
 	cmdAzureCreate "github.com/wizedkyle/sumocli/pkg/cmd/azure/create"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 )
 
 func NewCmdAzure() *cobra.Command {
@@ -14,13 +13,6 @@ func NewCmdAzure() *cobra.Command {
 	}
 
 	config.AddAzureFlags(cmd)
-
-	cmd.PersistentFlags().StringVar(&factory.ApplicationId, "appid", "", "Specify the Azure Application Registration Id")
-	cmd.PersistentFlags().StringVar(&factory.ApplicationSecret, "appsecret", "", "Specify the Azure Application Registration secret")
-	cmd.PersistentFlags().StringVar(&factory.Cloud, "cloud", "AzurePublicCloud", "Name of the Azure Cloud")
-	cmd.PersistentFlags().StringVar(&factory.Location, "location", "", "Azure Cloud location")
-	cmd.PersistentFlags().StringVar(&factory.SubscriptionId, "subscriptionid", "", "Specify the Azure Subscription Id")
-	cmd.PersistentFlags().StringVar(&factory.TenantId, "tenantid", "", "Specify the Azure tenant id")
 
 	cmd.AddCommand(cmdAzureCreate.NewCmdAzureCreate())
 	return cmd

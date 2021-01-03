@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/internal/build"
 	"github.com/wizedkyle/sumocli/pkg/logging"
@@ -65,3 +66,18 @@ func Environment() *azure.Environment {
 	environment = &env
 	return environment
 }
+
+func GetAzureLogTags() map[string]*string {
+	logTags := map[string]*string{
+		"CollectionType": to.StringPtr("Logs"),
+		"CreatedBy":      to.StringPtr("Sumocli"),
+		"Version":        to.StringPtr(build.Version),
+	}
+	return logTags
+}
+
+/*
+func AzureMetricTags() map[string]string {
+
+}
+*/

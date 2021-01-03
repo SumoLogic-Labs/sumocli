@@ -13,6 +13,8 @@ import (
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/clients"
+	"github.com/wizedkyle/sumocli/internal/config"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"os"
@@ -158,7 +160,7 @@ func azureCreateMetricCollection() {
 
 func createApplicationInsight(ctx context.Context, rgName string, insightsName string, log zerolog.Logger) insights.ApplicationInsightsComponent {
 	log.Info().Msg("creating or updating application insights: " + insightsName)
-	insightsClient := factory.GetInsightsClient()
+	insightsClient := clients.GetInsightsClient()
 	insights, err := insightsClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -185,8 +187,8 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 				PrivateLinkScopedResources: nil,
 				IngestionMode:              "",
 			},
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -200,7 +202,7 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 
 func createAppServicePlan(ctx context.Context, rgName string, appPlanName string, log zerolog.Logger) (web.AppServicePlan, error) {
 	log.Info().Msg("creating or updating app service plan " + appPlanName)
-	appClient := factory.GetAppServicePlanClient()
+	appClient := clients.GetAppServicePlanClient()
 	appPlan, err := appClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -213,8 +215,8 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 				Size: to.StringPtr("Y1"),
 			},
 			Kind:     to.StringPtr("FunctionApp"),
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {

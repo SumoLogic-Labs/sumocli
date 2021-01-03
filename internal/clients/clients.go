@@ -37,81 +37,81 @@ func GetConsumerGroupsClient() eventhub.ConsumerGroupsClient {
 }
 
 func GetEventGridSubscriptionClient() eventgrid.EventSubscriptionsClient {
-	egSubClient := eventgrid.NewEventSubscriptionsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	egSubClient := eventgrid.NewEventSubscriptionsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	egSubClient.Authorizer = auth
-	egSubClient.AddToUserAgent(userAgent())
+	egSubClient.AddToUserAgent(config.GetUserAgent())
 	return egSubClient
 }
 
 func GetEventGridTopicClient() eventgrid.TopicsClient {
-	egClient := eventgrid.NewTopicsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	egClient := eventgrid.NewTopicsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	egClient.Authorizer = auth
-	egClient.AddToUserAgent(userAgent())
+	egClient.AddToUserAgent(config.GetUserAgent())
 	return egClient
 }
 
 func GetEventHubClient() eventhub.EventHubsClient {
-	ehClient := eventhub.NewEventHubsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	ehClient := eventhub.NewEventHubsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	ehClient.Authorizer = auth
-	ehClient.AddToUserAgent(userAgent())
+	ehClient.AddToUserAgent(config.GetUserAgent())
 	return ehClient
 }
 
 func GetEventHubNamespaceClient() eventhub.NamespacesClient {
-	ehClient := eventhub.NewNamespacesClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	ehClient := eventhub.NewNamespacesClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	ehClient.Authorizer = auth
-	ehClient.AddToUserAgent(userAgent())
+	ehClient.AddToUserAgent(config.GetUserAgent())
 	return ehClient
 }
 
 func GetInsightsClient() insights.ComponentsClient {
-	insightsClient := insights.NewComponentsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	insightsClient := insights.NewComponentsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	insightsClient.Authorizer = auth
-	insightsClient.AddToUserAgent(userAgent())
+	insightsClient.AddToUserAgent(config.GetUserAgent())
 	return insightsClient
 }
 
 func GetNamespaceClient() servicebus.NamespacesClient {
-	nsClient := servicebus.NewNamespacesClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	nsClient := servicebus.NewNamespacesClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	nsClient.Authorizer = auth
-	nsClient.AddToUserAgent(userAgent())
+	nsClient.AddToUserAgent(config.GetUserAgent())
 	return nsClient
 }
 
 func GetQueueClient() servicebus.QueuesClient {
-	queueClient := servicebus.NewQueuesClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	queueClient := servicebus.NewQueuesClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	queueClient.Authorizer = auth
-	queueClient.AddToUserAgent(userAgent())
+	queueClient.AddToUserAgent(config.GetUserAgent())
 	return queueClient
 }
 
 func GetResourceGroupClient() features.ResourceGroupsClient {
-	rgClient := features.NewResourceGroupsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	rgClient := features.NewResourceGroupsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	rgClient.Authorizer = auth
-	rgClient.AddToUserAgent(userAgent())
+	rgClient.AddToUserAgent(config.GetUserAgent())
 	return rgClient
 }
 
 func GetStorageClient() storage.AccountsClient {
-	sgClient := storage.NewAccountsClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	sgClient := storage.NewAccountsClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	sgClient.Authorizer = auth
-	sgClient.AddToUserAgent(userAgent())
+	sgClient.AddToUserAgent(config.GetUserAgent())
 	return sgClient
 }
 
 func GetStorageTableClient() storage.TableClient {
-	sgTableClient := storage.NewTableClient(SubscriptionId)
-	auth, _ := AzureRMAuth()
+	sgTableClient := storage.NewTableClient(config.GetSubscriptionId())
+	auth, _ := authorizers.GetARMAuthorizer()
 	sgTableClient.Authorizer = auth
-	sgTableClient.AddToUserAgent(userAgent())
+	sgTableClient.AddToUserAgent(config.GetUserAgent())
 	return sgTableClient
 }
