@@ -13,9 +13,10 @@ import (
 	"github.com/Azure/go-autorest/autorest/to"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/az"
 	"github.com/wizedkyle/sumocli/internal/clients"
 	"github.com/wizedkyle/sumocli/internal/config"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
+	sourcesCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/create"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"os"
 )
@@ -73,9 +74,6 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	functionName := logsName + prefix
 	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
 	branch := "master"
-	/*
-
-	 */
 
 	createResourceGroup(ctx, rgName, log)
 	createStorageAccount(ctx, rgName, sgName, log)
@@ -96,55 +94,32 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 
 	// Creates each function app, adds source control integration and provides custom App Settings
 	// Blob collection requires three apps:  blob reader, consumer, dlq (dead letter queue)
-	readerAppSettings := []web.NameValuePair{
-		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
-		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/producer_build/")},
-		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
-		{Name: to.StringPtr("TABLE_NAME"), Value: to.StringPtr("FileOffsetMap")},
-		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: ehKey.PrimaryConnectionString},
-		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
-		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
-	}
+	readerAppSettings := az.ReaderAppSettings(
+		sgName,
+		getStorageAccountConnectionString(ctx, rgName, sgName, log),
+		appInsights.InstrumentationKey,
+		ehKey.PrimaryConnectionString,
+		sbKey.PrimaryConnectionString)
 	readerFunctionName := functionName + "reader"
 	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, readerFunctionName, appRepoUrl, branch, log)
 
-	consumerAppSettings := []web.NameValuePair{
-		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
-		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/consumer_build/")},
-		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
-		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
-		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
-	}
+	consumerAppSettings := az.ConsumerAppSettings(
+		sgName,
+		getStorageAccountConnectionString(ctx, rgName, sgName, log),
+		appInsights.InstrumentationKey,
+		sbKey.PrimaryConnectionString,
+		sourcesCreate.CreateSource())
 	consumerFunctionName := functionName + "consumer"
 	createFunctionApp(ctx, rgName, consumerFunctionName, appServicePlan, consumerAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, consumerFunctionName, appRepoUrl, branch, log)
 
-	dlqAppSettings := []web.NameValuePair{
-		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
-		{Name: to.StringPtr("Project"), Value: to.StringPtr("BlockBlobReader/target/dlqprocessor_build/")},
-		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: appInsights.InstrumentationKey},
-		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr("")}, // TODO: Need to add this
-		{Name: to.StringPtr("TaskQueueConnectionString"), Value: sbKey.PrimaryConnectionString},
-		{Name: to.StringPtr("TASKQUEUE_NAME"), Value: to.StringPtr("")}, // TODO : Need to add this
-		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
-		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
-		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(getStorageAccountConnectionString(ctx, rgName, sgName, log))},
-		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(sgName)},
-	}
+	dlqAppSettings := az.DlqAppSettings(
+		sgName,
+		getStorageAccountConnectionString(ctx, rgName, sgName, log),
+		appInsights.InstrumentationKey,
+		sbKey.PrimaryConnectionString,
+		sourcesCreate.CreateSource())
 	dlqFunctionName := functionName + "dlq"
 	createFunctionApp(ctx, rgName, dlqFunctionName, appServicePlan, dlqAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, dlqFunctionName, appRepoUrl, branch, log)
@@ -235,7 +210,7 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 
 func createEventGridSubscription(ctx context.Context, scope storage.Account, eventSubName string, eventhub eventhub.Model, log zerolog.Logger) eventgrid.EventSubscriptionsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating event grid subscription " + eventSubName)
-	egSubClient := factory.GetEventGridSubscriptionClient()
+	egSubClient := clients.GetEventGridSubscriptionClient()
 	subscription, err := egSubClient.CreateOrUpdate(
 		ctx,
 		to.String(scope.ID),
@@ -273,14 +248,14 @@ func createEventGridSubscription(ctx context.Context, scope storage.Account, eve
 
 func createEventGridTopic(ctx context.Context, rgName string, topicName string, log zerolog.Logger) (eventgrid.Topic, error) {
 	log.Info().Msg("creating or updating event grid topic " + topicName)
-	topicClient := factory.GetEventGridTopicClient()
+	topicClient := clients.GetEventGridTopicClient()
 	topic, err := topicClient.CreateOrUpdate(
 		ctx,
 		rgName,
 		topicName,
 		eventgrid.Topic{
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -300,7 +275,7 @@ func createEventGridTopic(ctx context.Context, rgName string, topicName string, 
 
 func createEventHubNamespace(ctx context.Context, rgName string, nsName string, log zerolog.Logger) (eventhub.EHNamespace, error) {
 	log.Info().Msg("creating or updating event hub namespace " + nsName)
-	ehClient := factory.GetEventHubNamespaceClient()
+	ehClient := clients.GetEventHubNamespaceClient()
 	ehNamespace, err := ehClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -310,8 +285,8 @@ func createEventHubNamespace(ctx context.Context, rgName string, nsName string, 
 				Name:     eventhub.Standard,
 				Capacity: to.Int32Ptr(1),
 			},
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -331,7 +306,7 @@ func createEventHubNamespace(ctx context.Context, rgName string, nsName string, 
 
 func createEventHub(ctx context.Context, rgName string, ehNsName string, ehName string, log zerolog.Logger) eventhub.Model {
 	log.Info().Msg("creating or updating event hub " + ehName)
-	ehClient := factory.GetEventHubClient()
+	ehClient := clients.GetEventHubClient()
 	eh, err := ehClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -353,7 +328,7 @@ func createEventHub(ctx context.Context, rgName string, ehNsName string, ehName 
 
 func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string, ehName string, ehAuthName string, log zerolog.Logger) eventhub.AuthorizationRule {
 	log.Info().Msg("creating or updating event hub authorization rule " + ehAuthName)
-	ehClient := factory.GetEventHubClient()
+	ehClient := clients.GetEventHubClient()
 	ehAuthRule, err := ehClient.CreateOrUpdateAuthorizationRule(
 		ctx,
 		rgName,
@@ -380,7 +355,7 @@ func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string,
 
 func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName string, ehName string, cgName string, log zerolog.Logger) {
 	log.Info().Msg("creating or updating event hub consumer group " + cgName)
-	csClient := factory.GetConsumerGroupsClient()
+	csClient := clients.GetConsumerGroupsClient()
 	_, err := csClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -400,7 +375,7 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 
 func getEventHubConnectionString(ctx context.Context, rgName string, ehNsName string, ehName string, ehAuthName string, log zerolog.Logger) eventhub.AccessKeys {
 	log.Info().Msg("getting event hub keys for " + ehAuthName)
-	ehClient := factory.GetEventHubClient()
+	ehClient := clients.GetEventHubClient()
 	ehKey, err := ehClient.ListKeys(
 		ctx,
 		rgName,
@@ -419,7 +394,7 @@ func getEventHubConnectionString(ctx context.Context, rgName string, ehNsName st
 
 func createFunctionApp(ctx context.Context, rgName string, functionName string, appSerivceId web.AppServicePlan, appSettings []web.NameValuePair, log zerolog.Logger) web.AppsCreateOrUpdateFuture {
 	log.Info().Msg("creating or updating azure function " + functionName)
-	appClient := factory.GetAppServiceClient()
+	appClient := clients.GetAppServiceClient()
 	functionApp, err := appClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -440,8 +415,8 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 				Type: web.ManagedServiceIdentityTypeSystemAssigned,
 			},
 			Kind:     to.StringPtr("FunctionApp"),
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -461,7 +436,7 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 
 func createFunctionAppSourceControl(ctx context.Context, rgName string, functionName string, appRepoUrl string, branch string, log zerolog.Logger) web.AppsCreateOrUpdateSourceControlFuture {
 	log.Info().Msg("creating or updating source control for function app " + functionName)
-	appClient := factory.GetAppServiceClient()
+	appClient := clients.GetAppServiceClient()
 	functionAppSc, err := appClient.CreateOrUpdateSourceControl(
 		ctx,
 		rgName,
@@ -491,14 +466,14 @@ func createFunctionAppSourceControl(ctx context.Context, rgName string, function
 
 func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger) features.ResourceGroup {
 	log.Info().Msg("creating or updating resource group " + rgName)
-	rgClient := factory.GetResourceGroupClient()
+	rgClient := clients.GetResourceGroupClient()
 	rg, err := rgClient.CreateOrUpdate(
 		ctx,
 		rgName,
 		features.ResourceGroup{
 			Name:     to.StringPtr(rgName),
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -511,7 +486,7 @@ func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger)
 
 func createStorageAccount(ctx context.Context, rgName string, sgName string, log zerolog.Logger) (storage.Account, error) {
 	log.Info().Msg("creating or updating storage account " + sgName)
-	sgClient := factory.GetStorageClient()
+	sgClient := clients.GetStorageClient()
 
 	// TODO: add storage account name check
 	sgAccount, err := sgClient.Create(
@@ -524,8 +499,8 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string, log
 				Tier: storage.Standard,
 			},
 			Kind:     storage.StorageV2,
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -545,7 +520,7 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string, log
 
 func createStorageAccountTable(ctx context.Context, rgName string, sgName string, log zerolog.Logger) {
 	log.Info().Msg("creating FileOffsetMap table")
-	tableClient := factory.GetStorageTableClient()
+	tableClient := clients.GetStorageTableClient()
 	_, err := tableClient.Create(
 		ctx,
 		rgName,
@@ -562,7 +537,7 @@ func createStorageAccountTable(ctx context.Context, rgName string, sgName string
 
 func getStorageAccountConnectionString(ctx context.Context, rgName string, sgName string, log zerolog.Logger) string {
 	log.Info().Msg("getting storage account connection string for " + sgName)
-	sgClient := factory.GetStorageClient()
+	sgClient := clients.GetStorageClient()
 	sgKey, err := sgClient.ListKeys(
 		ctx,
 		rgName,
@@ -580,7 +555,7 @@ func getStorageAccountConnectionString(ctx context.Context, rgName string, sgNam
 
 func createServiceBusNamespace(ctx context.Context, rgName string, nsName string, log zerolog.Logger) (servicebus.SBNamespace, error) {
 	log.Info().Msg("creating or updating service bus namespace " + nsName)
-	nsClient := factory.GetNamespaceClient()
+	nsClient := clients.GetNamespaceClient()
 	ns, err := nsClient.CreateOrUpdate(
 		ctx,
 		rgName,
@@ -589,8 +564,8 @@ func createServiceBusNamespace(ctx context.Context, rgName string, nsName string
 			Sku: &servicebus.SBSku{
 				Name: servicebus.Standard,
 			},
-			Location: to.StringPtr(factory.Location),
-			Tags:     factory.AzureLogTags(),
+			Location: to.StringPtr(config.GetDefaultLocation()),
+			Tags:     config.GetAzureLogTags(),
 		})
 
 	if err != nil {
@@ -610,7 +585,7 @@ func createServiceBusNamespace(ctx context.Context, rgName string, nsName string
 
 func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string, nsAuthName string, log zerolog.Logger) servicebus.SBAuthorizationRule {
 	log.Info().Msg("creating or updating service bus namespace authorization rule " + nsAuthName)
-	nsClient := factory.GetNamespaceClient()
+	nsClient := clients.GetNamespaceClient()
 	sbAuthRule, err := nsClient.CreateOrUpdateAuthorizationRule(
 		ctx,
 		rgName,
@@ -637,7 +612,7 @@ func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string,
 
 func getServiceBusConnectionString(ctx context.Context, rgName string, nsName string, nsAuthName string, log zerolog.Logger) servicebus.AccessKeys {
 	log.Info().Msg("getting service bus connection string for " + nsAuthName)
-	nsClient := factory.GetNamespaceClient()
+	nsClient := clients.GetNamespaceClient()
 	sbKeys, err := nsClient.ListKeys(
 		ctx,
 		rgName,
@@ -655,7 +630,7 @@ func getServiceBusConnectionString(ctx context.Context, rgName string, nsName st
 
 func createServiceBusQueue(ctx context.Context, rgName string, nsName string, queueName string, log zerolog.Logger) {
 	log.Info().Msg("creating or updating service bus queue " + queueName)
-	queueClient := factory.GetQueueClient()
+	queueClient := clients.GetQueueClient()
 	_, err := queueClient.CreateOrUpdate(
 		ctx,
 		rgName,
