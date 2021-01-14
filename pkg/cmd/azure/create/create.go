@@ -16,13 +16,14 @@ import (
 	"github.com/wizedkyle/sumocli/internal/az"
 	"github.com/wizedkyle/sumocli/internal/clients"
 	"github.com/wizedkyle/sumocli/internal/config"
-	sourcesCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/create"
+	"github.com/wizedkyle/sumocli/pkg/cmd/collectors/create"
+	sources "github.com/wizedkyle/sumocli/pkg/cmd/sources/create"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"os"
 )
 
 func NewCmdAzureCreate() *cobra.Command {
 	var (
+		category   string
 		prefix     string
 		diagnostic bool
 		metrics    bool
@@ -37,7 +38,7 @@ func NewCmdAzureCreate() *cobra.Command {
 			log := logging.GetConsoleLogger()
 			logger.Debug().Msg("Create Azure infrastructure request started")
 			if blob == true {
-				azureCreateBlobCollection(prefix, log)
+				azureCreateBlobCollection(category, prefix, log)
 			} else if metrics == true {
 
 			} else if diagnostic == true {
@@ -50,12 +51,13 @@ func NewCmdAzureCreate() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVar(&blob, "blob", false, "Deploys infrastructure for Azure Blob collection.")
+	cmd.Flags().StringVar(&category, "category", "", "Specify the source category for the Sumo Logic source")
 	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
 	cmd.MarkFlagRequired("prefix")
 	return cmd
 }
 
-func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
+func azureCreateBlobCollection(category string, prefix string, log zerolog.Logger) {
 	ctx := context.Background()
 	logsName := "scliblob"
 	rgName := logsName + prefix
@@ -72,6 +74,8 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	insightsName := logsName + prefix
 	appPlanName := logsName + prefix
 	functionName := logsName + prefix
+	collectorName := logsName + prefix + "collector"
+	sourceName := logsName + prefix + "source"
 	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
 	branch := "master"
 
@@ -92,6 +96,9 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 	appInsights := createApplicationInsight(ctx, rgName, insightsName, log)
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
+	// Creates a Sumo Logic collector and HTTP source
+	collector := create.Collector(collectorName, "", "", "", log)
+	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
 	// Creates each function app, adds source control integration and provides custom App Settings
 	// Blob collection requires three apps:  blob reader, consumer, dlq (dead letter queue)
 	readerAppSettings := az.ReaderAppSettings(
@@ -109,7 +116,7 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 		getStorageAccountConnectionString(ctx, rgName, sgName, log),
 		appInsights.InstrumentationKey,
 		sbKey.PrimaryConnectionString,
-		sourcesCreate.CreateSource())
+		source.Url)
 	consumerFunctionName := functionName + "consumer"
 	createFunctionApp(ctx, rgName, consumerFunctionName, appServicePlan, consumerAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, consumerFunctionName, appRepoUrl, branch, log)
@@ -119,7 +126,7 @@ func azureCreateBlobCollection(prefix string, log zerolog.Logger) {
 		getStorageAccountConnectionString(ctx, rgName, sgName, log),
 		appInsights.InstrumentationKey,
 		sbKey.PrimaryConnectionString,
-		sourcesCreate.CreateSource())
+		source.Url)
 	dlqFunctionName := functionName + "dlq"
 	createFunctionApp(ctx, rgName, dlqFunctionName, appServicePlan, dlqAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, dlqFunctionName, appRepoUrl, branch, log)
@@ -168,7 +175,6 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update application insights: " + insightsName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated application insights: " + insightsName)
@@ -196,7 +202,6 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update app service plan " + appPlanName)
-		os.Exit(0)
 	}
 
 	err = appPlan.WaitForCompletionRef(ctx, appClient.Client)
@@ -233,13 +238,11 @@ func createEventGridSubscription(ctx context.Context, scope storage.Account, eve
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
-		os.Exit(0)
 	}
 	err = subscription.WaitForCompletionRef(ctx, egSubClient.Client)
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated event grid subscription " + eventSubName)
@@ -260,13 +263,11 @@ func createEventGridTopic(ctx context.Context, rgName string, topicName string, 
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event grid topic " + topicName)
-		os.Exit(0)
 	}
 
 	err = topic.WaitForCompletionRef(ctx, topicClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event grid topic " + topicName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated event grid topic " + topicName)
@@ -291,13 +292,11 @@ func createEventHubNamespace(ctx context.Context, rgName string, nsName string, 
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event hub namespace " + nsName)
-		os.Exit(0)
 	}
 
 	err = ehNamespace.WaitForCompletionRef(ctx, ehClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event hub namespace " + nsName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated event hub namespace " + nsName)
@@ -321,7 +320,6 @@ func createEventHub(ctx context.Context, rgName string, ehNsName string, ehName 
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event hub " + ehName)
-		os.Exit(0)
 	}
 	return eh
 }
@@ -346,7 +344,6 @@ func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string,
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event hub authorization rule " + ehAuthName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated event hub authorization rule " + ehAuthName)
@@ -368,7 +365,6 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update event hub consumer group " + cgName)
-		os.Exit(0)
 	}
 	log.Info().Msg("created or updated event hub consumer group " + cgName)
 }
@@ -385,7 +381,6 @@ func getEventHubConnectionString(ctx context.Context, rgName string, ehNsName st
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot get event hub keys for " + ehAuthName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("obtained event hub keys for " + ehAuthName)
@@ -421,13 +416,11 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
-		os.Exit(0)
 	}
 
 	err = functionApp.WaitForCompletionRef(ctx, appClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated azure function app " + functionName)
@@ -451,13 +444,11 @@ func createFunctionAppSourceControl(ctx context.Context, rgName string, function
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
-		os.Exit(0)
 	}
 
 	err = functionAppSc.WaitForCompletionRef(ctx, appClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated source control settings on function app " + functionName)
@@ -478,7 +469,6 @@ func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger)
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update resource group " + rgName)
-		os.Exit(0)
 	}
 	log.Info().Msg("created or updated resource group " + rgName)
 	return rg
@@ -505,13 +495,11 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string, log
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update storage account " + sgName)
-		os.Exit(0)
 	}
 
 	err = sgAccount.WaitForCompletionRef(ctx, sgClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create or update storage account " + sgName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated storage account " + rgName)
@@ -529,7 +517,6 @@ func createStorageAccountTable(ctx context.Context, rgName string, sgName string
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create FileOffsetMap table")
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created FileOffsetMap table")
@@ -546,7 +533,6 @@ func getStorageAccountConnectionString(ctx context.Context, rgName string, sgNam
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot get storage account keys")
-		os.Exit(0)
 	}
 
 	log.Info().Msg("connection string obtained for storage account " + sgName)
@@ -570,13 +556,11 @@ func createServiceBusNamespace(ctx context.Context, rgName string, nsName string
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create service bus namespace " + nsName)
-		os.Exit(0)
 	}
 
 	err = ns.WaitForCompletionRef(ctx, nsClient.Client)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create service bus namespace " + nsName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated service bus namespace " + nsName)
@@ -603,7 +587,6 @@ func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string,
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create service bus namespace authorization rule " + nsAuthName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("created or updated service bus namespace authorization rule " + nsAuthName)
@@ -621,7 +604,6 @@ func getServiceBusConnectionString(ctx context.Context, rgName string, nsName st
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot get keys for service bus " + nsAuthName)
-		os.Exit(0)
 	}
 
 	log.Info().Msg("obtained service bus connection string for " + nsAuthName)
@@ -655,7 +637,6 @@ func createServiceBusQueue(ctx context.Context, rgName string, nsName string, qu
 
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create service bus queue " + queueName)
-		os.Exit(0)
 	}
 	log.Info().Msg("created or updated service bus queue " + queueName)
 }

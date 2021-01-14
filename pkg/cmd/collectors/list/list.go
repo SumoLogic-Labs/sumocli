@@ -70,18 +70,18 @@ func listCollectors(filter string, limit string, offset string, output string, o
 
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to make http request to " + requestUrl)
+		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
 	}
 
 	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal().Err(err).Msg("error reading response body from request")
+		log.Error().Err(err).Msg("error reading response body from request")
 	}
 
 	jsonErr := json.Unmarshal(responseBody, &collectorInfo)
 	if jsonErr != nil {
-		log.Fatal().Err(jsonErr).Msg("error unmarshalling response body")
+		log.Error().Err(jsonErr).Msg("error unmarshalling response body")
 	}
 
 	collectorInfoJson, err := json.MarshalIndent(collectorInfo.Data, "", "    ")

@@ -6,6 +6,7 @@ import (
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
+	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
 )
@@ -24,6 +25,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(sourcesCmd.NewCmdSources())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
 

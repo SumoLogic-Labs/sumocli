@@ -10,7 +10,7 @@ import (
 func NewCmdCollectors() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "collectors <command>",
-		Short: "Managed collectors",
+		Short: "Manages collectors",
 	}
 
 	cmd.AddCommand(cmdCollectorCreate.NewCmdCollectorCreate())
