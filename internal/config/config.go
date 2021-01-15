@@ -22,7 +22,9 @@ var (
 
 func AddAzureFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&clientId, "clientId", "", "Specify the client ID of the Azure AD Application")
+	cmd.PersistentFlags().StringVar(&clientSecret, "clientSecret", "", "Specify the client secret of the Azure AD Application")
 	cmd.PersistentFlags().StringVar(&tenantId, "tenantId", "", "Specify the tenant ID of the Azure AD tenant")
+	cmd.PersistentFlags().StringVar(&subscriptionId, "subscriptionId", "", "Specify the subscription ID of the Azure subscription you want to deploy to")
 	cmd.PersistentFlags().StringVar(&defaultLocation, "location", "", "Specify the Azure location to deploy resources to")
 	cmd.PersistentFlags().BoolVar(&useDeviceFlow, "useDeviceFlow", false, "Uses device flow authentication, requires clientId and tenantId")
 }

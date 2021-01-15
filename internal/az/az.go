@@ -32,7 +32,7 @@ func ConsumerAppSettings(storageAccountName string, storageAccountConnection str
 		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(storageAccountConnection)},
 		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(storageAccountConnection)},
 		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: instrumentationKey},
-		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr(sumoLogicSource)}, // TODO: Need to add this
+		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr(sumoLogicSource)},
 		{Name: to.StringPtr("TaskQueueConnectionString"), Value: serviceBusKey},
 		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
 		{Name: to.StringPtr("FUNCTION_APP_EDIT_MODE"), Value: to.StringPtr("readwrite")},
@@ -50,7 +50,7 @@ func DlqAppSettings(storageAccountName string, storageAccountConnection string, 
 		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(storageAccountConnection)},
 		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(storageAccountConnection)},
 		{Name: to.StringPtr("APPINSIGHTS_INSTRUMENTATIONKEY"), Value: instrumentationKey},
-		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr(sumoLogicSource)}, // TODO: Need to add this
+		{Name: to.StringPtr("SumoLogEndpoint"), Value: to.StringPtr(sumoLogicSource)},
 		{Name: to.StringPtr("TaskQueueConnectionString"), Value: serviceBusKey},
 		{Name: to.StringPtr("TASKQUEUE_NAME"), Value: to.StringPtr("")}, // TODO : Need to add this
 		{Name: to.StringPtr("WEBSITE_NODE_DEFAULT_VERSION"), Value: to.StringPtr("6.5.0")},
