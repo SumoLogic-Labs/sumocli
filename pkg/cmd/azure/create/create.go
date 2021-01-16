@@ -51,6 +51,8 @@ func NewCmdAzureCreate() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVar(&blob, "blob", false, "Deploys infrastructure for Azure Blob collection.")
+	cmd.Flags().BoolVar(&diagnostic, "diagnostic", false, "Deploys infrastructure for Azure Diagnostic Log collection")
+	cmd.Flags().BoolVar(&metrics, "metrics", false, "Deploys infrastructure for Azure Metrics collection")
 	cmd.Flags().StringVar(&category, "category", "", "Specify the source category for the Sumo Logic source")
 	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
 	cmd.MarkFlagRequired("prefix")
@@ -74,8 +76,8 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 	insightsName := logsName + prefix
 	appPlanName := logsName + prefix
 	functionName := logsName + prefix
-	collectorName := logsName + prefix + "collector"
-	sourceName := logsName + prefix + "source"
+	collectorName := logsName + prefix
+	sourceName := logsName + prefix
 	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
 	branch := "master"
 
@@ -99,6 +101,7 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 	// Creates a Sumo Logic collector and HTTP source
 	collector := create.Collector(collectorName, "", "", "", log)
 	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
+
 	// Creates each function app, adds source control integration and provides custom App Settings
 	// Blob collection requires three apps:  blob reader, consumer, dlq (dead letter queue)
 	readerAppSettings := az.ReaderAppSettings(
@@ -126,16 +129,50 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 		getStorageAccountConnectionString(ctx, rgName, sgName, log),
 		appInsights.InstrumentationKey,
 		sbKey.PrimaryConnectionString,
+		queueName,
 		source.Url)
 	dlqFunctionName := functionName + "dlq"
 	createFunctionApp(ctx, rgName, dlqFunctionName, appServicePlan, dlqAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, dlqFunctionName, appRepoUrl, branch, log)
 }
 
-/*
-func azureCreateDiagLogCollection() {
+func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Logger) {
+	ctx := context.Background()
+	logsName := "sclidiag"
+	rgName := logsName + prefix
+	sgLogsName := logsName + prefix + "logs"
+	sgFailedName := logsName + prefix + "failed"
+	ehNsName := logsName + prefix + "ehns"
+	ehName := logsName + prefix + "eh"
+	ehAuthName := logsName + prefix + "ehrule"
+	cgName := logsName + prefix + "cg"
+	appPlanName := logsName + prefix
+	functionName := logsName + prefix
+	collectorName := logsName + prefix
+	sourceName := logsName + prefix
+	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
+	branch := "master"
+
+	createResourceGroup(ctx, rgName, log)
+	logsStorageAccount, _ := createStorageAccount(ctx, rgName, sgLogsName, log)
+	failedLogsStorageAccount, _ := createStorageAccount(ctx, rgName, sgFailedName, log)
+	createEventHubNamespace(ctx, rgName, ehNsName, log)
+	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
+	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
+	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
+
+	// Creates a Sumo Logic collector and HTTP source
+	collector := create.Collector(collectorName, "", "", "", log)
+	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
+	diagnosticAppSettings := az.DiagnosticLogsAppSettings()
+	readerFunctionName := functionName + "reader"
+	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, readerFunctionName, appRepoUrl, branch, log)
 }
 
+/*
 func azureCreateMetricCollection() {
 }
 */
@@ -456,8 +493,8 @@ func createFunctionAppSourceControl(ctx context.Context, rgName string, function
 }
 
 func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger) features.ResourceGroup {
-	log.Info().Msg("creating or updating resource group " + rgName)
 	rgClient := clients.GetResourceGroupClient()
+	log.Info().Msg("creating or updating resource group " + rgName)
 	rg, err := rgClient.CreateOrUpdate(
 		ctx,
 		rgName,
