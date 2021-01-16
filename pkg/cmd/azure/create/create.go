@@ -42,7 +42,7 @@ func NewCmdAzureCreate() *cobra.Command {
 			} else if metrics == true {
 
 			} else if diagnostic == true {
-
+				azureCreateDiagLogCollection(category, prefix, log)
 			} else {
 				fmt.Println("Please select either --diagnostic, --logs or --metrics")
 			}
@@ -154,10 +154,10 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 	branch := "master"
 
 	createResourceGroup(ctx, rgName, log)
-	logsStorageAccount, _ := createStorageAccount(ctx, rgName, sgLogsName, log)
-	failedLogsStorageAccount, _ := createStorageAccount(ctx, rgName, sgFailedName, log)
+	createStorageAccount(ctx, rgName, sgLogsName, log)
+	createStorageAccount(ctx, rgName, sgFailedName, log)
 	createEventHubNamespace(ctx, rgName, ehNsName, log)
-	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
+	createEventHub(ctx, rgName, ehNsName, ehName, log)
 	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
@@ -166,10 +166,15 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 	// Creates a Sumo Logic collector and HTTP source
 	collector := create.Collector(collectorName, "", "", "", log)
 	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
-	diagnosticAppSettings := az.DiagnosticLogsAppSettings()
-	readerFunctionName := functionName + "reader"
-	createFunctionApp(ctx, rgName, readerFunctionName, appServicePlan, readerAppSettings, log)
-	createFunctionAppSourceControl(ctx, rgName, readerFunctionName, appRepoUrl, branch, log)
+	diagnosticAppSettings := az.DiagnosticLogsAppSettings(
+		sgLogsName,
+		getStorageAccountConnectionString(ctx, rgName, sgLogsName, log),
+		getStorageAccountConnectionString(ctx, rgName, sgFailedName, log),
+		ehKey.PrimaryConnectionString,
+		source.Url)
+	diagnosticFunctionName := functionName + "diagnostic"
+	createFunctionApp(ctx, rgName, diagnosticFunctionName, appServicePlan, diagnosticAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, diagnosticFunctionName, appRepoUrl, branch, log)
 }
 
 /*
@@ -211,7 +216,7 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update application insights: " + insightsName)
+		log.Fatal().Err(err).Msg("cannot create or update application insights: " + insightsName)
 	}
 
 	log.Info().Msg("created or updated application insights: " + insightsName)
@@ -238,12 +243,12 @@ func createAppServicePlan(ctx context.Context, rgName string, appPlanName string
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update app service plan " + appPlanName)
+		log.Fatal().Err(err).Msg("cannot create or update app service plan " + appPlanName)
 	}
 
 	err = appPlan.WaitForCompletionRef(ctx, appClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update app service plan " + appPlanName)
+		log.Fatal().Err(err).Msg("cannot create or update app service plan " + appPlanName)
 	}
 
 	log.Info().Msg("created or updated app service plan " + appPlanName)
@@ -274,12 +279,12 @@ func createEventGridSubscription(ctx context.Context, scope storage.Account, eve
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
+		log.Fatal().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
 	}
 	err = subscription.WaitForCompletionRef(ctx, egSubClient.Client)
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
+		log.Fatal().Err(err).Msg("cannot create or update event grid subscription " + eventSubName)
 	}
 
 	log.Info().Msg("created or updated event grid subscription " + eventSubName)
@@ -299,12 +304,12 @@ func createEventGridTopic(ctx context.Context, rgName string, topicName string, 
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event grid topic " + topicName)
+		log.Fatal().Err(err).Msg("cannot create or update event grid topic " + topicName)
 	}
 
 	err = topic.WaitForCompletionRef(ctx, topicClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event grid topic " + topicName)
+		log.Fatal().Err(err).Msg("cannot create or update event grid topic " + topicName)
 	}
 
 	log.Info().Msg("created or updated event grid topic " + topicName)
@@ -328,12 +333,12 @@ func createEventHubNamespace(ctx context.Context, rgName string, nsName string, 
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event hub namespace " + nsName)
+		log.Fatal().Err(err).Msg("cannot create or update event hub namespace " + nsName)
 	}
 
 	err = ehNamespace.WaitForCompletionRef(ctx, ehClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event hub namespace " + nsName)
+		log.Fatal().Err(err).Msg("cannot create or update event hub namespace " + nsName)
 	}
 
 	log.Info().Msg("created or updated event hub namespace " + nsName)
@@ -356,7 +361,7 @@ func createEventHub(ctx context.Context, rgName string, ehNsName string, ehName 
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event hub " + ehName)
+		log.Fatal().Err(err).Msg("cannot create or update event hub " + ehName)
 	}
 	return eh
 }
@@ -380,7 +385,7 @@ func createEventHubAuthRule(ctx context.Context, rgName string, ehNsName string,
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event hub authorization rule " + ehAuthName)
+		log.Fatal().Err(err).Msg("cannot create or update event hub authorization rule " + ehAuthName)
 	}
 
 	log.Info().Msg("created or updated event hub authorization rule " + ehAuthName)
@@ -401,7 +406,7 @@ func createEventHubConsumerGroup(ctx context.Context, rgName string, ehNsName st
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update event hub consumer group " + cgName)
+		log.Fatal().Err(err).Msg("cannot create or update event hub consumer group " + cgName)
 	}
 	log.Info().Msg("created or updated event hub consumer group " + cgName)
 }
@@ -417,7 +422,7 @@ func getEventHubConnectionString(ctx context.Context, rgName string, ehNsName st
 		ehAuthName)
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot get event hub keys for " + ehAuthName)
+		log.Fatal().Err(err).Msg("cannot get event hub keys for " + ehAuthName)
 	}
 
 	log.Info().Msg("obtained event hub keys for " + ehAuthName)
@@ -452,12 +457,12 @@ func createFunctionApp(ctx context.Context, rgName string, functionName string, 
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
+		log.Fatal().Err(err).Msg("cannot create azure function app " + functionName)
 	}
 
 	err = functionApp.WaitForCompletionRef(ctx, appClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create azure function app " + functionName)
+		log.Fatal().Err(err).Msg("cannot create azure function app " + functionName)
 	}
 
 	log.Info().Msg("created or updated azure function app " + functionName)
@@ -480,12 +485,12 @@ func createFunctionAppSourceControl(ctx context.Context, rgName string, function
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
+		log.Fatal().Err(err).Msg("cannot create source control settings on function app " + functionName)
 	}
 
 	err = functionAppSc.WaitForCompletionRef(ctx, appClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create source control settings on function app " + functionName)
+		log.Fatal().Err(err).Msg("cannot create source control settings on function app " + functionName)
 	}
 
 	log.Info().Msg("created or updated source control settings on function app " + functionName)
@@ -505,7 +510,7 @@ func createResourceGroup(ctx context.Context, rgName string, log zerolog.Logger)
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update resource group " + rgName)
+		log.Fatal().Err(err).Msg("cannot create or update resource group " + rgName)
 	}
 	log.Info().Msg("created or updated resource group " + rgName)
 	return rg
@@ -531,12 +536,12 @@ func createStorageAccount(ctx context.Context, rgName string, sgName string, log
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update storage account " + sgName)
+		log.Fatal().Err(err).Msg("cannot create or update storage account " + sgName)
 	}
 
 	err = sgAccount.WaitForCompletionRef(ctx, sgClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create or update storage account " + sgName)
+		log.Fatal().Err(err).Msg("cannot create or update storage account " + sgName)
 	}
 
 	log.Info().Msg("created or updated storage account " + rgName)
@@ -553,7 +558,7 @@ func createStorageAccountTable(ctx context.Context, rgName string, sgName string
 		"FileOffsetMap")
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create FileOffsetMap table")
+		log.Fatal().Err(err).Msg("cannot create FileOffsetMap table")
 	}
 
 	log.Info().Msg("created FileOffsetMap table")
@@ -569,7 +574,7 @@ func getStorageAccountConnectionString(ctx context.Context, rgName string, sgNam
 		storage.Kerb)
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot get storage account keys")
+		log.Fatal().Err(err).Msg("cannot get storage account keys")
 	}
 
 	log.Info().Msg("connection string obtained for storage account " + sgName)
@@ -592,12 +597,12 @@ func createServiceBusNamespace(ctx context.Context, rgName string, nsName string
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create service bus namespace " + nsName)
+		log.Fatal().Err(err).Msg("cannot create service bus namespace " + nsName)
 	}
 
 	err = ns.WaitForCompletionRef(ctx, nsClient.Client)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create service bus namespace " + nsName)
+		log.Fatal().Err(err).Msg("cannot create service bus namespace " + nsName)
 	}
 
 	log.Info().Msg("created or updated service bus namespace " + nsName)
@@ -623,7 +628,7 @@ func createServiceBusAuthRule(ctx context.Context, rgName string, nsName string,
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create service bus namespace authorization rule " + nsAuthName)
+		log.Fatal().Err(err).Msg("cannot create service bus namespace authorization rule " + nsAuthName)
 	}
 
 	log.Info().Msg("created or updated service bus namespace authorization rule " + nsAuthName)
@@ -640,7 +645,7 @@ func getServiceBusConnectionString(ctx context.Context, rgName string, nsName st
 		nsAuthName)
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot get keys for service bus " + nsAuthName)
+		log.Fatal().Err(err).Msg("cannot get keys for service bus " + nsAuthName)
 	}
 
 	log.Info().Msg("obtained service bus connection string for " + nsAuthName)
@@ -673,7 +678,7 @@ func createServiceBusQueue(ctx context.Context, rgName string, nsName string, qu
 		})
 
 	if err != nil {
-		log.Error().Err(err).Msg("cannot create service bus queue " + queueName)
+		log.Fatal().Err(err).Msg("cannot create service bus queue " + queueName)
 	}
 	log.Info().Msg("created or updated service bus queue " + queueName)
 }

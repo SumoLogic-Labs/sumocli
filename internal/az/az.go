@@ -61,18 +61,18 @@ func DlqAppSettings(storageAccountName string, storageAccountConnection string, 
 	return dlqAppSettings
 }
 
-func DiagnosticLogsAppSettings(storagAccountName string, storageAccountConnection string, eventHubKey *string,
-	sumoLogicSource string) []web.NameValuePair {
+func DiagnosticLogsAppSettings(logsStorageAccountName string, logsStorageAccountConnection string, failedStorageAccountConnection string,
+	eventHubKey *string, sumoLogicSource string) []web.NameValuePair {
 	diagnosticAppSettings := []web.NameValuePair{
 		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
 		{Name: to.StringPtr("Project"), Value: to.StringPtr("EventHubs/target/logs_build/")},
-		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(storageAccountConnection)},
-		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(storageAccountConnection)},
+		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(logsStorageAccountConnection)},
+		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(logsStorageAccountConnection)},
 		{Name: to.StringPtr("SumoLogsEndpoint"), Value: to.StringPtr(sumoLogicSource)},
 		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: eventHubKey},
-		{Name: to.StringPtr("StorageConnectionString"), Value: to.StringPtr()},
-		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(storageAccountConnection)},
-		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(storageAccountName)},
+		{Name: to.StringPtr("StorageConnectionString"), Value: to.StringPtr(failedStorageAccountConnection)},
+		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(logsStorageAccountConnection)},
+		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(logsStorageAccountName)},
 	}
 	return diagnosticAppSettings
 }
