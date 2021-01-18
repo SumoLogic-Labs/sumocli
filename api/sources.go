@@ -18,6 +18,10 @@ type ListSources struct {
 	Sources []GetSourcesResponse `json:"sources"`
 }
 
+type CreateSourceResponse struct {
+	Source SourcesResponse `json:"source"`
+}
+
 type GetSourcesResponse struct {
 	Id                         int             `json:"id"`
 	Name                       string          `json:"name"`

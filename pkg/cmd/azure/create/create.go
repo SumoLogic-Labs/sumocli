@@ -119,7 +119,7 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 		getStorageAccountConnectionString(ctx, rgName, sgName, log),
 		appInsights.InstrumentationKey,
 		sbKey.PrimaryConnectionString,
-		source.Url)
+		source.Source.Url)
 	consumerFunctionName := functionName + "consumer"
 	createFunctionApp(ctx, rgName, consumerFunctionName, appServicePlan, consumerAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, consumerFunctionName, appRepoUrl, branch, log)
@@ -130,7 +130,7 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 		appInsights.InstrumentationKey,
 		sbKey.PrimaryConnectionString,
 		queueName,
-		source.Url)
+		source.Source.Url)
 	dlqFunctionName := functionName + "dlq"
 	createFunctionApp(ctx, rgName, dlqFunctionName, appServicePlan, dlqAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, dlqFunctionName, appRepoUrl, branch, log)
@@ -171,16 +171,15 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 		getStorageAccountConnectionString(ctx, rgName, sgLogsName, log),
 		getStorageAccountConnectionString(ctx, rgName, sgFailedName, log),
 		ehKey.PrimaryConnectionString,
-		source.Url)
+		source.Source.Url)
 	diagnosticFunctionName := functionName + "diagnostic"
 	createFunctionApp(ctx, rgName, diagnosticFunctionName, appServicePlan, diagnosticAppSettings, log)
 	createFunctionAppSourceControl(ctx, rgName, diagnosticFunctionName, appRepoUrl, branch, log)
 }
 
-/*
 func azureCreateMetricCollection() {
+
 }
-*/
 
 func createApplicationInsight(ctx context.Context, rgName string, insightsName string, log zerolog.Logger) insights.ApplicationInsightsComponent {
 	log.Info().Msg("creating or updating application insights: " + insightsName)
