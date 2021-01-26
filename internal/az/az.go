@@ -76,3 +76,19 @@ func DiagnosticLogsAppSettings(logsStorageAccountName string, logsStorageAccount
 	}
 	return diagnosticAppSettings
 }
+
+func MetricsAppSettings(logsStorageAccountName string, logsStorageAccountConnection string, failedStorageAccountConnection string,
+	eventHubKey *string, sumoLogicSource string) []web.NameValuePair {
+	metricsAppSettings := []web.NameValuePair{
+		{Name: to.StringPtr("FUNCTIONS_EXTENSION_VERSION"), Value: to.StringPtr("~1")},
+		{Name: to.StringPtr("Project"), Value: to.StringPtr("EventHubs/target/metrics_build/")},
+		{Name: to.StringPtr("AzureWebJobsDashboard"), Value: to.StringPtr(logsStorageAccountConnection)},
+		{Name: to.StringPtr("AzureWebJobsStorage"), Value: to.StringPtr(logsStorageAccountConnection)},
+		{Name: to.StringPtr("SumoLabsMetricEndpoint"), Value: to.StringPtr(sumoLogicSource)},
+		{Name: to.StringPtr("AzureEventHubConnectionString"), Value: eventHubKey},
+		{Name: to.StringPtr("StorageConnectionString"), Value: to.StringPtr(failedStorageAccountConnection)},
+		{Name: to.StringPtr("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"), Value: to.StringPtr(logsStorageAccountConnection)},
+		{Name: to.StringPtr("WEBSITE_CONTENTSHARE"), Value: to.StringPtr(logsStorageAccountName)},
+	}
+	return metricsAppSettings
+}

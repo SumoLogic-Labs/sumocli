@@ -40,7 +40,7 @@ func NewCmdAzureCreate() *cobra.Command {
 			if blob == true {
 				azureCreateBlobCollection(category, prefix, log)
 			} else if metrics == true {
-
+				azureCreateMetricCollection(category, prefix, log)
 			} else if diagnostic == true {
 				azureCreateDiagLogCollection(category, prefix, log)
 			} else {
@@ -55,7 +55,7 @@ func NewCmdAzureCreate() *cobra.Command {
 	cmd.Flags().BoolVar(&metrics, "metrics", false, "Deploys infrastructure for Azure Metrics collection")
 	cmd.Flags().StringVar(&category, "category", "", "Specify the source category for the Sumo Logic source")
 	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
-	cmd.MarkFlagRequired("prefix")
+	_ = cmd.MarkFlagRequired("prefix")
 	return cmd
 }
 
@@ -82,14 +82,14 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 	branch := "master"
 
 	createResourceGroup(ctx, rgName, log)
-	createStorageAccount(ctx, rgName, sgName, log)
+	_, _ = createStorageAccount(ctx, rgName, sgName, log)
 	sourceSgAcc, _ := createStorageAccount(ctx, rgName, sourceSgName, log)
 	createStorageAccountTable(ctx, rgName, sgName, log)
-	createServiceBusNamespace(ctx, rgName, nsName, log)
+	_, _ = createServiceBusNamespace(ctx, rgName, nsName, log)
 	createServiceBusAuthRule(ctx, rgName, sgName, nsAuthName, log)
 	sbKey := getServiceBusConnectionString(ctx, rgName, nsName, nsAuthName, log)
 	createServiceBusQueue(ctx, rgName, nsName, queueName, log)
-	createEventHubNamespace(ctx, rgName, ehNsName, log)
+	_, _ = createEventHubNamespace(ctx, rgName, ehNsName, log)
 	eh := createEventHub(ctx, rgName, ehNsName, ehName, log)
 	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
@@ -154,9 +154,9 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 	branch := "master"
 
 	createResourceGroup(ctx, rgName, log)
-	createStorageAccount(ctx, rgName, sgLogsName, log)
-	createStorageAccount(ctx, rgName, sgFailedName, log)
-	createEventHubNamespace(ctx, rgName, ehNsName, log)
+	_, _ = createStorageAccount(ctx, rgName, sgLogsName, log)
+	_, _ = createStorageAccount(ctx, rgName, sgFailedName, log)
+	_, _ = createEventHubNamespace(ctx, rgName, ehNsName, log)
 	createEventHub(ctx, rgName, ehNsName, ehName, log)
 	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
 	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
@@ -177,14 +177,51 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 	createFunctionAppSourceControl(ctx, rgName, diagnosticFunctionName, appRepoUrl, branch, log)
 }
 
-func azureCreateMetricCollection() {
+func azureCreateMetricCollection(category string, prefix string, log zerolog.Logger) {
+	ctx := context.Background()
+	metricsName := "sclimetrics"
+	rgName := metricsName + prefix
+	sgLogsName := metricsName + prefix + "logs"
+	sgFailedName := metricsName + prefix + "failed"
+	ehNsName := metricsName + prefix + "ehns"
+	ehName := metricsName + prefix + "eh"
+	ehAuthName := metricsName + prefix + "ehrule"
+	cgName := metricsName + prefix + "cg"
+	appPlanName := metricsName + prefix
+	functionName := metricsName + prefix
+	collectorName := metricsName + prefix
+	sourceName := metricsName + prefix
+	appRepoUrl := "https://github.com/SumoLogic/sumologic-azure-function"
+	branch := "master"
 
+	createResourceGroup(ctx, rgName, log)
+	_, _ = createStorageAccount(ctx, rgName, sgLogsName, log)
+	_, _ = createStorageAccount(ctx, rgName, sgFailedName, log)
+	_, _ = createEventHubNamespace(ctx, rgName, ehNsName, log)
+	createEventHub(ctx, rgName, ehNsName, ehName, log)
+	createEventHubAuthRule(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	ehKey := getEventHubConnectionString(ctx, rgName, ehNsName, ehName, ehAuthName, log)
+	createEventHubConsumerGroup(ctx, rgName, ehNsName, ehName, cgName, log)
+	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
+
+	// Creates a Sumo Logic collector and HTTP source
+	collector := create.Collector(collectorName, "", "", "", log)
+	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
+	metricsAppSettings := az.MetricsAppSettings(
+		sgLogsName,
+		getStorageAccountConnectionString(ctx, rgName, sgLogsName, log),
+		getStorageAccountConnectionString(ctx, rgName, sgFailedName, log),
+		ehKey.PrimaryConnectionString,
+		source.Source.Url)
+	metricsFunctionName := functionName + "metrics"
+	createFunctionApp(ctx, rgName, metricsFunctionName, appServicePlan, metricsAppSettings, log)
+	createFunctionAppSourceControl(ctx, rgName, metricsFunctionName, appRepoUrl, branch, log)
 }
 
 func createApplicationInsight(ctx context.Context, rgName string, insightsName string, log zerolog.Logger) insights.ApplicationInsightsComponent {
-	log.Info().Msg("creating or updating application insights: " + insightsName)
+	log.Info().Msg("creating or updating application appInsights: " + insightsName)
 	insightsClient := clients.GetInsightsClient()
-	insights, err := insightsClient.CreateOrUpdate(
+	appInsights, err := insightsClient.CreateOrUpdate(
 		ctx,
 		rgName,
 		insightsName,
@@ -215,11 +252,11 @@ func createApplicationInsight(ctx context.Context, rgName string, insightsName s
 		})
 
 	if err != nil {
-		log.Fatal().Err(err).Msg("cannot create or update application insights: " + insightsName)
+		log.Fatal().Err(err).Msg("cannot create or update application appInsights: " + insightsName)
 	}
 
-	log.Info().Msg("created or updated application insights: " + insightsName)
-	return insights
+	log.Info().Msg("created or updated application appInsights: " + insightsName)
+	return appInsights
 }
 
 func createAppServicePlan(ctx context.Context, rgName string, appPlanName string, log zerolog.Logger) (web.AppServicePlan, error) {
@@ -288,31 +325,6 @@ func createEventGridSubscription(ctx context.Context, scope storage.Account, eve
 
 	log.Info().Msg("created or updated event grid subscription " + eventSubName)
 	return subscription
-}
-
-func createEventGridTopic(ctx context.Context, rgName string, topicName string, log zerolog.Logger) (eventgrid.Topic, error) {
-	log.Info().Msg("creating or updating event grid topic " + topicName)
-	topicClient := clients.GetEventGridTopicClient()
-	topic, err := topicClient.CreateOrUpdate(
-		ctx,
-		rgName,
-		topicName,
-		eventgrid.Topic{
-			Location: to.StringPtr(config.GetDefaultLocation()),
-			Tags:     config.GetAzureLogTags(),
-		})
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot create or update event grid topic " + topicName)
-	}
-
-	err = topic.WaitForCompletionRef(ctx, topicClient.Client)
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot create or update event grid topic " + topicName)
-	}
-
-	log.Info().Msg("created or updated event grid topic " + topicName)
-	return topic.Result(topicClient)
 }
 
 func createEventHubNamespace(ctx context.Context, rgName string, nsName string, log zerolog.Logger) (eventhub.EHNamespace, error) {

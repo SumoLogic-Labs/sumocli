@@ -38,7 +38,6 @@ func NewCmdCreateSource() *cobra.Command {
 					i++
 				}
 			}
-
 			if httpSource == true {
 				HTTPSource(category, fieldsMap, messagePerRequest, multilineProcessingEnabled, name, collectorId, log)
 			}
@@ -55,10 +54,6 @@ func NewCmdCreateSource() *cobra.Command {
 	cmd.MarkFlagRequired("collectorId")
 	cmd.MarkFlagRequired("name")
 	return cmd
-}
-
-func cmdOutput() {
-
 }
 
 func HTTPSource(category string, fields map[string]string, messagePerRequest bool, multilineProcessingEnabled bool,

@@ -17,7 +17,6 @@ func NewCmdCollectorCreate() *cobra.Command {
 		description string
 		category    string
 		fields      string
-		output      string
 	)
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -31,14 +30,8 @@ func NewCmdCollectorCreate() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the collector")
 	cmd.Flags().StringVar(&category, "category", "", "Source category for the collector, this will overwrite the categories on configured sources")
-	cmd.Flags().StringVar(&fields, "fields", "", "Specify fields for the collector, they need to be formatted as field1:value1,field2:value2")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 	cmd.MarkFlagRequired("name")
 	return cmd
-}
-
-func cmdOutput() {
-
 }
 
 func Collector(name string, description string, category string, fields string, log zerolog.Logger) api.CollectorResponse {
