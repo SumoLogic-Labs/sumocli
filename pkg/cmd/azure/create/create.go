@@ -54,7 +54,8 @@ func NewCmdAzureCreate() *cobra.Command {
 	cmd.Flags().BoolVar(&diagnostic, "diagnostic", false, "Deploys infrastructure for Azure Diagnostic Log collection")
 	cmd.Flags().BoolVar(&metrics, "metrics", false, "Deploys infrastructure for Azure Metrics collection")
 	cmd.Flags().StringVar(&category, "category", "", "Specify the source category for the Sumo Logic source")
-	cmd.Flags().StringVar(&prefix, "prefix", "", "Name of the resource")
+	cmd.Flags().StringVar(&prefix, "prefix", "", "User defined string that is used to name Azure resources can only contain numbers, lowercase letters and a max length of 10")
+	_ = cmd.MarkFlagRequired("category")
 	_ = cmd.MarkFlagRequired("prefix")
 	return cmd
 }

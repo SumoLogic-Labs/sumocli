@@ -79,8 +79,11 @@ func GetAzureLogTags() map[string]*string {
 	return logTags
 }
 
-/*
-func AzureMetricTags() map[string]string {
-
+func AzureMetricTags() map[string]*string {
+	metricTags := map[string]*string{
+		"CollectionType": to.StringPtr("Metrics"),
+		"CreatedBy":      to.StringPtr("Sumocli"),
+		"Version":        to.StringPtr(build.Version),
+	}
+	return metricTags
 }
-*/

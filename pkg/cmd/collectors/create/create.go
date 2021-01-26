@@ -29,7 +29,7 @@ func NewCmdCollectorCreate() *cobra.Command {
 
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the collector")
-	cmd.Flags().StringVar(&category, "category", "", "Source category for the collector, this will overwrite the categories on configured sources")
+	cmd.Flags().StringVar(&category, "category", "", "sourceCategory for the collector, this will overwrite the categories on configured sources")
 	cmd.MarkFlagRequired("name")
 	return cmd
 }
