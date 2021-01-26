@@ -19,9 +19,11 @@ The repo is using Go modules so you can run go build:
 
 ## Documentation
 
-All detailed documentation for Sumocli is located in [Gitbook](https://sumocli.gitbook.io)
+Detailed documentaion for each command can be found here: https://sumocli.gitbook.io/
 
 ## Contributing
 
+Clone or fork the repo, make your changes and create a pull request.
 
+If there is something you can't access in the repo email: kyle@thepublicclouds.com
 

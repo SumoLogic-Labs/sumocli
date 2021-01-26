@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/internal/build"
+	"github.com/wizedkyle/sumocli/internal/config"
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"net/http"
@@ -26,7 +26,7 @@ func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) 
 	request, _ := http.NewRequest(method, endpoint+apiUrl, nil)
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	request.Header.Add("User-Agent", config.GetUserAgent())
 	return client, request
 }
 
@@ -36,10 +36,11 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	request, _ := http.NewRequest(method, endpoint+apiUrl, bytes.NewBuffer(body))
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("User-Agent", "Sumocli "+build.Version)
+	request.Header.Add("User-Agent", config.GetUserAgent())
 	return client, request
 }
 
+// TODO: update this to use log.Error().Msg("")
 func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 	if statusCode == 400 {
 		var responseError api.ResponseError

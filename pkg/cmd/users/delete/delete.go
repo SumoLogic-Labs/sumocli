@@ -29,7 +29,7 @@ func NewCmdUserDelete() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to delete.")
-	cmd.Flags().StringVar(&transferTo, "transferto", "", "Specify the id of the user to transfer data to.")
+	cmd.Flags().StringVar(&transferTo, "transferTo", "", "Specify the id of the user to transfer data to.")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }

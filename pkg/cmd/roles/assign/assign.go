@@ -40,8 +40,8 @@ id
 		},
 	}
 
-	cmd.Flags().StringVar(&roleId, "roleid", "", "Specify the id of the role")
-	cmd.Flags().StringVar(&userId, "userid", "", "Specify the id of the user to remove")
+	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the id of the role")
+	cmd.Flags().StringVar(&userId, "userId", "", "Specify the id of the user to remove")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 
 	return cmd

@@ -10,7 +10,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -42,17 +41,13 @@ func NewCmdRoleCreate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities.")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
 	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from.")
+	cmd.MarkFlagRequired("name")
 
 	return cmd
 }
 
 func createRole(name string, description string, filter string, users []string, capabilities []string, autofill bool, output string, logger zerolog.Logger) {
 	var createRoleResponse api.RoleData
-
-	if name == "" {
-		fmt.Println("--name field needs to be specified.")
-		os.Exit(0)
-	}
 
 	for i, capability := range capabilities {
 		if validateCapabilities(capability) == false {

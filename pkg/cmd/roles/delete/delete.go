@@ -9,7 +9,6 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io/ioutil"
-	"os"
 )
 
 func NewCmdRoleDelete() *cobra.Command {
@@ -27,16 +26,11 @@ func NewCmdRoleDelete() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to delete")
-
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
 func deleteRole(id string, logger zerolog.Logger) {
-	if id == "" {
-		fmt.Println("--id field needs to be set.")
-		os.Exit(0)
-	}
-
 	requestUrl := "v1/roles/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
