@@ -17,6 +17,7 @@ import (
 )
 
 var Logger zerolog.Logger
+
 func NewCmdLogin() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
@@ -156,6 +157,22 @@ func ReadCredentials() (string, string) {
 		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
 		accessCredentialsComplete := "Basic " + accessCredentialsEnc
 		return accessCredentialsComplete, endpoint
+	}
+}
+
+func ReadAccessKeys() (string, string, string) {
+	viper.SetConfigName("creds")
+	viper.AddConfigPath(filepath.Dir(configPath()))
+	viper.AutomaticEnv()
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Println("No authentication credentials, please run sumocli login")
+		return "", "", ""
+	} else {
+		accessId := viper.GetString("accessid")
+		accessKey := viper.GetString("accesskey")
+		endpoint := viper.GetString("endpoint")
+		return accessId, accessKey, endpoint
 	}
 }
 
