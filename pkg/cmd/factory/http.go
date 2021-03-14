@@ -20,6 +20,24 @@ func newHttpClient() *http.Client {
 	return client
 }
 
+func NewLiveTailHttpRequest(method string, liveTailEndpoint string, body []byte) (*http.Client, *http.Request) {
+	client := newHttpClient()
+	request, _ := http.NewRequest(method, liveTailEndpoint, bytes.NewBuffer(body))
+	request.Header.Add("Accept", "application/json")
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("User-Agent", config.GetUserAgent())
+	return client, request
+}
+
+func StartLiveTailHttpRequest(method string, liveTailEndpoint string) (*http.Client, *http.Request) {
+	client := newHttpClient()
+	request, _ := http.NewRequest(method, liveTailEndpoint, nil)
+	request.Header.Add("Accept", "application/json")
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("User-Agent", config.GetUserAgent())
+	return client, request
+}
+
 func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) {
 	client := newHttpClient()
 	authToken, endpoint := login.ReadCredentials()
