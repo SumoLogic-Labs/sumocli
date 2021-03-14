@@ -17,7 +17,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:              "sumocli <command> <subcommand> [flags]",
 		Short:            "Sumo Logic CLI",
-		Long:             "Manage Sumo Logic from the command line.",
+		Long:             "Interact with and manage Sumo Logic and Cloud SIEM Enterprise from the command line.",
 		TraverseChildren: true,
 	}
 
