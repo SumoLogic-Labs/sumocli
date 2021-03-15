@@ -9,6 +9,7 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
+	"strconv"
 	"time"
 )
 
@@ -17,7 +18,7 @@ type CreateLiveTailSessionRequest struct {
 	Filter string `json:"filter,omitempty"`
 }
 
-type CreateLiveTailSessionResponse struct {
+type createLiveTailSessionResponse struct {
 	Id              string   `json:"id"`
 	StartTime       int      `json:"startTime"`
 	KeyedErrors     []string `json:"keyedErrors"`
@@ -25,6 +26,25 @@ type CreateLiveTailSessionResponse struct {
 	ErrorInstanceId string   `json:"errorInstanceId"`
 	ErrorKey        string   `json:"errorKey"`
 	ResultTraitLog  string   `json:"resultTraitLog"`
+}
+
+type liveTailSessionResponse struct {
+	State           liveTailSessionInfo `json:"state"`
+	Messages        []string            `json:"messages"`
+	KeyedErrors     []string            `json:keyedErrors"`
+	Error           bool                `json:"error"`
+	ErrorMessage    string              `json:"errorMessage"`
+	ErrorInstanceId string              `json:"errorInstanceId"`
+	ErrorKey        string              `json:"errorKey"`
+	ResultTraitLog  string              `json:"resultTraitLog"`
+}
+
+type liveTailSessionInfo struct {
+	TailId        int      `json:"tailId"`
+	CurrentOffset int      `json:"currentOffset"`
+	IsStopped     bool     `json:"isStopped"`
+	UserMessages  []string `json:"userMessages"`
+	Stopped       bool     `json:"stopped"`
 }
 
 func StartLiveTailCmd() *cobra.Command {
@@ -45,7 +65,7 @@ func StartLiveTailCmd() *cobra.Command {
 }
 
 func createLiveTailSession(log zerolog.Logger) string {
-	var session CreateLiveTailSessionResponse
+	var session createLiveTailSessionResponse
 	accessId, accessKey, endpoint := login.ReadAccessKeys()
 	requestBodySchema := &CreateLiveTailSessionRequest{
 		IsCLI:  true,
@@ -77,28 +97,28 @@ func startLiveTailSession(log zerolog.Logger) {
 	fmt.Println(sessionId)
 
 	for true {
-		latestLiveTailResultsUrl := endpoint + "v1/livetail/session/" + sessionId + "/latest/" + string(offset)
+		latestLiveTailResultsUrl := endpoint + "v1/livetail/session/" + sessionId + "/latest/" + strconv.Itoa(offset)
 		time.Sleep(2 * time.Second)
-
-		func() {
-			fmt.Println(latestLiveTailResultsUrl)
-			fmt.Println(accessId)
-			fmt.Println(accessKey)
-			client, request := factory.StartLiveTailHttpRequest("POST", latestLiveTailResultsUrl)
+		tailSession := func() liveTailSessionResponse {
+			var tailSession liveTailSessionResponse
+			client, request := factory.StartLiveTailHttpRequest("GET", latestLiveTailResultsUrl)
 			request.SetBasicAuth(accessId, accessKey)
-			_, _ = client.Do(request)
-			/*
-				client, request := factory.StartLiveTailHttpRequest("POST", latestLiveTailResultsUrl)
-				request.SetBasicAuth(accessId, accessKey)
-				response, err := client.Do(request)
-				if err != nil {
-					log.Error().Err(err).Msg("failed to make http request to " + endpoint)
-				}
-				defer response.Body.Close()
-				responseBody, err := io.ReadAll(response.Body)
-				return responseBody
-
-			*/
+			response, err := client.Do(request)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to make http request to " + endpoint)
+			}
+			defer response.Body.Close()
+			responseBody, err := io.ReadAll(response.Body)
+			if err != nil {
+				log.Error().Err(err).Msg("error reading response body from request")
+			}
+			err = json.Unmarshal(responseBody, &tailSession)
+			if err != nil {
+				log.Error().Err(err).Msg("error unmarshalling response body")
+			}
+			return tailSession
 		}()
+
+		fmt.Println(tailSession.State.TailId)
 	}
 }
