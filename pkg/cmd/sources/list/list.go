@@ -8,7 +8,7 @@ import (
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
+	"io"
 )
 
 func NewCmdSourceList() *cobra.Command {
@@ -41,7 +41,7 @@ func listSources(collectorId string, log zerolog.Logger) {
 	}
 
 	defer response.Body.Close()
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Error().Err(err).Msg("error reading response body from request")
 	}

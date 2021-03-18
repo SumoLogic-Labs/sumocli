@@ -5,19 +5,16 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
-	"strings"
+	"io"
 )
 
 func NewCmdCollectorGet() *cobra.Command {
 	var (
-		id     string
-		name   string
-		output string
+		id   string
+		name string
 	)
 
 	cmd := &cobra.Command{
@@ -26,17 +23,16 @@ func NewCmdCollectorGet() *cobra.Command {
 		Long:  "You can use either the id or the name of the collector to specify the collector to return",
 		Run: func(cmd *cobra.Command, args []string) {
 			log := logging.GetConsoleLogger()
-			getCollector(id, name, output, log)
+			getCollector(id, name, log)
 		},
 	}
 
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the collector")
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 	return cmd
 }
 
-func getCollector(id string, name string, output string, log zerolog.Logger) {
+func getCollector(id string, name string, log zerolog.Logger) {
 	var collectorInfo api.CollectorResponse
 	requestUrl := "v1/collectors/"
 	if id != "" {
@@ -54,7 +50,7 @@ func getCollector(id string, name string, output string, log zerolog.Logger) {
 	}
 
 	defer response.Body.Close()
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Fatal().Err(err).Msg("error reading response body from request")
 	}
@@ -69,12 +65,6 @@ func getCollector(id string, name string, output string, log zerolog.Logger) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		if factory.ValidateCollectorOutput(output) == true {
-			value := gjson.Get(string(collectorInfoJson), "#.collector."+output) // TODO: need to fix this
-			formattedValue := strings.Trim(value.String(), `"[]"`)
-			fmt.Println(formattedValue)
-		} else {
-			fmt.Println(string(collectorInfoJson))
-		}
+		fmt.Println(string(collectorInfoJson))
 	}
 }

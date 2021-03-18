@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
+	"io"
 	"os"
 	"reflect"
 	"strings"
@@ -23,7 +22,6 @@ func NewCmdUserUpdate() *cobra.Command {
 		isActive  bool
 		roleIds   []string
 		merge     bool
-		output    string
 	)
 
 	cmd := &cobra.Command{
@@ -32,7 +30,7 @@ func NewCmdUserUpdate() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
 			logger.Debug().Msg("Update user request started.")
-			updateUser(id, firstName, lastName, isActive, roleIds, merge, output, logger)
+			updateUser(id, firstName, lastName, isActive, roleIds, merge, logger)
 			logger.Debug().Msg("Update user request finished.")
 		},
 	}
@@ -43,7 +41,6 @@ func NewCmdUserUpdate() *cobra.Command {
 	cmd.Flags().BoolVar(&isActive, "isActive", true, "True if the account is active, false if it is deactivated")
 	cmd.Flags().StringSliceVar(&roleIds, "roleIds", []string{}, "Comma deliminated list of Role Ids.")
 	cmd.Flags().BoolVar(&merge, "merge", true, "Is set to true by default, if set to false it will overwrite the role.")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from.")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("firstname")
 	cmd.MarkFlagRequired("lastname")
@@ -52,7 +49,7 @@ func NewCmdUserUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, merge bool, output string, logger zerolog.Logger) {
+func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, merge bool, logger zerolog.Logger) {
 	var userInfo api.UserResponse
 
 	if merge == true {
@@ -62,7 +59,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 		logging.LogError(err, logger)
 
 		jsonErr := json.Unmarshal(responseBody, &userInfo)
@@ -102,7 +99,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err = ioutil.ReadAll(response.Body)
+		responseBody, err = io.ReadAll(response.Body)
 
 		jsonErr = json.Unmarshal(responseBody, &userInfo)
 		logging.LogError(jsonErr, logger)
@@ -113,13 +110,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		if response.StatusCode != 200 {
 			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
-			if factory.ValidateUserOutput(output) == true {
-				value := gjson.Get(string(userInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(userInfoJson))
-			}
+			fmt.Println(string(userInfoJson))
 		}
 	} else {
 		requestBodySchema := &api.UpdateUserRequest{
@@ -136,7 +127,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 
 		jsonErr := json.Unmarshal(responseBody, &userInfo)
 		logging.LogError(jsonErr, logger)
@@ -147,13 +138,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		if response.StatusCode != 200 {
 			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
-			if factory.ValidateUserOutput(output) == true {
-				value := gjson.Get(string(userInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(userInfoJson))
-			}
+			fmt.Println(string(userInfoJson))
 		}
 	}
 }

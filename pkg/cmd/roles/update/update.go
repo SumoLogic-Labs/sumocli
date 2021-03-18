@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
+	"io"
 	"os"
 	"reflect"
 	"strings"
@@ -25,7 +24,6 @@ func NewCmdRoleUpdate() *cobra.Command {
 		capabilities []string
 		autofill     bool
 		merge        bool
-		output       string
 	)
 
 	cmd := &cobra.Command{
@@ -34,7 +32,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
 			logger.Debug().Msg("Role update request started.")
-			updateRole(id, name, description, filter, users, capabilities, autofill, merge, output, logger)
+			updateRole(id, name, description, filter, users, capabilities, autofill, merge, logger)
 			logger.Debug().Msg("Role update request finished.")
 		},
 	}
@@ -47,7 +45,6 @@ func NewCmdRoleUpdate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities.")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
 	cmd.Flags().BoolVar(&merge, "merge", true, "Is set to true by default, if set to false it will overwrite the role.")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from.")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("name")
 	cmd.MarkFlagRequired("description")
@@ -57,7 +54,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, output string, logger zerolog.Logger) {
+func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, logger zerolog.Logger) {
 	var roleInfo api.RoleData
 
 	if merge == true {
@@ -67,7 +64,7 @@ func updateRole(id string, name string, description string, filter string, users
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 		logging.LogError(err, logger)
 
 		jsonErr := json.Unmarshal(responseBody, &roleInfo)
@@ -125,7 +122,7 @@ func updateRole(id string, name string, description string, filter string, users
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err = ioutil.ReadAll(response.Body)
+		responseBody, err = io.ReadAll(response.Body)
 
 		jsonErr = json.Unmarshal(responseBody, &roleInfo)
 		logging.LogError(jsonErr, logger)
@@ -136,13 +133,7 @@ func updateRole(id string, name string, description string, filter string, users
 		if response.StatusCode != 200 {
 			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
-			if factory.ValidateRoleOutput(output) == true {
-				value := gjson.Get(string(roleInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(roleInfoJson))
-			}
+			fmt.Println(string(roleInfoJson))
 		}
 	} else {
 		requestBodySchema := &api.UpdateRoleRequest{
@@ -161,7 +152,7 @@ func updateRole(id string, name string, description string, filter string, users
 		logging.LogError(err, logger)
 
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 
 		jsonErr := json.Unmarshal(responseBody, &roleInfo)
 		logging.LogError(jsonErr, logger)
@@ -172,13 +163,7 @@ func updateRole(id string, name string, description string, filter string, users
 		if response.StatusCode != 200 {
 			factory.HttpError(response.StatusCode, responseBody, logger)
 		} else {
-			if factory.ValidateRoleOutput(output) == true {
-				value := gjson.Get(string(roleInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(roleInfoJson))
-			}
+			fmt.Println(string(roleInfoJson))
 		}
 	}
 }

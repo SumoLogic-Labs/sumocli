@@ -9,6 +9,7 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
+	"reflect"
 	"strconv"
 	"time"
 )
@@ -49,6 +50,7 @@ type liveTailSessionInfo struct {
 
 func StartLiveTailCmd() *cobra.Command {
 	var (
+		filter string
 		tailId string
 	)
 	cmd := &cobra.Command{
@@ -60,8 +62,13 @@ func StartLiveTailCmd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&filter, "filter", "", "")
 	cmd.Flags().StringVar(&tailId, "tailId", "", "Test argument")
 	return cmd
+}
+
+func IsEmpty(response liveTailSessionInfo) bool {
+	return reflect.DeepEqual(liveTailSessionInfo{}, response)
 }
 
 func createLiveTailSession(log zerolog.Logger) string {
@@ -118,7 +125,17 @@ func startLiveTailSession(log zerolog.Logger) {
 			}
 			return tailSession
 		}()
+		if IsEmpty(tailSession.State) == false {
+			for i, userMessage := range tailSession.State.UserMessages {
+				fmt.Println(userMessage)
+				i++
+			}
+		}
 
 		fmt.Println(tailSession.State.TailId)
+		fmt.Println(tailSession.State.CurrentOffset)
+		fmt.Println(tailSession.State.IsStopped)
+		fmt.Println(tailSession.State.Stopped)
+		fmt.Println(tailSession.State.UserMessages)
 	}
 }
