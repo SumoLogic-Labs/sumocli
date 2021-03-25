@@ -10,12 +10,13 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
 	"net/url"
+	"strconv"
 )
 
 func NewCmdCollectorList() *cobra.Command {
 	var (
 		filter  string
-		limit   string
+		limit   int
 		offset  string
 		offline bool
 	)
@@ -30,13 +31,13 @@ func NewCmdCollectorList() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&filter, "filter", "", "Filters the collectors returned using either installed, hosted, dead or alive")
-	cmd.Flags().StringVar(&limit, "limit", "", "Maximum number of collectors returned")
+	cmd.Flags().IntVar(&limit, "limit", 1000, "Maximum number of collectors returned")
 	cmd.Flags().StringVar(&offset, "offset", "", "Offset into the list of collectors")
 	cmd.Flags().BoolVar(&offline, "offline", false, "Lists offline collectors")
 	return cmd
 }
 
-func listCollectors(filter string, limit string, offset string, offline bool, log zerolog.Logger) {
+func listCollectors(filter string, limit int, offset string, offline bool, log zerolog.Logger) {
 	var collectorInfo api.Collectors
 	var requestUrl string
 	if offline == true {
@@ -54,14 +55,10 @@ func listCollectors(filter string, limit string, offset string, offline bool, lo
 			query.Add("filter", filter)
 		}
 	}
-	if limit != "" && offline == false {
-		// TODO: Add validation that string is a number
-		query.Add("limit", limit)
-	}
 	if offset != "" && offline == false {
-		// TODO: Validate something?
 		query.Add("offset", offset)
 	}
+	query.Add("limit", strconv.Itoa(limit))
 	request.URL.RawQuery = query.Encode()
 
 	response, err := client.Do(request)

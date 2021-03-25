@@ -44,6 +44,15 @@ type CollectorsResponse struct {
 	OsTime             int               `json:"osTime,omitempty"`
 }
 
+type Targets struct {
+	Targets []TargetsResponse `json:"targets"`
+}
+
+type TargetsResponse struct {
+	Version string `json:"version"`
+	Latest  bool   `json:"latest"`
+}
+
 type collectorLinks struct {
 	Rel  string `json:"rel"`
 	Href string `json:"href"`

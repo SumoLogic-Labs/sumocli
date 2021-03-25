@@ -6,6 +6,7 @@ import (
 	cmdCollectorDelete "github.com/wizedkyle/sumocli/pkg/cmd/collectors/delete"
 	cmdCollectorGet "github.com/wizedkyle/sumocli/pkg/cmd/collectors/get"
 	cmdCollectorList "github.com/wizedkyle/sumocli/pkg/cmd/collectors/list"
+	cmdCollectorUpgrade "github.com/wizedkyle/sumocli/pkg/cmd/collectors/upgrade"
 )
 
 func NewCmdCollectors() *cobra.Command {
@@ -18,5 +19,6 @@ func NewCmdCollectors() *cobra.Command {
 	cmd.AddCommand(cmdCollectorDelete.NewCmdCollectorDelete())
 	cmd.AddCommand(cmdCollectorGet.NewCmdCollectorGet())
 	cmd.AddCommand(cmdCollectorList.NewCmdCollectorList())
+	cmd.AddCommand(cmdCollectorUpgrade.NewCmdUpgradeCollectors())
 	return cmd
 }

@@ -1,3 +1,0 @@
-package httpmock
-
-import ()
