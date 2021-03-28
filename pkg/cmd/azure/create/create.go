@@ -100,7 +100,7 @@ func azureCreateBlobCollection(category string, prefix string, log zerolog.Logge
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
 	// Creates a Sumo Logic collector and HTTP source
-	collector := create.Collector(collectorName, "", "", "", log)
+	collector := create.Collector(collectorName, "", "", "")
 	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
 
 	// Creates each function app, adds source control integration and provides custom App Settings
@@ -165,7 +165,7 @@ func azureCreateDiagLogCollection(category string, prefix string, log zerolog.Lo
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
 	// Creates a Sumo Logic collector and HTTP source
-	collector := create.Collector(collectorName, "", "", "", log)
+	collector := create.Collector(collectorName, "", "", "")
 	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
 	diagnosticAppSettings := az.DiagnosticLogsAppSettings(
 		sgLogsName,
@@ -206,7 +206,7 @@ func azureCreateMetricCollection(category string, prefix string, log zerolog.Log
 	appServicePlan, _ := createAppServicePlan(ctx, rgName, appPlanName, log)
 
 	// Creates a Sumo Logic collector and HTTP source
-	collector := create.Collector(collectorName, "", "", "", log)
+	collector := create.Collector(collectorName, "", "", "")
 	source := sources.HTTPSource(category, nil, false, false, sourceName, collector.Collector.Id, log)
 	metricsAppSettings := az.MetricsAppSettings(
 		sgLogsName,

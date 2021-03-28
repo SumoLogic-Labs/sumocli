@@ -3,7 +3,6 @@ package list
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -25,8 +24,7 @@ func NewCmdCollectorList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic collectors",
 		Run: func(cmd *cobra.Command, args []string) {
-			log := logging.GetConsoleLogger()
-			listCollectors(filter, limit, offset, offline, log)
+			listCollectors(filter, limit, offset, offline)
 		},
 	}
 
@@ -37,7 +35,8 @@ func NewCmdCollectorList() *cobra.Command {
 	return cmd
 }
 
-func listCollectors(filter string, limit int, offset string, offline bool, log zerolog.Logger) {
+func listCollectors(filter string, limit int, offset string, offline bool) {
+	log := logging.GetConsoleLogger()
 	var collectorInfo api.Collectors
 	var requestUrl string
 	if offline == true {

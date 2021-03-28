@@ -27,7 +27,7 @@ func NewCmdGetUpgradableCollectors() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&toVersion, "toVersion", "", "Collector build to upgrade to, if not specified defaults to the latest version")
+	cmd.Flags().StringVar(&toVersion, "version", "", "Collector build to upgrade to, if not specified defaults to the latest version")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Offset into the list of collectors")
 	cmd.Flags().IntVar(&limit, "limit", 50, "Maximum number of collectors to return")
 	return cmd
