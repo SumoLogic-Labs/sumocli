@@ -117,31 +117,30 @@ func updateRole(id string, name string, description string, filter string, users
 			requestBodySchema.AutoFillDependencies = autofill
 		}
 
-		requestBody, _ := json.Marshal(requestBodySchema)
+		requestBody, err := json.Marshal(requestBodySchema)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal request body")
+		}
 		client, request = factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err = client.Do(request)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to make http request " + requestUrl)
 		}
-
 		defer response.Body.Close()
 		responseBody, err = io.ReadAll(response.Body)
 		if err != nil {
 			log.Error().Err(err).Msg("error reading response body from request")
 		}
-
 		err = json.Unmarshal(responseBody, &roleInfo)
 		if err != nil {
 			log.Error().Err(err).Msg("error unmarshalling response body")
 		}
-
 		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
 		if err != nil {
 			log.Error().Err(err).Msg("error marshalling response body")
 		}
-
 		if response.StatusCode != 200 {
-			log.Fatal().Msg("Error code = " + strconv.Itoa(response.StatusCode) + string(responseBody))
+			log.Error().Msg("Error code = " + strconv.Itoa(response.StatusCode) + string(responseBody))
 		} else {
 			fmt.Println(string(roleInfoJson))
 		}
