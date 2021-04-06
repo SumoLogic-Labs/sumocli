@@ -153,7 +153,10 @@ func updateRole(id string, name string, description string, filter string, users
 			Capabilities:         capabilities,
 			AutoFillDependencies: autofill,
 		}
-		requestBody, _ := json.Marshal(requestBodySchema)
+		requestBody, err := json.Marshal(requestBodySchema)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal request body")
+		}
 
 		requestUrl := "v1/roles/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)

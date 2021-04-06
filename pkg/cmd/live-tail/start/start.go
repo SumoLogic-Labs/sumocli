@@ -30,14 +30,24 @@ type createLiveTailSessionResponse struct {
 }
 
 type liveTailSessionResponse struct {
-	State           liveTailSessionInfo `json:"state"`
-	Messages        []string            `json:"messages"`
-	KeyedErrors     []string            `json:keyedErrors"`
-	Error           bool                `json:"error"`
-	ErrorMessage    string              `json:"errorMessage"`
-	ErrorInstanceId string              `json:"errorInstanceId"`
-	ErrorKey        string              `json:"errorKey"`
-	ResultTraitLog  string              `json:"resultTraitLog"`
+	State           liveTailSessionInfo              `json:"state"`
+	Messages        []liveTailSessionMessageResponse `json:"messages"`
+	KeyedErrors     []string                         `json:keyedErrors"`
+	Error           bool                             `json:"error"`
+	ErrorMessage    string                           `json:"errorMessage"`
+	ErrorInstanceId string                           `json:"errorInstanceId"`
+	ErrorKey        string                           `json:"errorKey"`
+	ResultTraitLog  string                           `json:"resultTraitLog"`
+}
+
+type liveTailSessionMessageResponse struct {
+	Offset         int    `json:"offset"`
+	ReceiptTime    int    `json:"receiptTime"`
+	MessageTime    int    `json:"messageTime"`
+	Payload        string `json:"payload"`
+	SourceName     string `json:"sourceName"`
+	SourceHost     string `json:"sourceHost"`
+	SourceCategory string `json:"sourceCategory"`
 }
 
 type liveTailSessionInfo struct {
@@ -49,21 +59,18 @@ type liveTailSessionInfo struct {
 }
 
 func StartLiveTailCmd() *cobra.Command {
-	var (
-		filter string
-		tailId string
-	)
+	var filter string
 	cmd := &cobra.Command{
 		Use:   "start",
 		Short: "Starts a live tail session",
 		Run: func(cmd *cobra.Command, args []string) {
 			log := logging.GetConsoleLogger()
-			startLiveTailSession(log)
+			startLiveTailSession(filter, log)
 		},
 	}
 
 	cmd.Flags().StringVar(&filter, "filter", "", "")
-	cmd.Flags().StringVar(&tailId, "tailId", "", "Test argument")
+	cmd.MarkFlagRequired(filter)
 	return cmd
 }
 
@@ -71,12 +78,12 @@ func IsEmpty(response liveTailSessionInfo) bool {
 	return reflect.DeepEqual(liveTailSessionInfo{}, response)
 }
 
-func createLiveTailSession(log zerolog.Logger) string {
+func createLiveTailSession(filter string, log zerolog.Logger) string {
 	var session createLiveTailSessionResponse
 	accessId, accessKey, endpoint := login.ReadAccessKeys()
 	requestBodySchema := &CreateLiveTailSessionRequest{
 		IsCLI:  true,
-		Filter: "_sourceCategory=test",
+		Filter: "_sourceCategory=ubuntu/syslog",
 	}
 	requestBody, _ := json.Marshal(requestBodySchema)
 	client, request := factory.NewLiveTailHttpRequest("POST", endpoint+"v1/livetail/session", requestBody)
@@ -97,11 +104,11 @@ func createLiveTailSession(log zerolog.Logger) string {
 	return session.Id
 }
 
-func startLiveTailSession(log zerolog.Logger) {
-	sessionId := createLiveTailSession(log)
+func startLiveTailSession(filter string, log zerolog.Logger) {
+	sessionId := createLiveTailSession(filter, log)
 	accessId, accessKey, endpoint := login.ReadAccessKeys()
+	fmt.Println("### Starting Live Tail Session ###")
 	offset := 0
-	fmt.Println(sessionId)
 
 	for true {
 		latestLiveTailResultsUrl := endpoint + "v1/livetail/session/" + sessionId + "/latest/" + strconv.Itoa(offset)
@@ -126,16 +133,21 @@ func startLiveTailSession(log zerolog.Logger) {
 			return tailSession
 		}()
 		if IsEmpty(tailSession.State) == false {
+			offset = tailSession.State.CurrentOffset + 1
+			messages := tailSession.Messages
+			// TODO: Add the usermessage code
 			for i, userMessage := range tailSession.State.UserMessages {
 				fmt.Println(userMessage)
 				i++
 			}
+
+			// TODO: Add an if statement if the tail is stopped
+
+			for i, message := range messages {
+				fmt.Println(message.Payload)
+				i++
+			}
 		}
 
-		fmt.Println(tailSession.State.TailId)
-		fmt.Println(tailSession.State.CurrentOffset)
-		fmt.Println(tailSession.State.IsStopped)
-		fmt.Println(tailSession.State.Stopped)
-		fmt.Println(tailSession.State.UserMessages)
 	}
 }

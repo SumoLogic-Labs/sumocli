@@ -7,7 +7,7 @@ import (
 
 func NewCmdLiveTail() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "live tail",
+		Use:   "live-tail",
 		Short: "Manages access to live tail via CLI",
 	}
 
