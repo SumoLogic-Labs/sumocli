@@ -17,6 +17,3 @@ jobs:
 
       - name: Build Sumocli
         run: go build -v ./cmd/sumocli
-        
-      - name: Run Tests
-        run: go test ./...
