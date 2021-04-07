@@ -23,7 +23,8 @@ Detailed documentaion for each command can be found here: https://sumocli.gitboo
 
 ## Contributing
 
-Clone or fork the repo, make your changes and create a pull request.
+Clone or fork the repo, make your changes and create a pull request. 
+I will then review it and all things looking good it gets merged!
 
-If there is something you can't access in the repo email: kyle@thepublicclouds.com
+If there is something in the code that you don't understand please feel free to email at kyle@thepublicclouds.com.
 

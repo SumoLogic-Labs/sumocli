@@ -135,19 +135,16 @@ func startLiveTailSession(filter string, log zerolog.Logger) {
 		if IsEmpty(tailSession.State) == false {
 			offset = tailSession.State.CurrentOffset + 1
 			messages := tailSession.Messages
-			// TODO: Add the usermessage code
+
 			for i, userMessage := range tailSession.State.UserMessages {
 				fmt.Println(userMessage)
 				i++
 			}
-
-			// TODO: Add an if statement if the tail is stopped
 
 			for i, message := range messages {
 				fmt.Println(message.Payload)
 				i++
 			}
 		}
-
 	}
 }
