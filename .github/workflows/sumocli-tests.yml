@@ -15,11 +15,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Download Dependencies
-        run: go mod download
-
-      - name: Run Tests
-        run: go test ./...
-
       - name: Build Sumocli
         run: go build -v ./cmd/sumocli
+        
+      - name: Run Tests
+        run: go test ./...
