@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.2'
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v1
         with:
@@ -100,6 +102,8 @@ jobs:
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.2'
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
@@ -134,6 +138,8 @@ jobs:
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.2'
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
@@ -168,6 +174,8 @@ jobs:
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.2'
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
