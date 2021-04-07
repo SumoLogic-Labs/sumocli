@@ -44,7 +44,44 @@ type CollectorsResponse struct {
 	OsTime             int               `json:"osTime,omitempty"`
 }
 
+type Targets struct {
+	Targets []targetsResponse `json:"targets"`
+}
+
+type UpgradeTask struct {
+	CollectorId int    `json:"collectorId"`
+	ToVersion   string `json:"toVersion"`
+}
+
+type UpgradeTaskResponse struct {
+	Id   string          `json:"id"`
+	Link upgradeTaskLink `json:"link"`
+}
+
+type UpgradeTaskStatus struct {
+	Upgrade upgradeTaskProgress `json:"upgrade"`
+}
+
 type collectorLinks struct {
 	Rel  string `json:"rel"`
 	Href string `json:"href"`
+}
+
+type targetsResponse struct {
+	Version string `json:"version"`
+	Latest  bool   `json:"latest"`
+}
+
+type upgradeTaskLink struct {
+	Rel  string `json:"rel"`
+	Href string `json:"href"`
+}
+
+type upgradeTaskProgress struct {
+	Id          int    `json:"id"`
+	CollectorId int    `json:"collectorId"`
+	ToVersion   string `json:"toVersion"`
+	RequestTime int    `json:"requestTime"`
+	Status      int    `json:"status"`
+	Message     string `json:"message"`
 }

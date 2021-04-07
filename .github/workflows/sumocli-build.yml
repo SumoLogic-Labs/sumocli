@@ -127,8 +127,8 @@ jobs:
           asset_name: sumocli-linux-amd64.zip
           asset_content_type: application/zip
 
-  build_macos:
-    name: Build macOS Binary
+  build_macos_intel:
+    name: Build macOS Binary (Intel)
     needs: [create_semver, create_github_release]
     runs-on: macos-latest
     steps:
@@ -151,7 +151,7 @@ jobs:
       - name: Zip Releases
         run: |
           zip -r sumocli-macos-amd64.zip sumocli
-      - name: Upload Windows Release Asset
+      - name: Upload macOS Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -159,4 +159,38 @@ jobs:
           upload_url: ${{ needs.create_github_release.outputs.releaseurl }}
           asset_path: ./sumocli-macos-amd64.zip
           asset_name: sumocli-macos-amd64.zip
+          asset_content_type: application/zip
+
+  build_macos_apple_silicon:
+    name: Build macOS Binary (Apple Silicon)
+    needs: [create_semver, create_github_release]
+    runs-on: macos-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Download Dependencies
+        run: go mod download
+      - name: Build Sumocli
+        shell: pwsh
+        run: |
+          $build = $Env:GITHUB_RUN_NUMBER
+          $time = Get-Date
+          go build GOOS=darwin GOARCH=arm64 -ldflags `
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+            ./cmd/sumocli
+      - name: Zip Releases
+        run: |
+          zip -r sumocli-macos-arm64.zip sumocli
+      - name: Upload macOS Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_github_release.outputs.releaseurl }}
+          asset_path: ./sumocli-macos-arm64.zip
+          asset_name: sumocli-macos-arm64.zip
           asset_content_type: application/zip

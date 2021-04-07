@@ -10,7 +10,7 @@ import (
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -80,7 +80,7 @@ func userDisableMFA(logger zerolog.Logger) {
 	logging.LogError(err, logger)
 
 	defer response.Body.Close()
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	logging.LogError(err, logger)
 
 	if response.StatusCode != 204 {

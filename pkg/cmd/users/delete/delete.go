@@ -3,12 +3,11 @@ package delete
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
+	"io"
 )
 
 func NewCmdUserDelete() *cobra.Command {
@@ -21,33 +20,37 @@ func NewCmdUserDelete() *cobra.Command {
 		Use:   "delete",
 		Short: "Deletes a Sumo Logic user",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User delete request started.")
-			deleteUser(id, transferTo, logger)
-			logger.Debug().Msg("User delete request finished.")
+			deleteUser(id, transferTo)
 		},
 	}
 
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to delete.")
-	cmd.Flags().StringVar(&transferTo, "transferTo", "", "Specify the id of the user to transfer data to.")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to delete")
+	cmd.Flags().StringVar(&transferTo, "transferTo", "", "Specify the id of the user to transfer data to")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func deleteUser(id string, transferTo string, logger zerolog.Logger) {
+func deleteUser(id string, transferTo string) {
+	log := logging.GetConsoleLogger()
 	requestUrl := "v1/users/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
+	}
 
 	defer response.Body.Close()
-	responseBody, err := ioutil.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("error reading response body from request")
+	}
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
-		jsonErr := json.Unmarshal(responseBody, &responseError)
-		logging.LogError(jsonErr, logger)
+		err := json.Unmarshal(responseBody, &responseError)
+		if err != nil {
+			log.Error().Err(err).Msg("error unmarshalling response body")
+		}
 	} else {
 		fmt.Println("User was deleted.")
 	}

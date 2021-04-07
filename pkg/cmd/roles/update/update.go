@@ -3,15 +3,13 @@ package update
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
-	"os"
+	"io"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -25,7 +23,6 @@ func NewCmdRoleUpdate() *cobra.Command {
 		capabilities []string
 		autofill     bool
 		merge        bool
-		output       string
 	)
 
 	cmd := &cobra.Command{
@@ -34,7 +31,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
 			logger.Debug().Msg("Role update request started.")
-			updateRole(id, name, description, filter, users, capabilities, autofill, merge, output, logger)
+			updateRole(id, name, description, filter, users, capabilities, autofill, merge)
 			logger.Debug().Msg("Role update request finished.")
 		},
 	}
@@ -47,7 +44,6 @@ func NewCmdRoleUpdate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities.")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
 	cmd.Flags().BoolVar(&merge, "merge", true, "Is set to true by default, if set to false it will overwrite the role.")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from.")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("name")
 	cmd.MarkFlagRequired("description")
@@ -57,25 +53,27 @@ func NewCmdRoleUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool, output string, logger zerolog.Logger) {
+func updateRole(id string, name string, description string, filter string, users []string, capabilities []string, autofill bool, merge bool) {
+	log := logging.GetConsoleLogger()
 	var roleInfo api.RoleData
-
 	if merge == true {
 		requestUrl := "v1/roles/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
-		logging.LogError(err, logger)
-
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request " + requestUrl)
+		}
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
-		logging.LogError(err, logger)
-
-		jsonErr := json.Unmarshal(responseBody, &roleInfo)
-		logging.LogError(jsonErr, logger)
-
+		responseBody, err := io.ReadAll(response.Body)
+		if err != nil {
+			log.Error().Err(err).Msg("error reading response body from request")
+		}
+		err = json.Unmarshal(responseBody, &roleInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("error unmarshalling response body")
+		}
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
-			os.Exit(0)
+			log.Fatal().Msg("Error code = " + strconv.Itoa(response.StatusCode) + string(responseBody))
 		}
 
 		// Building body payload to update the role based on the differences
@@ -119,30 +117,32 @@ func updateRole(id string, name string, description string, filter string, users
 			requestBodySchema.AutoFillDependencies = autofill
 		}
 
-		requestBody, _ := json.Marshal(requestBodySchema)
+		requestBody, err := json.Marshal(requestBodySchema)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal request body")
+		}
 		client, request = factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err = client.Do(request)
-		logging.LogError(err, logger)
-
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request " + requestUrl)
+		}
 		defer response.Body.Close()
-		responseBody, err = ioutil.ReadAll(response.Body)
-
-		jsonErr = json.Unmarshal(responseBody, &roleInfo)
-		logging.LogError(jsonErr, logger)
-
+		responseBody, err = io.ReadAll(response.Body)
+		if err != nil {
+			log.Error().Err(err).Msg("error reading response body from request")
+		}
+		err = json.Unmarshal(responseBody, &roleInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("error unmarshalling response body")
+		}
 		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-		logging.LogError(err, logger)
-
+		if err != nil {
+			log.Error().Err(err).Msg("error marshalling response body")
+		}
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
+			log.Error().Msg("Error code = " + strconv.Itoa(response.StatusCode) + string(responseBody))
 		} else {
-			if factory.ValidateRoleOutput(output) == true {
-				value := gjson.Get(string(roleInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(roleInfoJson))
-			}
+			fmt.Println(string(roleInfoJson))
 		}
 	} else {
 		requestBodySchema := &api.UpdateRoleRequest{
@@ -153,32 +153,38 @@ func updateRole(id string, name string, description string, filter string, users
 			Capabilities:         capabilities,
 			AutoFillDependencies: autofill,
 		}
-		requestBody, _ := json.Marshal(requestBodySchema)
+		requestBody, err := json.Marshal(requestBodySchema)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal request body")
+		}
 
 		requestUrl := "v1/roles/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request")
+		}
 
 		defer response.Body.Close()
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
+		if err != nil {
+			log.Error().Err(err).Msg("error reading response body from request")
+		}
 
-		jsonErr := json.Unmarshal(responseBody, &roleInfo)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &roleInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("error unmarshalling response body")
+		}
 
 		roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("error marshalling response body")
+		}
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
+			log.Fatal().Msg("Error code = " + strconv.Itoa(response.StatusCode) + string(responseBody))
 		} else {
-			if factory.ValidateRoleOutput(output) == true {
-				value := gjson.Get(string(roleInfoJson), output)
-				formattedValue := strings.Trim(value.String(), `"[]"`)
-				fmt.Println(formattedValue)
-			} else {
-				fmt.Println(string(roleInfoJson))
-			}
+			fmt.Println(string(roleInfoJson))
 		}
 	}
 }

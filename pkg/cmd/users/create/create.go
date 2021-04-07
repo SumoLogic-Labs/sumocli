@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
-	"strings"
+	"io"
 )
 
 func NewCmdUserCreate() *cobra.Command {
@@ -19,7 +17,6 @@ func NewCmdUserCreate() *cobra.Command {
 		lastName     string
 		emailAddress string
 		roleIds      []string
-		output       string
 	)
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -27,7 +24,7 @@ func NewCmdUserCreate() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := logging.GetLoggerForCommand(cmd)
 			logger.Debug().Msg("User create request started.")
-			user(firstName, lastName, emailAddress, roleIds, output, logger)
+			user(firstName, lastName, emailAddress, roleIds, logger)
 			logger.Debug().Msg("User create request finished.")
 		},
 	}
@@ -36,7 +33,6 @@ func NewCmdUserCreate() *cobra.Command {
 	cmd.Flags().StringVar(&lastName, "lastname", "", "Last name of the user")
 	cmd.Flags().StringVar(&emailAddress, "email", "", "Email address of the user")
 	cmd.Flags().StringSliceVar(&roleIds, "roleids", []string{}, "Comma deliminated list of Role Ids")
-	cmd.Flags().StringVar(&output, "output", "", "Specify the field to export the value from")
 	cmd.MarkFlagRequired("firstname")
 	cmd.MarkFlagRequired("lastname")
 	cmd.MarkFlagRequired("email")
@@ -45,7 +41,7 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string, output string, logger zerolog.Logger) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string, logger zerolog.Logger) {
 	var createUserResponse api.UserResponse
 
 	requestBodySchema := &api.CreateUserRequest{
@@ -60,7 +56,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	logging.LogError(err, logger)
 
 	defer response.Body.Close()
-	responseBody, err := ioutil.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 
 	jsonErr := json.Unmarshal(responseBody, &createUserResponse)
 	logging.LogError(jsonErr, logger)
@@ -71,13 +67,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, logger)
 	} else {
-		if factory.ValidateUserOutput(output) == true {
-			value := gjson.Get(string(createUserResponseJson), output)
-			formattedValue := strings.Trim(value.String(), `"[]"`)
-			fmt.Println(formattedValue)
-		} else {
-			fmt.Println(string(createUserResponseJson))
-			fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
-		}
+		fmt.Println(string(createUserResponseJson))
+		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)
 	}
 }
