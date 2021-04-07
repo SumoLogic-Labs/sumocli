@@ -19,7 +19,7 @@ The repo is using Go modules so you can run go build:
 
 ## Documentation
 
-Detailed documentaion for each command can be found here: https://sumocli.gitbook.io/
+Documentation for each command can be found by using `sumocli <command> --help`
 
 ## Contributing
 
