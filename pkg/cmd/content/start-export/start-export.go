@@ -1,4 +1,4 @@
-package get
+package start_export
 
 import (
 	"encoding/json"
@@ -10,29 +10,28 @@ import (
 	"io"
 )
 
-func NewCmdRoleGet() *cobra.Command {
+func NewCmdStartExport() *cobra.Command {
 	var id string
 
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic role information",
+		Use: "start-export",
+		Short: "Starts an asynchronous export of content with the given identifier. You will be given a job identifier" +
+			"which can be used with the sumocli content export-status command." +
+			"If the content is a folder everything under that folder is exported recursively.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role get request started.")
-			getRole(id)
-			logger.Debug().Msg("Role get request finished.")
+			startExport(id)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to get")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content item to export")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getRole(id string) {
-	var roleInfo api.RoleData
+func startExport(id string) {
+	var exportResponse api.StartExportResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/roles/" + id
-	client, request := factory.NewHttpRequest("GET", requestUrl)
+	requestUrl := "v2/content/" + id + "/export"
+	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -44,19 +43,19 @@ func getRole(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &roleInfo)
+	err = json.Unmarshal(responseBody, &exportResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+	exportJson, err := json.MarshalIndent(exportResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal roleInfo")
+		log.Error().Err(err).Msg("failed to marshal exportResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(roleInfoJson))
+		fmt.Println(string(exportJson))
 	}
 }

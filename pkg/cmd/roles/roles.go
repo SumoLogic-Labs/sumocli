@@ -15,7 +15,7 @@ func NewCmdRole() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "roles <command>",
 		Short: "Manage roles",
-		Long:  "Work with Sumo Logic roles",
+		Long:  "Commands that allow you to manage roles in your Sumo Logic tenant",
 	}
 
 	cmd.AddCommand(cmdRoleAssign.NewCmdRoleAssign())

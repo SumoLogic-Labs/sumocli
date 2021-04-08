@@ -4,8 +4,10 @@ import (
 	"github.com/spf13/cobra"
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
+	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
+	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -24,8 +26,10 @@ func NewCmdRoot() *cobra.Command {
 	// Add subcommands
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
+	cmd.AddCommand(contentCmd.NewCmdContent())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
+	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
 	cmd.AddCommand(usersCmd.NewCmdUser())

@@ -1,4 +1,4 @@
-package get
+package get_path
 
 import (
 	"encoding/json"
@@ -10,28 +10,25 @@ import (
 	"io"
 )
 
-func NewCmdRoleGet() *cobra.Command {
+func NewCmdGetPath() *cobra.Command {
 	var id string
 
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic role information",
+		Use:   "get-path",
+		Short: "Gets the full path of a content item with the given identifier",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role get request started.")
-			getRole(id)
-			logger.Debug().Msg("Role get request finished.")
+			getPath(id)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to get")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getRole(id string) {
-	var roleInfo api.RoleData
+func getPath(id string) {
+	var pathResponse api.GetPathResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/roles/" + id
+	requestUrl := "v2/content/" + id + "/path"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -44,19 +41,19 @@ func getRole(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &roleInfo)
+	err = json.Unmarshal(responseBody, &pathResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+	pathJson, err := json.MarshalIndent(pathResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal roleInfo")
+		log.Error().Err(err).Msg("failed to marshal pathResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(roleInfoJson))
+		fmt.Println(string(pathJson))
 	}
 }

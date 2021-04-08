@@ -8,31 +8,32 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
+	"net/url"
 )
 
-func NewCmdRoleGet() *cobra.Command {
-	var id string
+func NewCmdGet() *cobra.Command {
+	var path string
 
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Gets a Sumo Logic role information",
+		Short: "Gets a content item corresponding to the provided path",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role get request started.")
-			getRole(id)
-			logger.Debug().Msg("Role get request finished.")
+			getContent(path)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to get")
-	cmd.MarkFlagRequired("id")
+	cmd.Flags().StringVar(&path, "path", "", "Specify the path of the content you want to retrieve")
+	cmd.MarkFlagRequired("path")
 	return cmd
 }
 
-func getRole(id string) {
-	var roleInfo api.RoleData
+func getContent(path string) {
+	var contentResponse api.GetContentResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/roles/" + id
+	requestUrl := "v2/content/path"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
+	query := url.Values{}
+	query.Add("path", path)
+	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -44,19 +45,19 @@ func getRole(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &roleInfo)
+	err = json.Unmarshal(responseBody, &contentResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
+	contentJson, err := json.MarshalIndent(contentResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal roleInfo")
+		log.Error().Err(err).Msg("failed to marshal contentResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(roleInfoJson))
+		fmt.Println(string(contentJson))
 	}
 }
