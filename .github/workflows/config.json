@@ -2,7 +2,7 @@
   "source" : ["./sumocli"],
   "bundle_id" : "com.thepublicclouds.sumocli",
   "apple_id": {
-    "username" : "@env:AC_USERNAME",
+    "username" : "kyle.jackson733@gmail.com",
     "password":  "@env:AC_PASSWORD"
   },
   "sign" :{
