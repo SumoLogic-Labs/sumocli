@@ -16,5 +16,5 @@ dmg {
 }
 
 zip {
-  output_path = "sumocli-macos-arm64.zip"
+  output_path = "sumocli.zip"
 }
