@@ -217,7 +217,7 @@ type reportPanelSyncDefinition struct {
 	MetricsQueries            []metricsQueriesDefinition `json:"metricsQueries"`
 	TimeRange                 timeRangeDefinition        `json:"timeRange"`
 	X                         int                        `json:"x"`
-	Y                         int                        `json:"Y"`
+	Y                         int                        `json:"y"`
 	Width                     int                        `json:"width"`
 	Height                    int                        `json:"height"`
 	Properties                string                     `json:"properties"`
