@@ -19,7 +19,7 @@ func NewCmdExportStatus() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "export-status",
-		Short: "",
+		Short: "Get the status of an asynchronous content export request for the given job identifier",
 		Run: func(cmd *cobra.Command, args []string) {
 			exportStatus(contentId, jobId, isAdminMode)
 		},

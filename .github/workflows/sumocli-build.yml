@@ -154,6 +154,9 @@ jobs:
             -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
             -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
+        env:
+          GOOS: darwin
+          GOARCH: amd64
       - name: Zip Releases
         run: |
           zip -r sumocli-macos-amd64.zip sumocli
@@ -181,18 +184,41 @@ jobs:
       - name: Download Dependencies
         run: go mod download
       - name: Build Sumocli
-        shell: pwsh
+        shell: bash
         run: |
-          $build = $Env:GITHUB_RUN_NUMBER
-          $time = Get-Date
-          go build GOOS=darwin GOARCH=arm64 -ldflags `
-            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' `
-            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$build' `
-            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" `
+          time=$(date)
+          go build -ldflags \
+            "-X 'github.com/wizedkyle/sumocli/internal/build.Version=${{ needs.create_semver.outputs.semvertag }}' \
+            -X 'github.com/wizedkyle/sumocli/internal/build.Build=$GITHUB_RUN_NUMBER' \
+            -X 'github.com/wizedkyle/sumocli/internal/build.Date=$time'" \
             ./cmd/sumocli
-      - name: Zip Releases
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+      - name: Install gon
+        shell: bash
         run: |
-          zip -r sumocli-macos-arm64.zip sumocli
+          brew tap mitchellh/gon
+          brew install mitchellh/gon/gon
+      - name: Sign and Notarize Binary
+        shell: bash
+        run: |
+          # Install signing certificate
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+          security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Sign macOS build
+          gon .github/workflows/config.hcl
+        env:
+          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
+          APPLE_DEV_CERT_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       - name: Upload macOS Release Asset
         uses: actions/upload-release-asset@v1
         env:

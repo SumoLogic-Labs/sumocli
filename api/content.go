@@ -7,7 +7,7 @@ type DashboardSyncDefinition struct {
 	DetailLevel int                         `json:"detailLevel"`
 	Properties  string                      `json:"properties"`
 	Panels      []reportPanelSyncDefinition `json:"panels"`
-	Filters     filtersSyncDefinition       `json:"filters"`
+	Filters     []filtersSyncDefinition     `json:"filters"`
 }
 
 type FolderSyncDefinition struct {
@@ -34,15 +34,33 @@ type GetPathResponse struct {
 }
 
 type MetricsSavedSearchSyncDefinition struct {
-	Type
+	Type                      string                     `json:"type"`
+	Name                      string                     `json:"name"`
+	Description               string                     `json:"description"`
+	TimeRange                 timeRangeDefinition        `json:"timeRange"`
+	LogQuery                  string                     `json:"logQuery"`
+	MetricsQueries            []metricsQueriesDefinition `json:"metricsQueries"`
+	DesiredQuantizationInSecs int                        `json:"desiredQuantizationInSecs"`
+	Properties                string                     `json:"properties"`
 }
 
 type MetricsSearchSyncDefinition struct {
-	Type
+	Type           string              `json:"type"`
+	Name           string              `json:"name"`
+	TimeRange      timeRangeDefinition `json:"timeRange"`
+	Description    string              `json:"description"`
+	Queries        []queries           `json:"queries"`
+	VisualSettings string              `json:"visualSettings"`
 }
 
 type LookupTableSyncDefinition struct {
-	Type
+	Type            string   `json:"type"`
+	Name            string   `json:"name"`
+	Description     string   `json:"description"`
+	Fields          []fields `json:"fields"`
+	PrimaryKeys     []string `json:"primaryKeys"`
+	TTL             int      `json:"ttl"`
+	SizeLimitAction string   `json:"sizeLimitAction"`
 }
 
 type MewboardSyncDefinition struct {
@@ -61,8 +79,16 @@ type MewboardSyncDefinition struct {
 	ColoringRules    coloringRulesDefinition `json:"coloringRules"`
 }
 
+type ResponseType struct {
+	Type string `json:"type"`
+}
+
 type SavedSearchWithScheduleSyncDefinition struct {
-	Type
+	Type           string         `json:"type"`
+	Name           string         `json:"name"`
+	Search         search         `json:"search"`
+	SearchSchedule searchSchedule `json:"searchSchedule"`
+	Description    string         `json:"description"`
 }
 
 type StartExportResponse struct {
@@ -117,6 +143,11 @@ type exportError struct {
 	Detail  string `json:"detail,omitempty"`
 }
 
+type fields struct {
+	FieldName string `json:"fieldName"`
+	FieldType string `json:"fieldType"`
+}
+
 type filtersSyncDefinition struct {
 	FieldName    string   `json:"fieldName"`
 	Label        string   `json:"label"`
@@ -150,6 +181,21 @@ type panelsDefinition struct {
 	PanelType                              string `json:"panelType"`
 }
 
+type queries struct {
+	QueryString string `json:"queryString"`
+	QueryType   string `json:"queryType"`
+	QueryKey    string `json:"queryKey"`
+}
+
+type queryParameters struct {
+	Name         string       `json:"name"`
+	Label        string       `json:"label"`
+	Description  string       `json:"description"`
+	DataType     string       `json:"dataType"`
+	Value        string       `json:"value"`
+	AutoComplete autoComplete `json:"autoComplete"`
+}
+
 type rootPanelDefinition struct {
 	Id                                     string                    `json:"id"`
 	Key                                    string                    `json:"key"`
@@ -181,6 +227,43 @@ type reportPanelSyncDefinition struct {
 	AutoParsingInfo           autoParsingInfo            `json:"autoParsingInfo"`
 }
 
+type search struct {
+	QueryText        string            `json:"queryText"`
+	DefaultTimeRange string            `json:"defaultTimeRange"`
+	ByReceiptTime    bool              `json:"byReceiptTime"`
+	ViewName         string            `json:"viewName"`
+	ViewStartTime    string            `json:"viewStartTime"`
+	QueryParameters  []queryParameters `json:"queryParameters"`
+	ParsingMode      string            `json:"parsingMode"`
+}
+
+type searchSchedule struct {
+	CronExpression       string                     `json:"cronExpression"`
+	DisplayableTimeRange string                     `json:"displayableTimeRange"`
+	ParseableTimeRange   timeRangeDefinition        `json:"parseableTimeRange"`
+	TimeZone             string                     `json:"timeZone"`
+	Threshold            searchScheduleThreshold    `json:"threshold"`
+	Notification         searchScheduleNotification `json:"notification"`
+	ScheduleType         string                     `json:"scheduleType"`
+	MuteErrorEmails      bool                       `json:"muteErrorEmails"`
+	Parameters           []searchScheduleParamters  `json:"parameters"`
+}
+
+type searchScheduleNotification struct {
+	TaskType string `json:"taskType"`
+}
+
+type searchScheduleParamters struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type searchScheduleThreshold struct {
+	ThresholdType string `json:"thresholdType"`
+	Operator      string `json:"operator"`
+	Count         int    `json:"count"`
+}
+
 type timeRangeDefinition struct {
 	Type string                  `json:"type"`
 	From timeRangeFromDefinition `json:"from"`
@@ -193,15 +276,6 @@ type timeRangeFromDefinition struct {
 
 type topologyLabelMap struct {
 	Service []string `json:"service"`
-}
-
-type queryParameters struct {
-	Name         string       `json:"name"`
-	Label        string       `json:"label"`
-	Description  string       `json:"description"`
-	DataType     string       `json:"dataType"`
-	Value        string       `json:"value"`
-	AutoComplete autoComplete `json:"autoComplete"`
 }
 
 type variablesDefinition struct {
