@@ -176,7 +176,7 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
 
           # Sign macOS build
-          gon .github/workflows/config.hcl
+          gon -log-level=info -log-json .github/workflows/config.json
         env:
           APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
           APPLE_DEV_CERT_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
@@ -240,7 +240,7 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
 
           # Sign macOS build
-          gon .github/workflows/config.hcl
+          gon -log-level=info -log-json .github/workflows/config.json
         env:
           APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
           APPLE_DEV_CERT_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
