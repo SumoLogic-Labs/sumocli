@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -124,7 +123,7 @@ func getCredentials() {
 		}
 	}
 	credentialFile, _ := json.MarshalIndent(credentials, "", "  ")
-	err = ioutil.WriteFile(configPath(), credentialFile, 0644)
+	err = os.WriteFile(configPath(), credentialFile, 0644)
 	if err != nil {
 		Logger.Fatal().Err(err)
 	} else {
