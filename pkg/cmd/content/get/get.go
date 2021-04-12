@@ -21,7 +21,7 @@ func NewCmdGet() *cobra.Command {
 			getContent(path)
 		},
 	}
-	cmd.Flags().StringVar(&path, "path", "", "Specify the path of the content you want to retrieve")
+	cmd.Flags().StringVar(&path, "path", "", "Specify the path of the content you want to retrieve (e.g. /Library/Users/user@demo.com/SampleFolder)")
 	cmd.MarkFlagRequired("path")
 	return cmd
 }

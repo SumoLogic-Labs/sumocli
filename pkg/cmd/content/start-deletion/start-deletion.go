@@ -1,4 +1,4 @@
-package start_export
+package start_deletion
 
 import (
 	"encoding/json"
@@ -10,32 +10,30 @@ import (
 	"io"
 )
 
-func NewCmdStartExport() *cobra.Command {
+func NewCmdStartDeletion() *cobra.Command {
 	var (
 		id          string
 		isAdminMode bool
 	)
 
 	cmd := &cobra.Command{
-		Use: "start-export",
-		Short: "Starts an asynchronous export of content with the given identifier. You will be given a job identifier" +
-			"which can be used with the sumocli content export-status command." +
-			"If the content is a folder everything under that folder is exported recursively.",
+		Use:   "start-deletion",
+		Short: "Start an asynchronous content deletion job with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			startExport(id, isAdminMode)
+			startDeletion(id, isAdminMode)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content item to export")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content to delete")
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func startExport(id string, isAdminMode bool) {
-	var exportResponse api.StartExportResponse
+func startDeletion(id string, isAdminMode bool) {
+	var deletionResponse api.StartExportResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/export"
-	client, request := factory.NewHttpRequest("POST", requestUrl)
+	requestUrl := "v2/content/" + id + "/delete"
+	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")
 	}
@@ -50,12 +48,12 @@ func startExport(id string, isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &exportResponse)
+	err = json.Unmarshal(responseBody, &deletionResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	exportJson, err := json.MarshalIndent(exportResponse, "", "    ")
+	exportJson, err := json.MarshalIndent(deletionResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal exportResponse")
 	}

@@ -1,4 +1,4 @@
-package start_export
+package deletion_status
 
 import (
 	"encoding/json"
@@ -10,32 +10,33 @@ import (
 	"io"
 )
 
-func NewCmdStartExport() *cobra.Command {
+func NewCmdDeletionStatus() *cobra.Command {
 	var (
 		id          string
+		jobId       string
 		isAdminMode bool
 	)
 
 	cmd := &cobra.Command{
-		Use: "start-export",
-		Short: "Starts an asynchronous export of content with the given identifier. You will be given a job identifier" +
-			"which can be used with the sumocli content export-status command." +
-			"If the content is a folder everything under that folder is exported recursively.",
+		Use:   "deletion-status",
+		Short: "Get the status of an asynchronous content deletion job request for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			startExport(id, isAdminMode)
+			deletionStatus(id, jobId, isAdminMode)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content item to export")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content to delete")
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the deletion (returned from running sumocli content start-deletion)")
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
-	cmd.MarkFlagRequired("id")
+	cmd.MarkFlagRequired("contentId")
+	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func startExport(id string, isAdminMode bool) {
-	var exportResponse api.StartExportResponse
+func deletionStatus(id string, jobId string, isAdminMode bool) {
+	var deletionStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/export"
-	client, request := factory.NewHttpRequest("POST", requestUrl)
+	requestUrl := "v2/content/" + id + "/delete/" + jobId + "/status"
+	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")
 	}
@@ -50,19 +51,19 @@ func startExport(id string, isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &exportResponse)
+	err = json.Unmarshal(responseBody, &deletionStatusResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	exportJson, err := json.MarshalIndent(exportResponse, "", "    ")
+	importStatusJson, err := json.MarshalIndent(deletionStatusResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal exportResponse")
+		log.Error().Err(err).Msg("failed to marshal exportStatusResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(exportJson))
+		fmt.Println(string(importStatusJson))
 	}
 }
