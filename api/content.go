@@ -33,6 +33,16 @@ type GetPathResponse struct {
 	Path string `json:"path"`
 }
 
+type LookupTableSyncDefinition struct {
+	Type            string   `json:"type"`
+	Name            string   `json:"name"`
+	Description     string   `json:"description"`
+	Fields          []fields `json:"fields"`
+	PrimaryKeys     []string `json:"primaryKeys"`
+	TTL             int      `json:"ttl"`
+	SizeLimitAction string   `json:"sizeLimitAction"`
+}
+
 type MetricsSavedSearchSyncDefinition struct {
 	Type                      string                     `json:"type"`
 	Name                      string                     `json:"name"`
@@ -53,16 +63,6 @@ type MetricsSearchSyncDefinition struct {
 	VisualSettings string              `json:"visualSettings"`
 }
 
-type LookupTableSyncDefinition struct {
-	Type            string   `json:"type"`
-	Name            string   `json:"name"`
-	Description     string   `json:"description"`
-	Fields          []fields `json:"fields"`
-	PrimaryKeys     []string `json:"primaryKeys"`
-	TTL             int      `json:"ttl"`
-	SizeLimitAction string   `json:"sizeLimitAction"`
-}
-
 type MewboardSyncDefinition struct {
 	Type             string                  `json:"type"`
 	Name             string                  `json:"name"`
@@ -77,6 +77,11 @@ type MewboardSyncDefinition struct {
 	Panels           panelsDefinition        `json:"panels"`
 	Variables        variablesDefinition     `json:"variables"`
 	ColoringRules    coloringRulesDefinition `json:"coloringRules"`
+}
+
+type MoveResponse struct {
+	Id     string       `json:"id"`
+	Errors []moveErrors `json:"errors"`
 }
 
 type ResponseType struct {
@@ -170,6 +175,11 @@ type layoutStructure struct {
 type metricsQueriesDefinition struct {
 	Query string `json:"query"`
 	RowId string `json:"rowId"`
+}
+
+type moveErrors struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
 }
 
 type panelsDefinition struct {

@@ -1,4 +1,4 @@
-package import_status
+package copy_status
 
 import (
 	"encoding/json"
@@ -10,32 +10,32 @@ import (
 	"io"
 )
 
-func NewCmdImportStatus() *cobra.Command {
+func NewCmdCopyStatus() *cobra.Command {
 	var (
-		folderId    string
+		id          string
 		jobId       string
 		isAdminMode bool
 	)
 
 	cmd := &cobra.Command{
-		Use:   "import-status",
-		Short: "Get the status of an asynchronous content import request for the given job identifier",
+		Use:   "copy-status",
+		Short: "Get the status of the copy request with the given job identifier. On success, field statusMessage will contain identifier of the newly copied content.",
 		Run: func(cmd *cobra.Command, args []string) {
-			importStatus(folderId, jobId, isAdminMode)
+			copyStatus(id, jobId, isAdminMode)
 		},
 	}
-	cmd.Flags().StringVar(&folderId, "folderId", "", "Specify the id of the folder to import to")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content that was copied")
 	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the import (returned from running sumocli content start-import)")
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
-	cmd.MarkFlagRequired("folderId")
+	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func importStatus(folderId string, jobId string, isAdminMode bool) {
-	var importStatusResponse api.ExportStatusResponse
+func copyStatus(id string, jobId string, isAdminMode bool) {
+	var copyStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/folders/" + folderId + "/import/" + jobId + "/status"
+	requestUrl := "v2/content/" + id + "/copy/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")
@@ -51,12 +51,12 @@ func importStatus(folderId string, jobId string, isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &importStatusResponse)
+	err = json.Unmarshal(responseBody, &copyStatusResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	importStatusJson, err := json.MarshalIndent(importStatusResponse, "", "    ")
+	copyStatusJson, err := json.MarshalIndent(copyStatusResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal exportStatusResponse")
 	}
@@ -64,6 +64,6 @@ func importStatus(folderId string, jobId string, isAdminMode bool) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(importStatusJson))
+		fmt.Println(string(copyStatusJson))
 	}
 }
