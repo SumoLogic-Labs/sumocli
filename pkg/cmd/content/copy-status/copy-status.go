@@ -25,7 +25,7 @@ func NewCmdCopyStatus() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content that was copied")
-	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the import (returned from running sumocli content start-import)")
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the copy (returned from running sumocli content start-copy)")
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("jobId")

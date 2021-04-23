@@ -20,6 +20,23 @@ type FolderResponse struct {
 	Children    []folderChildren `json:"children"`
 }
 
+type GlobalFolderResponse struct {
+	Id string `json:"id"`
+}
+
+type GlobalFolderResultResponse struct {
+	Data []folderChildren `json:"data"`
+}
+
+type GlobalFolderStatusRequest struct {
+	JobId string `json:"jobId"`
+}
+
+type GlobalFolderStatusResponse struct {
+	Status        string `json:"status"`
+	StatusMessage string `json:"statusMessage"`
+}
+
 type UpdateFolderRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`

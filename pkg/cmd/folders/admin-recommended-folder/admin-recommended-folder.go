@@ -1,4 +1,4 @@
-package global_folder
+package admin_recommended_folder
 
 import (
 	"encoding/json"
@@ -10,25 +10,24 @@ import (
 	"io"
 )
 
-func NewCmdGlobalFolder() *cobra.Command {
+func NewCmdAdminRecommendedFolder() *cobra.Command {
 	var isAdminMode bool
 
 	cmd := &cobra.Command{
-		Use: "global-folder",
-		Short: "Schedule an asynchronous job to get global folder. " +
-			"Global folder contains all content items that a user has permissions to view in the organization.",
+		Use:   "admin-recommended-folder",
+		Short: "Schedule an asynchronous job to get the top-level Admin Recommended content items.",
 		Run: func(cmd *cobra.Command, args []string) {
-			globalFolder(isAdminMode)
+			adminRecommendedFolder(isAdminMode)
 		},
 	}
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
 	return cmd
 }
 
-func globalFolder(isAdminMode bool) {
-	var globalFolderResponse api.GlobalFolderResponse
+func adminRecommendedFolder(isAdminMode bool) {
+	var adminRecommendedFolderResponse api.GlobalFolderResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/folders/global"
+	requestUrl := "v2/content/folders/adminRecommended"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")
@@ -44,12 +43,12 @@ func globalFolder(isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &globalFolderResponse)
+	err = json.Unmarshal(responseBody, &adminRecommendedFolderResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	globalFoldersResponseJson, err := json.MarshalIndent(globalFolderResponse, "", "    ")
+	adminRecommendedFolderResponseJson, err := json.MarshalIndent(adminRecommendedFolderResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal foldersResponse")
 	}
@@ -57,6 +56,6 @@ func globalFolder(isAdminMode bool) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(globalFoldersResponseJson))
+		fmt.Println(string(adminRecommendedFolderResponseJson))
 	}
 }

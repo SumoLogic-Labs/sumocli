@@ -1,4 +1,4 @@
-package global_folder
+package admin_recommended_folder_result
 
 import (
 	"encoding/json"
@@ -10,29 +10,26 @@ import (
 	"io"
 )
 
-func NewCmdGlobalFolder() *cobra.Command {
-	var isAdminMode bool
+func NewCmdAdminRecommendedFolderResult() *cobra.Command {
+	var jobId string
 
 	cmd := &cobra.Command{
-		Use: "global-folder",
-		Short: "Schedule an asynchronous job to get global folder. " +
-			"Global folder contains all content items that a user has permissions to view in the organization.",
+		Use:   "admin-recommended-folder-result",
+		Short: "Get results from Admin Recommended job for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			globalFolder(isAdminMode)
+			adminRecommendedFolderResult(jobId)
 		},
 	}
-	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id (returned from running sumocli admin-recommended-folder)")
+	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func globalFolder(isAdminMode bool) {
-	var globalFolderResponse api.GlobalFolderResponse
+func adminRecommendedFolderResult(jobId string) {
+	var adminRecommendedFolderResultResponse api.FolderResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/folders/global"
+	requestUrl := "v2/content/folders/adminRecommended/" + jobId + "/result"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
-	if isAdminMode == true {
-		request.Header.Add("isAdminMode", "true")
-	}
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -44,12 +41,12 @@ func globalFolder(isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &globalFolderResponse)
+	err = json.Unmarshal(responseBody, &adminRecommendedFolderResultResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	globalFoldersResponseJson, err := json.MarshalIndent(globalFolderResponse, "", "    ")
+	adminRecommendedFolderResultResponseJson, err := json.MarshalIndent(adminRecommendedFolderResultResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal foldersResponse")
 	}
@@ -57,6 +54,6 @@ func globalFolder(isAdminMode bool) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(globalFoldersResponseJson))
+		fmt.Println(string(adminRecommendedFolderResultResponseJson))
 	}
 }
