@@ -1,6 +1,15 @@
 package create
 
-import "github.com/spf13/cobra"
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
+	"github.com/wizedkyle/sumocli/pkg/logging"
+	"io"
+	"strings"
+)
 
 func NewCmdLookupTablesCreate() *cobra.Command {
 	var (
@@ -18,7 +27,7 @@ func NewCmdLookupTablesCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Create a new lookup table by providing a schema and specifying its configuration.",
 		Run: func(cmd *cobra.Command, args []string) {
-
+			createLookupTable(description, fieldNames, fieldTypes, primaryKeys, ttl, sizeLimitAction, name, parentFolderId)
 		},
 	}
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the lookup table")
@@ -44,6 +53,58 @@ func NewCmdLookupTablesCreate() *cobra.Command {
 	return cmd
 }
 
-func createLookupTable() {
+func createLookupTable(description string, fieldNames string, fieldTypes string, primaryKeys string,
+	ttl int, sizeLimitAction string, name string, parentFolderId string) {
+	var createLookupTableResponse api.LookupTableResponse
+	log := logging.GetConsoleLogger()
+	requestBodySchema := &api.CreateLookupTableRequest{
+		Description:     description,
+		PrimaryKeys:     strings.Split(primaryKeys, ","),
+		Ttl:             ttl,
+		SizeLimitAction: sizeLimitAction,
+		Name:            name,
+		ParentFolderId:  parentFolderId,
+	}
+	fieldNameSlice := strings.Split(fieldNames, ",")
+	fieldTypeSlice := strings.Split(fieldTypes, ",")
+	for i := range fieldNameSlice {
+		fieldAddition := api.LookupTableFields{
+			FieldName: fieldNameSlice[i],
+			FieldType: fieldTypeSlice[i],
+		}
+		requestBodySchema.Fields = append(requestBodySchema.Fields, fieldAddition)
+		i++
+	}
+	requestBody, err := json.Marshal(requestBodySchema)
+	if err != nil {
+		log.Error().Err(err).Msg("error marshalling request body")
+	}
+	requestUrl := "v1/lookupTables"
+	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
+	response, err := client.Do(request)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
+	defer response.Body.Close()
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
+
+	err = json.Unmarshal(responseBody, &createLookupTableResponse)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
+
+	createLookupTableResponseJson, err := json.MarshalIndent(createLookupTableResponse, "", "    ")
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
+	}
+
+	if response.StatusCode != 200 {
+		factory.HttpError(response.StatusCode, responseBody, log)
+	} else {
+		fmt.Println(string(createLookupTableResponseJson))
+	}
 }
