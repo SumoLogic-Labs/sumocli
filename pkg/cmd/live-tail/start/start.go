@@ -100,6 +100,7 @@ func createLiveTailSession(filter string, log zerolog.Logger) string {
 	err = json.Unmarshal(responseBody, &session)
 	if err != nil {
 		log.Error().Err(err).Msg("error unmarshalling response body")
+		fmt.Println(string(responseBody))
 	}
 	return session.Id
 }
