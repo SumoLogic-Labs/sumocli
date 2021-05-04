@@ -14,17 +14,18 @@ import (
 
 func NewCmdCollectorList() *cobra.Command {
 	var (
-		filter  string
-		limit   int
-		offset  string
-		offline bool
+		filter     string
+		limit      int
+		offset     string
+		offline    bool
+		jsonFormat bool
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic collectors",
 		Run: func(cmd *cobra.Command, args []string) {
-			listCollectors(filter, limit, offset, offline)
+			listCollectors(filter, limit, offset, offline, jsonFormat)
 		},
 	}
 
@@ -32,10 +33,11 @@ func NewCmdCollectorList() *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 1000, "Maximum number of collectors returned")
 	cmd.Flags().StringVar(&offset, "offset", "", "Offset into the list of collectors")
 	cmd.Flags().BoolVar(&offline, "offline", false, "Lists offline collectors")
+	cmd.Flags().BoolVar(&jsonFormat, "jsonFormat", false, "Set to true if you want the output to be formatted JSON")
 	return cmd
 }
 
-func listCollectors(filter string, limit int, offset string, offline bool) {
+func listCollectors(filter string, limit int, offset string, offline bool, jsonFormat bool) {
 	log := logging.GetConsoleLogger()
 	var collectorInfo api.Collectors
 	var requestUrl string
@@ -76,11 +78,21 @@ func listCollectors(filter string, limit int, offset string, offline bool) {
 		log.Error().Err(jsonErr).Msg("error unmarshalling response body")
 	}
 
-	collectorInfoJson, err := json.MarshalIndent(collectorInfo.Data, "", "    ")
-
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Print(string(collectorInfoJson))
+		if jsonFormat == true {
+			collectorInfoJson, err := json.MarshalIndent(collectorInfo.Data, "", "    ")
+			if err != nil {
+				log.Error().Err(err).Msg("failed to marshal response")
+			}
+			fmt.Print(string(collectorInfoJson))
+		} else {
+			collectorInfoJson, err := json.Marshal(collectorInfo.Data)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to marshal response")
+			}
+			fmt.Println(string(collectorInfoJson))
+		}
 	}
 }
