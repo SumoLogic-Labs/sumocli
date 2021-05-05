@@ -6,7 +6,9 @@ import (
 	cmdLookupTablesDelete "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/delete"
 	cmdLookupTablesDeleteData "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/delete-data"
 	cmdLookupTablesEdit "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/edit"
+	cmdLookupTablesEmpty "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/empty"
 	cmdLookupTablesGet "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/get"
+	cmdLookupTablesJobStatus "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/job-status"
 	cmdLookupTablesUpload "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/upload"
 )
 
@@ -20,7 +22,9 @@ func NewCmdLookupTables() *cobra.Command {
 	cmd.AddCommand(cmdLookupTablesDelete.NewCmdLookupTablesDelete())
 	cmd.AddCommand(cmdLookupTablesDeleteData.NewCmdLookupTablesDeleteData())
 	cmd.AddCommand(cmdLookupTablesEdit.NewCmdLookupTablesEdit())
+	cmd.AddCommand(cmdLookupTablesEmpty.NewCmdLookupTableEmpty())
 	cmd.AddCommand(cmdLookupTablesGet.NewCmdLookupTablesGet())
+	cmd.AddCommand(cmdLookupTablesJobStatus.NewCmdLookupTableJobStatus())
 	cmd.AddCommand(cmdLookupTablesUpload.NewCmdLookupTablesUpload())
 	return cmd
 }

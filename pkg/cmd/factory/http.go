@@ -58,6 +58,16 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	return client, request
 }
 
+func NewHttpUploadRequest(method string, apiUrl string, body *bytes.Buffer) (*http.Client, *http.Request) {
+	client := newHttpClient()
+	authToken, endpoint := login.ReadCredentials()
+	request, _ := http.NewRequest(method, endpoint+apiUrl, body)
+	request.Header.Add("Authorization", authToken)
+	request.Header.Add("Content-Type", "multipart/form-data")
+	request.Header.Add("User-Agent", config.GetUserAgent())
+	return client, request
+}
+
 // TODO: update this to use log.Error().Msg("")
 func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 	if statusCode == 400 {
