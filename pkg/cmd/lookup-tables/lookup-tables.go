@@ -9,7 +9,6 @@ import (
 	cmdLookupTablesEmpty "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/empty"
 	cmdLookupTablesGet "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/get"
 	cmdLookupTablesJobStatus "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/job-status"
-	cmdLookupTablesUpload "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables/upload"
 )
 
 func NewCmdLookupTables() *cobra.Command {
@@ -25,6 +24,5 @@ func NewCmdLookupTables() *cobra.Command {
 	cmd.AddCommand(cmdLookupTablesEmpty.NewCmdLookupTableEmpty())
 	cmd.AddCommand(cmdLookupTablesGet.NewCmdLookupTablesGet())
 	cmd.AddCommand(cmdLookupTablesJobStatus.NewCmdLookupTableJobStatus())
-	cmd.AddCommand(cmdLookupTablesUpload.NewCmdLookupTablesUpload())
 	return cmd
 }
