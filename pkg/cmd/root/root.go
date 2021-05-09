@@ -11,6 +11,7 @@ import (
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
+	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
 )
@@ -34,6 +35,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
+	cmd.AddCommand(tokensCmd.NewCmdTokens())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
 
