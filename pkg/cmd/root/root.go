@@ -11,6 +11,7 @@ import (
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
+	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -36,14 +37,13 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
 	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
 	cmd.AddCommand(tokensCmd.NewCmdTokens())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
-	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available. Off by default.")
-	cmd.PersistentFlags().BoolP("quiet", "q", false, "Suppress any levelled log messages. General command output will still output to console. Off by default.")
 
 	return cmd
 }
