@@ -1,4 +1,4 @@
-package create
+package update
 
 import (
 	"encoding/json"
@@ -11,30 +11,32 @@ import (
 	"strings"
 )
 
-func NewCmdAccessKeysCreate() *cobra.Command {
+func NewCmdAccessKeysUpdate() *cobra.Command {
 	var (
-		name        string
 		corsHeaders string
+		disabled    bool
+		id          string
 	)
 
 	cmd := &cobra.Command{
-		Use:   "create",
-		Short: "Creates a new access ID and key pair. The new access key can be used from the domains specified in corsHeaders field.",
+		Use:   "update",
+		Short: "Updates the properties of existing accessKey by accessId. It can be used to enable or disable the access key and to update the corsHeaders list.",
 		Run: func(cmd *cobra.Command, args []string) {
-			createAccessKey(name, corsHeaders)
+			updateAccessKey(corsHeaders, disabled, id)
 		},
 	}
-	cmd.Flags().StringVar(&name, "name", "", "Specify a name for the access key")
 	cmd.Flags().StringVar(&corsHeaders, "corsHeaders", "", "Specify cors headers (they need to be comma separated e.g. header1,header2,header3")
-	cmd.MarkFlagRequired("name")
+	cmd.Flags().BoolVar(&disabled, "disabled", false, "Set to true to disable the access key")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the access key to update")
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func createAccessKey(name string, corsHeaders string) {
+func updateAccessKey(corsHeaders string, disabled bool, id string) {
 	var accessKeyResponse api.GetAccessKeysResponse
 	log := logging.GetConsoleLogger()
-	requestBodySchema := &api.CreateAccessKeysRequest{
-		Label: name,
+	requestBodySchema := &api.UpdateAccessKeysRequest{
+		Disabled: disabled,
 	}
 	if corsHeaders != "" {
 		requestBodySchema.CorsHeaders = strings.Split(corsHeaders, ",")
@@ -43,8 +45,8 @@ func createAccessKey(name string, corsHeaders string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/accessKeys"
-	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
+	requestUrl := "v1/accessKeys/" + id
+	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request")
