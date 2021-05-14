@@ -6,10 +6,10 @@ type GetAllowlistStatus struct {
 }
 
 type ListServiceAllowlist struct {
-	Data []allowlistCIDR `json:"data"`
+	Data []AllowlistCIDR `json:"data"`
 }
 
-type allowlistCIDR struct {
+type AllowlistCIDR struct {
 	Cidr        string `json:"cidr"`
 	Description string `json:"description"`
 }

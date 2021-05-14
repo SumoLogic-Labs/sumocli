@@ -3,6 +3,7 @@ package root
 import (
 	"github.com/spf13/cobra"
 	accessKeysCmd "github.com/wizedkyle/sumocli/pkg/cmd/access-keys"
+	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
@@ -29,6 +30,7 @@ func NewCmdRoot() *cobra.Command {
 
 	// Add subcommands
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
+	cmd.AddCommand(appsCmd.NewCmdApps())
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())

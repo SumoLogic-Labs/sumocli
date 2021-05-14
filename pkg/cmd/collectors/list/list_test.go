@@ -34,7 +34,7 @@ func TestListCollectors(t *testing.T) {
    ]
 }
 `))
-	listCollectors("hosted", 1000, "", false)
+	listCollectors("hosted", 1000, "", false, true)
 }
 
 func TestListCollectorsOffline(t *testing.T) {
@@ -67,5 +67,5 @@ func TestListCollectorsOffline(t *testing.T) {
   }]
 }
 `))
-	listCollectors("hosted", 1000, "", true)
+	listCollectors("hosted", 1000, "", true, true)
 }
