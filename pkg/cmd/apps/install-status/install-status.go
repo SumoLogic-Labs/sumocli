@@ -1,4 +1,4 @@
-package list
+package install_status
 
 import (
 	"encoding/json"
@@ -10,21 +10,27 @@ import (
 	"io"
 )
 
-func NewCmdAppsList() *cobra.Command {
+func NewCmdAppsInstallStatus() *cobra.Command {
+	var (
+		jobId string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "Lists all available apps from the App Catalog.",
+		Use:   "install-status",
+		Short: "Get the status of an asynchronous app install request for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			listAvailableApps()
+			getAppInstallStatus(jobId)
 		},
 	}
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify a jobId (it can be retrieved by running sumocli apps install)")
+	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func listAvailableApps() {
-	var appListResponse api.ListApps
+func getAppInstallStatus(jobId string) {
+	var installStatusResponse api.InstallStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/apps"
+	requestUrl := "v1/apps/install/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -37,12 +43,12 @@ func listAvailableApps() {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &appListResponse)
+	err = json.Unmarshal(responseBody, &installStatusResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	appListResponseJson, err := json.MarshalIndent(appListResponse, "", "    ")
+	installStatusResponseJson, err := json.MarshalIndent(installStatusResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -50,6 +56,6 @@ func listAvailableApps() {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(appListResponseJson))
+		fmt.Println(string(installStatusResponseJson))
 	}
 }

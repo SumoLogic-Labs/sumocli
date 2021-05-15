@@ -1,4 +1,4 @@
-package list
+package get
 
 import (
 	"encoding/json"
@@ -10,21 +10,25 @@ import (
 	"io"
 )
 
-func NewCmdAppsList() *cobra.Command {
+func NewCmdAppsGet() *cobra.Command {
+	var uuid string
+
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "Lists all available apps from the App Catalog.",
+		Use:   "get",
+		Short: "Gets the app with the given universally unique identifier (UUID).",
 		Run: func(cmd *cobra.Command, args []string) {
-			listAvailableApps()
+			getApp(uuid)
 		},
 	}
+	cmd.Flags().StringVar(&uuid, "uuid", "", "Specify the UUID of the app")
+	cmd.MarkFlagRequired("uuid")
 	return cmd
 }
 
-func listAvailableApps() {
-	var appListResponse api.ListApps
+func getApp(uuid string) {
+	var appResponse api.AppDetails
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/apps"
+	requestUrl := "v1/apps/" + uuid
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -37,12 +41,12 @@ func listAvailableApps() {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &appListResponse)
+	err = json.Unmarshal(responseBody, &appResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	appListResponseJson, err := json.MarshalIndent(appListResponse, "", "    ")
+	appResponseJson, err := json.MarshalIndent(appResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -50,6 +54,6 @@ func listAvailableApps() {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(appListResponseJson))
+		fmt.Println(string(appResponseJson))
 	}
 }

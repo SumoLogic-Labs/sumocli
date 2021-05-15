@@ -42,6 +42,14 @@ type LookupTableRequestId struct {
 	Id string `json:"id"`
 }
 
+type LookupTableRowRequest struct {
+	Row []LookupTableRow `json:"row"`
+}
+
+type LookupTableRemoveRowRequest struct {
+	PrimaryKey []LookupTableRow `json:"primaryKey"`
+}
+
 type LookupTableStatusResponse struct {
 	JobId             string                      `json:"jobId"`
 	Status            string                      `json:"status"`
@@ -55,6 +63,11 @@ type LookupTableStatusResponse struct {
 	UserId            string                      `json:"userId"`
 	CreatedAt         string                      `json:"createdAt"`
 	ModifiedAt        string                      `json:"modifiedAt"`
+}
+
+type LookupTableRow struct {
+	ColumnName  string `json:"columnName"`
+	ColumnValue string `json:"columnValue"`
 }
 
 type lookupTableStatusErrors struct {
