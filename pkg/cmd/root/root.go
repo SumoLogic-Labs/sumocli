@@ -7,10 +7,12 @@ import (
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
+	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
@@ -34,10 +36,12 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
+	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
 	cmd.AddCommand(foldersCmd.NewCmdFolders())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
