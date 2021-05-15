@@ -2,14 +2,21 @@ package root
 
 import (
 	"github.com/spf13/cobra"
+	accessKeysCmd "github.com/wizedkyle/sumocli/pkg/cmd/access-keys"
+	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
+	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
+	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
+	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
+	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
 )
@@ -24,20 +31,25 @@ func NewCmdRoot() *cobra.Command {
 	}
 
 	// Add subcommands
+	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
+	cmd.AddCommand(appsCmd.NewCmdApps())
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
+	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
+	cmd.AddCommand(foldersCmd.NewCmdFolders())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
+	cmd.AddCommand(tokensCmd.NewCmdTokens())
 	cmd.AddCommand(usersCmd.NewCmdUser())
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
-	cmd.PersistentFlags().BoolP("verbose", "v", false, "Log with the highest level of verbosity available. Off by default.")
-	cmd.PersistentFlags().BoolP("quiet", "q", false, "Suppress any levelled log messages. General command output will still output to console. Off by default.")
 
 	return cmd
 }

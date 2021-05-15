@@ -3,7 +3,6 @@ package create
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -22,10 +21,7 @@ func NewCmdUserCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User create request started.")
-			user(firstName, lastName, emailAddress, roleIds, logger)
-			logger.Debug().Msg("User create request finished.")
+			user(firstName, lastName, emailAddress, roleIds)
 		},
 	}
 
@@ -41,9 +37,10 @@ func NewCmdUserCreate() *cobra.Command {
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string, logger zerolog.Logger) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string) {
 	var createUserResponse api.UserResponse
-
+	log := logging.GetConsoleLogger()
+	requestUrl := "v1/users"
 	requestBodySchema := &api.CreateUserRequest{
 		Firstname:    firstName,
 		Lastname:     lastName,
@@ -51,21 +48,30 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 		Roleids:      roleIds,
 	}
 	requestBody, _ := json.Marshal(requestBodySchema)
-	client, request := factory.NewHttpRequestWithBody("POST", "v1/users", requestBody)
+	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
-	jsonErr := json.Unmarshal(responseBody, &createUserResponse)
-	logging.LogError(jsonErr, logger)
+	err = json.Unmarshal(responseBody, &createUserResponse)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
 
 	createUserResponseJson, err := json.MarshalIndent(createUserResponse, "", "    ")
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal createUserResponse")
+	}
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		fmt.Println(string(createUserResponseJson))
 		fmt.Println("User account successfully created for " + createUserResponse.Firstname + " " + createUserResponse.Lastname)

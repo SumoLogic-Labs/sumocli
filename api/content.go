@@ -163,7 +163,7 @@ type filtersSyncDefinition struct {
 }
 
 type layout struct {
-	LayoutType       string            `json:"layouType"`
+	LayoutType       string            `json:"layoutType"`
 	LayoutStructures []layoutStructure `json:"layoutStructures"`
 }
 

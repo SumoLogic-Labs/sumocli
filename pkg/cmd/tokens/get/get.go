@@ -10,24 +10,25 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
+func NewCmdTokensGet() *cobra.Command {
 	var id string
+
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Short: "Get a token with the given identifier in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			getToken(id)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the token to retrieve")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func getToken(id string) {
+	var tokenResponse api.GetTokenResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v1/tokens/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -40,12 +41,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &tokenResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	tokenResponseJson, err := json.MarshalIndent(tokenResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +54,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(tokenResponseJson))
 	}
 }

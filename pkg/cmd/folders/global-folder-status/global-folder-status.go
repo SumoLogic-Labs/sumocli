@@ -1,4 +1,4 @@
-package get
+package global_folder_status
 
 import (
 	"encoding/json"
@@ -10,24 +10,25 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdGlobalFolderStatus() *cobra.Command {
+	var jobId string
+
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Use:   "global-folder-status",
+		Short: "Get the status of an asynchronous global folder job for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			globalFolderStatus(jobId)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
-	cmd.MarkFlagRequired("id")
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the global folder (returned from running sumocli folders global-folder")
+	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func globalFolderStatus(jobId string) {
+	var globalFolderStatusResponse api.GlobalFolderStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v2/content/folders/global/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -40,19 +41,19 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &globalFolderStatusResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	globalFolderStatusResponseJson, err := json.MarshalIndent(globalFolderStatusResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
+		log.Error().Err(err).Msg("failed to marshal exportStatusResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(globalFolderStatusResponseJson))
 	}
 }

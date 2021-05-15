@@ -10,25 +10,33 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdGet() *cobra.Command {
+	var (
+		id          string
+		isAdminMode bool
+	)
+
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Short: "Get a folder with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			get(id, isAdminMode)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the identifier of the folder")
+	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func get(id string, isAdminMode bool) {
+	var foldersResponse api.FolderResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v2/content/folders/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
+	if isAdminMode == true {
+		request.Header.Add("isAdminMode", "true")
+	}
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -40,19 +48,19 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &foldersResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	foldersResponseJson, err := json.MarshalIndent(foldersResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
+		log.Error().Err(err).Msg("failed to marshal foldersResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(foldersResponseJson))
 	}
 }

@@ -1,4 +1,4 @@
-package get
+package list
 
 import (
 	"encoding/json"
@@ -10,24 +10,21 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdServiceAllowlistList() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Use:   "list",
+		Short: "Get a list of all allowlisted CIDR notations and/or IP addresses for the organization.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			listServiceAllowlist()
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
-	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func listServiceAllowlist() {
+	var allowlistResponse api.ListServiceAllowlist
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v1/serviceAllowlist/addresses"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -40,12 +37,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &allowlistResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	allowlistResponseJson, err := json.MarshalIndent(allowlistResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +50,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(allowlistResponseJson))
 	}
 }

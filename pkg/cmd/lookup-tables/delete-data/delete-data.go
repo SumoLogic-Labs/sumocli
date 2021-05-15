@@ -1,4 +1,4 @@
-package get
+package delete_data
 
 import (
 	"encoding/json"
@@ -10,28 +10,29 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
+func NewCmdLookupTablesDeleteData() *cobra.Command {
 	var id string
+
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Use:   "delete-data",
+		Short: "Delete all data from a lookup table.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			deleteLookupTableData(id)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table to delete data from")
 	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func deleteLookupTableData(id string) {
+	var deleteDataResponse api.LookupTableRequestId
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
-	client, request := factory.NewHttpRequest("GET", requestUrl)
+	requestUrl := "v1/lookupTables/" + id + "/truncate"
+	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
+		log.Error().Err(err).Msg("failed to make http request")
 	}
 
 	defer response.Body.Close()
@@ -40,12 +41,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &deleteDataResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	deleteLookupTableDataResponseJson, err := json.MarshalIndent(deleteDataResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +54,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(deleteLookupTableDataResponseJson))
 	}
 }

@@ -1,4 +1,4 @@
-package copy_status
+package admin_recommended_folder
 
 import (
 	"encoding/json"
@@ -10,32 +10,24 @@ import (
 	"io"
 )
 
-func NewCmdCopyStatus() *cobra.Command {
-	var (
-		id          string
-		jobId       string
-		isAdminMode bool
-	)
+func NewCmdAdminRecommendedFolder() *cobra.Command {
+	var isAdminMode bool
 
 	cmd := &cobra.Command{
-		Use:   "copy-status",
-		Short: "Get the status of the copy request with the given job identifier. On success, field statusMessage will contain identifier of the newly copied content.",
+		Use:   "admin-recommended-folder",
+		Short: "Schedule an asynchronous job to get the top-level Admin Recommended content items.",
 		Run: func(cmd *cobra.Command, args []string) {
-			copyStatus(id, jobId, isAdminMode)
+			adminRecommendedFolder(isAdminMode)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content that was copied")
-	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify the job id for the copy (returned from running sumocli content start-copy)")
 	cmd.Flags().BoolVar(&isAdminMode, "isAdminMode", false, "Set to true if you want to perform the request as a content administrator")
-	cmd.MarkFlagRequired("id")
-	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func copyStatus(id string, jobId string, isAdminMode bool) {
-	var copyStatusResponse api.ExportStatusResponse
+func adminRecommendedFolder(isAdminMode bool) {
+	var adminRecommendedFolderResponse api.GlobalFolderResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/copy/" + jobId + "/status"
+	requestUrl := "v2/content/folders/adminRecommended"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")
@@ -51,19 +43,19 @@ func copyStatus(id string, jobId string, isAdminMode bool) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &copyStatusResponse)
+	err = json.Unmarshal(responseBody, &adminRecommendedFolderResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	copyStatusJson, err := json.MarshalIndent(copyStatusResponse, "", "    ")
+	adminRecommendedFolderResponseJson, err := json.MarshalIndent(adminRecommendedFolderResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal exportStatusResponse")
+		log.Error().Err(err).Msg("failed to marshal foldersResponse")
 	}
 
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(copyStatusJson))
+		fmt.Println(string(adminRecommendedFolderResponseJson))
 	}
 }

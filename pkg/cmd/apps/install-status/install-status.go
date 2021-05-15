@@ -1,4 +1,4 @@
-package get
+package install_status
 
 import (
 	"encoding/json"
@@ -10,24 +10,27 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdAppsInstallStatus() *cobra.Command {
+	var (
+		jobId string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Use:   "install-status",
+		Short: "Get the status of an asynchronous app install request for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			getAppInstallStatus(jobId)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
-	cmd.MarkFlagRequired("id")
+	cmd.Flags().StringVar(&jobId, "jobId", "", "Specify a jobId (it can be retrieved by running sumocli apps install)")
+	cmd.MarkFlagRequired("jobId")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func getAppInstallStatus(jobId string) {
+	var installStatusResponse api.InstallStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v1/apps/install/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -40,12 +43,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &installStatusResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	installStatusResponseJson, err := json.MarshalIndent(installStatusResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +56,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(installStatusResponseJson))
 	}
 }

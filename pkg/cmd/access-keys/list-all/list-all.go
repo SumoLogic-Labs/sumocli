@@ -1,4 +1,4 @@
-package get
+package list_all
 
 import (
 	"encoding/json"
@@ -8,27 +8,32 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
+	"net/url"
+	"strconv"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdAccessKeysListAll() *cobra.Command {
+	var limit int
+
 	cmd := &cobra.Command{
-		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Use:   "list-all",
+		Short: "List all access keys in your account.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			listAllAccessKeys(limit)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
-	cmd.MarkFlagRequired("id")
+	cmd.Flags().IntVar(&limit, "limit", 100, "Specify the number of access keys returned")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func listAllAccessKeys(limit int) {
+	var accessKeyResponse api.ListAccessKeysResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v1/accessKeys"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
+	query := url.Values{}
+	query.Add("limit", strconv.Itoa(limit))
+	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -40,12 +45,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &accessKeyResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	accessKeyResponseJson, err := json.MarshalIndent(accessKeyResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +58,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(accessKeyResponseJson))
 	}
 }

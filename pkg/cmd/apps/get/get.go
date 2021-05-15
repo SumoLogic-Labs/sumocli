@@ -10,24 +10,25 @@ import (
 	"io"
 )
 
-func NewCmdLookupTablesGet() *cobra.Command {
-	var id string
+func NewCmdAppsGet() *cobra.Command {
+	var uuid string
+
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: "Gets a Sumo Logic lookup table based on the given identifier",
+		Short: "Gets the app with the given universally unique identifier (UUID).",
 		Run: func(cmd *cobra.Command, args []string) {
-			getLookupTable(id)
+			getApp(uuid)
 		},
 	}
-	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the lookup table you want to retrieve")
-	cmd.MarkFlagRequired("id")
+	cmd.Flags().StringVar(&uuid, "uuid", "", "Specify the UUID of the app")
+	cmd.MarkFlagRequired("uuid")
 	return cmd
 }
 
-func getLookupTable(id string) {
-	var lookupTableResponse api.LookupTableResponse
+func getApp(uuid string) {
+	var appResponse api.AppDetails
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "v1/apps/" + uuid
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {
@@ -40,12 +41,12 @@ func getLookupTable(id string) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &lookupTableResponse)
+	err = json.Unmarshal(responseBody, &appResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	lookupTableResponseJson, err := json.MarshalIndent(lookupTableResponse, "", "    ")
+	appResponseJson, err := json.MarshalIndent(appResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
 	}
@@ -53,6 +54,6 @@ func getLookupTable(id string) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(lookupTableResponseJson))
+		fmt.Println(string(appResponseJson))
 	}
 }
