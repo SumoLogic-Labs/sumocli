@@ -13,6 +13,7 @@ import (
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
 	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
@@ -43,6 +44,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
