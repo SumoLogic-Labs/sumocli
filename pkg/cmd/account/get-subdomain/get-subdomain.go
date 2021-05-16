@@ -1,4 +1,4 @@
-package list_all
+package get_subdomain
 
 import (
 	"encoding/json"
@@ -8,32 +8,24 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
-	"net/url"
-	"strconv"
 )
 
-func NewCmdAccessKeysListAll() *cobra.Command {
-	var limit int
-
+func NewCmdAccountGetSubdomain() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-all",
-		Short: "List all access keys in your account.",
+		Use:   "get-subdomain",
+		Short: "Get the configured subdomain.",
 		Run: func(cmd *cobra.Command, args []string) {
-			listAllAccessKeys(limit)
+			getSubdomain()
 		},
 	}
-	cmd.Flags().IntVar(&limit, "limit", 100, "Specify the number of access keys returned")
 	return cmd
 }
 
-func listAllAccessKeys(limit int) {
-	var accessKeyResponse api.ListAccessKeysResponse
+func getSubdomain() {
+	var subdomainResponse api.GetSubdomain
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/accessKeys"
+	requestUrl := "v1/account/subdomain"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	query.Add("limit", strconv.Itoa(limit))
-	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
@@ -45,12 +37,12 @@ func listAllAccessKeys(limit int) {
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	err = json.Unmarshal(responseBody, &accessKeyResponse)
+	err = json.Unmarshal(responseBody, &subdomainResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")
 	}
 
-	accessKeyResponseJson, err := json.MarshalIndent(accessKeyResponse, "", "    ")
+	subdomainResponseJson, err := json.MarshalIndent(subdomainResponse, "", "    ")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal response")
 	}
@@ -58,6 +50,6 @@ func listAllAccessKeys(limit int) {
 	if response.StatusCode != 200 {
 		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
-		fmt.Println(string(accessKeyResponseJson))
+		fmt.Println(string(subdomainResponseJson))
 	}
 }
