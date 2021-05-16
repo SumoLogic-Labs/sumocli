@@ -16,6 +16,7 @@ import (
 	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
 	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
+	samlCmd "github.com/wizedkyle/sumocli/pkg/cmd/saml"
 	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
@@ -47,6 +48,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
 	cmd.AddCommand(tokensCmd.NewCmdTokens())
