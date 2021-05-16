@@ -1,5 +1,15 @@
 package api
 
+type GetSamlAllowListUsers struct {
+	UserId        string `json:"userId"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	Email         string `json:"email"`
+	CanManageSaml bool   `json:"canManageSaml"`
+	IsActive      bool   `json:"isActive"`
+	LastLogin     string `json:"lastLogin"`
+}
+
 type GetSaml struct {
 	SpInitiatedLoginPath         string                     `json:"spInitiatedLoginPath"`
 	ConfigurationName            string                     `json:"configurationName"`
@@ -27,7 +37,7 @@ type GetSaml struct {
 }
 
 type onDemandProvisioningDetail struct {
-	FirstNameAttribute        string `json:"firstNameAttribute"`
-	LastNameAttribute         string `json:"lastNameAttribute"`
-	OnDemandProvisioningRoles string `json:"onDemandProvisioningRoles"`
+	FirstNameAttribute        string   `json:"firstNameAttribute"`
+	LastNameAttribute         string   `json:"lastNameAttribute"`
+	OnDemandProvisioningRoles []string `json:"onDemandProvisioningRoles"`
 }
