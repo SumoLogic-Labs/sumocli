@@ -5,7 +5,7 @@ type CreateIngestBudgetRequest struct {
 	FieldValue     string `json:"fieldValue"`
 	CapacityBytes  int    `json:"capacityBytes"`
 	Timezone       string `json:"timezone"`
-	ResetTime      int    `json:"resetTime"`
+	ResetTime      string `json:"resetTime"`
 	Description    string `json:"description"`
 	Action         string `json:"action"`
 	AuditThreshold int    `json:"auditThreshold"`
@@ -16,7 +16,7 @@ type GetIngestBudget struct {
 	FieldValue         string               `json:"fieldValue"`
 	CapacityBytes      int                  `json:"capacityBytes"`
 	TimeZone           string               `json:"timeZone"`
-	ResetTime          int                  `json:"resetTime"`
+	ResetTime          string               `json:"resetTime"`
 	Description        string               `json:"description"`
 	Action             string               `json:"action"`
 	AuditThreshold     int                  `json:"auditThreshold"`
