@@ -11,6 +11,7 @@ import (
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
+	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
@@ -44,6 +45,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
 	cmd.AddCommand(foldersCmd.NewCmdFolders())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
+	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())

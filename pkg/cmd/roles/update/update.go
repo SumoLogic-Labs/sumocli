@@ -35,7 +35,6 @@ func NewCmdRoleUpdate() *cobra.Command {
 			logger.Debug().Msg("Role update request finished.")
 		},
 	}
-
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to update.")
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name for the role.")
 	cmd.Flags().StringVar(&description, "description", "", "Specify the role description.")
@@ -43,7 +42,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&users, "users", []string{}, "Comma deliminated list of user ids to add to the role.")
 	cmd.Flags().StringSliceVar(&capabilities, "capabilities", []string{}, "Comma deliminated list of capabilities.")
 	cmd.Flags().BoolVar(&autofill, "autofill", true, "Is set to true by default.")
-	cmd.Flags().BoolVar(&merge, "merge", true, "Is set to true by default, if set to false it will overwrite the role.")
+	cmd.Flags().BoolVar(&merge, "merge", true, "If set to false it will overwrite the role configuration")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("name")
 	cmd.MarkFlagRequired("description")

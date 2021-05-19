@@ -11,11 +11,15 @@ type CreateIngestBudgetRequest struct {
 	AuditThreshold int    `json:"auditThreshold"`
 }
 
+type GetAssociatedCollectors struct {
+	Data []associatedCollectorsDetail `json:"data"`
+}
+
 type GetIngestBudget struct {
 	Name               string               `json:"name"`
 	FieldValue         string               `json:"fieldValue"`
 	CapacityBytes      int                  `json:"capacityBytes"`
-	TimeZone           string               `json:"timeZone"`
+	TimeZone           string               `json:"timezone"`
 	ResetTime          string               `json:"resetTime"`
 	Description        string               `json:"description"`
 	Action             string               `json:"action"`
@@ -32,6 +36,11 @@ type GetIngestBudget struct {
 
 type ListIngestBudgets struct {
 	Data []GetIngestBudget `json:"data"`
+}
+
+type associatedCollectorsDetail struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ingestBudgetUserInfo struct {
