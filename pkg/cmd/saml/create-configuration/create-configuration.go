@@ -1,7 +1,13 @@
 package create_configuration
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
+	"github.com/wizedkyle/sumocli/pkg/logging"
+	"io"
 )
 
 func NewCmdSamlCreateConfiguration() *cobra.Command {
@@ -16,7 +22,7 @@ func NewCmdSamlCreateConfiguration() *cobra.Command {
 		x509cert3                  string
 		firstNameAttribute         string
 		lastNameAttribute          string
-		onDemandProvisioningRoles  string
+		onDemandProvisioningRoles  []string
 		rolesAttribute             string
 		logoutEnabled              bool
 		logoutUrl                  string
@@ -31,7 +37,10 @@ func NewCmdSamlCreateConfiguration() *cobra.Command {
 		Use:   "create-configuration",
 		Short: "Create a new SAML configuration in the organization.",
 		Run: func(cmd *cobra.Command, args []string) {
-
+			createSamlConfiguration(spInitiatedLoginPath, configurationName, issuer, spInitiatedLoginEnabled,
+				authnRequestUrl, x509cert1, x509cert2, x509cert3, firstNameAttribute, lastNameAttribute, onDemandProvisioningRoles,
+				rolesAttribute, logoutEnabled, logoutUrl, emailAttribute, debugMode, signAuthnRequest, disableRequestAuthnContext,
+				isRedirectBinding)
 		},
 	}
 	cmd.Flags().StringVar(&spInitiatedLoginPath, "spInitiatedLoginPath", "", "Specify the identifier used to generate a unique URL for user login")
@@ -44,7 +53,7 @@ func NewCmdSamlCreateConfiguration() *cobra.Command {
 	cmd.Flags().StringVar(&x509cert3, "x509cert3", "", "Specify a backup certificate used to verify the signature in SAML assertions when x509cert1 expires and x509cert2 is empty (optional)")
 	cmd.Flags().StringVar(&firstNameAttribute, "firstNameAttribute", "", "Specify the first name attribute of the new user account")
 	cmd.Flags().StringVar(&lastNameAttribute, "lastNameAttribute", "", "Specify the last name attribute of the new user account")
-	cmd.Flags().StringVar(&onDemandProvisioningRoles, "onDemandProvisioningRoles", "", "Sumo Logic RBAC roles to be assigned when user accounts are provisioned"+
+	cmd.Flags().StringSliceVar(&onDemandProvisioningRoles, "onDemandProvisioningRoles", []string{}, "Sumo Logic RBAC roles to be assigned when user accounts are provisioned"+
 		"(the roles need to be comma separated e.g. role1,role2,role3)")
 	cmd.Flags().StringVar(&rolesAttribute, "rolesAttribute", "", "Specify the role that Sumo Logic will assign to users when they sign in")
 	cmd.Flags().BoolVar(&logoutEnabled, "logoutEnabled", false, "Set to true if users are redirected to a URL after signing out of Sumo Logic")
@@ -60,6 +69,65 @@ func NewCmdSamlCreateConfiguration() *cobra.Command {
 	return cmd
 }
 
-func createSamlConfiguration() {
+func createSamlConfiguration(spInitiatedLoginPath string, configurationName string, issuer string, spInitiatedLoginEnabled bool,
+	authnRequestUrl string, x509cert1 string, x509cert2 string, x509cert3 string, firstNameAttribute string, lastNameAttribute string,
+	onDemandProvisioningRoles []string, rolesAttribute string, logoutEnabled bool, logoutUrl string, emailAttribute string,
+	debugMode bool, signAuthnRequest bool, disableRequestAuthnContext bool, isRedirectBinding bool) {
+	var samlResponse api.GetSaml
+	log := logging.GetConsoleLogger()
+	requestBodySchema := &api.CreateSamlRequest{
+		SpInitiatedLoginPath:    spInitiatedLoginPath,
+		ConfigurationName:       configurationName,
+		Issuer:                  issuer,
+		SpInitiatedLoginEnabled: spInitiatedLoginEnabled,
+		AuthnRequestUrl:         authnRequestUrl,
+		X509Cert1:               x509cert1,
+		X509Cert2:               x509cert2,
+		X509Cert3:               x509cert3,
+		OnDemandProvisioningEnabled: api.OnDemandProvisioningDetail{
+			FirstNameAttribute:        firstNameAttribute,
+			LastNameAttribute:         lastNameAttribute,
+			OnDemandProvisioningRoles: onDemandProvisioningRoles,
+		},
+		RolesAttribute:               rolesAttribute,
+		LogoutEnabled:                logoutEnabled,
+		LogoutUrl:                    logoutUrl,
+		EmailAttribute:               emailAttribute,
+		DebugMode:                    debugMode,
+		SignAuthnRequest:             signAuthnRequest,
+		DisableRequestedAuthnContext: disableRequestAuthnContext,
+		IsRedirectBinding:            isRedirectBinding,
+	}
+	requestBody, err := json.Marshal(requestBodySchema)
+	if err != nil {
+		log.Error().Err(err).Msg("error marshalling request body")
+	}
+	requestUrl := "v1/saml/identityProviders"
+	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
+	response, err := client.Do(request)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
+	defer response.Body.Close()
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
+
+	err = json.Unmarshal(responseBody, &samlResponse)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
+
+	samlResponseJson, err := json.MarshalIndent(samlResponse, "", "    ")
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
+	}
+
+	if response.StatusCode != 200 {
+		factory.HttpError(response.StatusCode, responseBody, log)
+	} else {
+		fmt.Println(string(samlResponseJson))
+	}
 }

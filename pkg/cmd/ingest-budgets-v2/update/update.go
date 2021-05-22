@@ -12,17 +12,17 @@ import (
 	"strings"
 )
 
-func NewCmdIngestBudgetsUpdate() *cobra.Command {
+func NewCmdIngestBudgetsV2Update() *cobra.Command {
 	var (
 		action         string
 		auditThreshold int
 		capacityBytes  int
 		description    string
-		fieldValue     string
 		id             string
 		merge          bool
 		name           string
 		resetTime      string
+		scope          string
 		timezone       string
 	)
 
@@ -30,8 +30,8 @@ func NewCmdIngestBudgetsUpdate() *cobra.Command {
 		Use:   "update",
 		Short: "Update an existing ingest budget.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateIngestBudget(action, auditThreshold, capacityBytes, description, fieldValue, id, merge,
-				name, resetTime, timezone)
+			updateIngestBudgetV2(action, auditThreshold, capacityBytes, description, id, merge, name,
+				resetTime, scope, timezone)
 		},
 	}
 	cmd.Flags().StringVar(&action, "action", "", "Specify an action to take when ingest budget's capacity is reached."+
@@ -39,28 +39,28 @@ func NewCmdIngestBudgetsUpdate() *cobra.Command {
 	cmd.Flags().IntVar(&auditThreshold, "auditThreshold", 1, "Specify a percentage of when an ingest budget's capacity usage is logged in the Audit Index")
 	cmd.Flags().IntVar(&capacityBytes, "capacityBytes", 0, "Specify the capacity of the ingest budget in bytes.")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the ingest budget")
-	cmd.Flags().StringVar(&fieldValue, "fieldValue", "", "Specify the custom field value that is used to assign Collectors to the ingest budget")
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the ingest budget")
 	cmd.Flags().BoolVar(&merge, "merge", true, "If set to false it will overwrite the ingest budget configuration")
 	cmd.Flags().StringVar(&name, "name", "", "Specify a name for the ingest budget")
 	cmd.Flags().StringVar(&resetTime, "resetTime", "", "Specify the reset time of the ingest bidget in HH:MM format")
+	cmd.Flags().StringVar(&scope, "scope", "", "Specify a scope which will be used to identify the messages on which the budget needs to be applied")
 	cmd.Flags().StringVar(&timezone, "timezone", "", "Specify the timezone of the reset time in IANA Time Zone format")
 	cmd.MarkFlagRequired("action")
 	cmd.MarkFlagRequired("capacityBytes")
-	cmd.MarkFlagRequired("fieldValue")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("name")
 	cmd.MarkFlagRequired("resetTime")
+	cmd.MarkFlagRequired("scope")
 	cmd.MarkFlagRequired("timezone")
 	return cmd
 }
 
-func updateIngestBudget(action string, auditThreshold int, capacityBytes int, description string, fieldValue string, id string, merge bool,
-	name string, resetTime string, timezone string) {
-	var ingestBudgetResponse api.GetIngestBudget
+func updateIngestBudgetV2(action string, auditThreshold int, capacityBytes int, description string, id string, merge bool,
+	name string, resetTime string, scope string, timezone string) {
+	var ingestBudgetResponse api.GetIngestBudgetV2
 	log := logging.GetConsoleLogger()
 	if merge == true {
-		requestUrl := "v1/ingestBudgets/" + id
+		requestUrl := "v2/ingestBudgets/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
 		if err != nil {
@@ -81,7 +81,7 @@ func updateIngestBudget(action string, auditThreshold int, capacityBytes int, de
 
 		// Building body payload to update the ingest budget based on the differences
 		// between the current ingest budget and the desired settings
-		requestBodySchema := &api.CreateIngestBudgetRequest{}
+		requestBodySchema := &api.GetIngestBudgetV2{}
 		if strings.EqualFold(ingestBudgetResponse.Action, action) {
 			requestBodySchema.Action = ingestBudgetResponse.Action
 		} else {
@@ -106,12 +106,6 @@ func updateIngestBudget(action string, auditThreshold int, capacityBytes int, de
 			requestBodySchema.Description = description
 		}
 
-		if strings.EqualFold(ingestBudgetResponse.FieldValue, fieldValue) {
-			requestBodySchema.FieldValue = ingestBudgetResponse.FieldValue
-		} else {
-			requestBodySchema.FieldValue = fieldValue
-		}
-
 		if strings.EqualFold(ingestBudgetResponse.Name, name) {
 			requestBodySchema.Name = ingestBudgetResponse.Name
 		} else {
@@ -124,8 +118,14 @@ func updateIngestBudget(action string, auditThreshold int, capacityBytes int, de
 			requestBodySchema.ResetTime = resetTime
 		}
 
-		if strings.EqualFold(ingestBudgetResponse.TimeZone, timezone) {
-			requestBodySchema.Timezone = ingestBudgetResponse.TimeZone
+		if strings.EqualFold(ingestBudgetResponse.Scope, scope) {
+			requestBodySchema.Scope = ingestBudgetResponse.Scope
+		} else {
+			requestBodySchema.Scope = scope
+		}
+
+		if strings.EqualFold(ingestBudgetResponse.Timezone, timezone) {
+			requestBodySchema.Timezone = ingestBudgetResponse.Timezone
 		} else {
 			requestBodySchema.Timezone = timezone
 		}
@@ -158,9 +158,9 @@ func updateIngestBudget(action string, auditThreshold int, capacityBytes int, de
 			fmt.Println(string(ingestBudgetResponseJson))
 		}
 	} else {
-		requestBodySchema := &api.CreateIngestBudgetRequest{
+		requestBodySchema := api.CreateIngestBudgetV2Request{
 			Name:           name,
-			FieldValue:     fieldValue,
+			Scope:          scope,
 			CapacityBytes:  capacityBytes,
 			Timezone:       timezone,
 			ResetTime:      resetTime,
@@ -172,7 +172,7 @@ func updateIngestBudget(action string, auditThreshold int, capacityBytes int, de
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal request body")
 		}
-		requestUrl := "v1/ingestBudgets/" + id
+		requestUrl := "v2/ingestBudgets/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
 		if err != nil {

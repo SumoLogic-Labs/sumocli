@@ -1,5 +1,16 @@
 package api
 
+type CreateIngestBudgetV2Request struct {
+	Name           string `json:"name"`
+	Scope          string `json:"scope"`
+	CapacityBytes  int    `json:"capacityBytes"`
+	Timezone       string `json:"timezone"`
+	ResetTime      string `json:"resetTime"`
+	Description    string `json:"description"`
+	Action         string `json:"action"`
+	AuditThreshold int    `json:"auditThreshold"`
+}
+
 type GetIngestBudgetV2 struct {
 	Name           string `json:"name"`
 	Scope          string `json:"scope"`
