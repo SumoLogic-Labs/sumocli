@@ -1,6 +1,7 @@
 package delete
 
 import (
+	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -90,9 +91,9 @@ func deleteCollector(aliveBeforeDays int, force bool, id string, offline bool) {
 		}
 		defer response.Body.Close()
 		if response.StatusCode == 200 {
-			log.Info().Msg("collector with id " + id + " has been deleted")
+			fmt.Println("collector with id " + id + " has been deleted")
 		} else {
-			log.Error().Msg("collector with id " + id + " failed to delete, please try again.")
+			fmt.Println("collector with id " + id + " failed to delete, please try again.")
 		}
 	}
 }
