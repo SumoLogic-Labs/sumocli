@@ -1,6 +1,8 @@
 # sumocli
 A CLI application that lets you manage/automate your Sumo Logic tenancy. 
 
+Sumocli is currently in development so there could be bugs/incomplete functionality.
+GA will be v1.0.0 which I am expecting to be ready for release towards the end of 2021.
 ## Installation
 
 ### Recommended

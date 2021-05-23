@@ -18,7 +18,7 @@ func NewCmdSourceList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "Lists sources on assigned to a Sumo Logic collector",
+		Short: "Lists sources assigned to a Sumo Logic collector",
 		Run: func(cmd *cobra.Command, args []string) {
 			log := logging.GetConsoleLogger()
 			listSources(collectorId, log)

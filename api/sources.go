@@ -47,7 +47,27 @@ type SourcesResponse struct {
 	AutomaticDateParsing       bool              `json:"automaticDateParsing"`
 	MultilineProcessingEnabled bool              `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool              `json:"useAutolineMatching"`
-	ContentType                string            `json:"contentType"`
+	ForceTimezone              bool              `json:"forceTimezome"`
+	Filters                    []sourceFilters   `json:"filters"`
+	CutoffTimestamp            int               `json:"cutoffTimestamp"`
+	Encoding                   string            `json:"encoding"`
+	Interval                   int               `json:"interval"`
+	Metrics                    []string          `json:"metrics"`
+	SourceType                 string            `json:"sourceType"`
+	Alive                      bool              `json:"alive"`
+	Url                        string            `json:"url,omitempty"`
+	Category                   string            `json:"category,omitempty"`
+	Fields                     map[string]string `json:"fields,omitempty"`
+	MessagePerRequest          bool              `json:"messagePerRequest"`
+}
+
+type UpdateSourcesResponse struct {
+	Id                         string            `json:"id"`
+	Name                       string            `json:"name"`
+	HostName                   string            `json:"hostName,omitempty"`
+	AutomaticDateParsing       bool              `json:"automaticDateParsing"`
+	MultilineProcessingEnabled bool              `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool              `json:"useAutolineMatching"`
 	ForceTimezone              bool              `json:"forceTimezome"`
 	Filters                    []sourceFilters   `json:"filters"`
 	CutoffTimestamp            int               `json:"cutoffTimestamp"`

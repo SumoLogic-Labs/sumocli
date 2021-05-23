@@ -12,7 +12,7 @@ import (
 func NewCmdAccessKeys() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "access-keys",
-		Short: "Managed access keys",
+		Short: "Manage access keys",
 		Long:  "Commands that allow you to manage access keys in your Sumo Logic tenant",
 	}
 	cmd.AddCommand(cmdAccessKeysCreate.NewCmdAccessKeysCreate())

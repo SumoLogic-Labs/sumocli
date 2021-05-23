@@ -52,7 +52,7 @@ func listAllAccessKeys(limit int) {
 
 	accessKeyResponseJson, err := json.MarshalIndent(accessKeyResponse, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
+		log.Error().Err(err).Msg("failed to marshal response")
 	}
 
 	if response.StatusCode != 200 {

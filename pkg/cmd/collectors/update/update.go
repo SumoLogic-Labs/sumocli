@@ -179,7 +179,6 @@ func updateCollector(category string, collectorId int, cutoffTimestamp int, desc
 	}
 	err = json.Unmarshal(responseBody, &collectorInfo)
 	if err != nil {
-		fmt.Println(string(responseBody))
 		log.Error().Err(err).Msg("error unmarshalling response body")
 	}
 	collectorInfoJson, err := json.MarshalIndent(&collectorInfo, "", "    ")

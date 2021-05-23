@@ -3,7 +3,6 @@ package get
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -18,10 +17,7 @@ func NewCmdGetUser() *cobra.Command {
 		Use:   "get",
 		Short: "Gets a Sumo Logic user",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User get request started.")
-			getUser(id, logger)
-			logger.Debug().Msg("User get request finished.")
+			GetUser(id)
 		},
 	}
 
@@ -30,26 +26,34 @@ func NewCmdGetUser() *cobra.Command {
 	return cmd
 }
 
-func getUser(id string, logger zerolog.Logger) {
+func GetUser(id string) {
 	var userInfo api.UserResponse
-
+	log := logging.GetConsoleLogger()
 	requestUrl := "v1/users/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
-	jsonErr := json.Unmarshal(responseBody, &userInfo)
-	logging.LogError(jsonErr, logger)
+	err = json.Unmarshal(responseBody, &userInfo)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
 
 	userInfoJson, err := json.MarshalIndent(userInfo, "", "    ")
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal response")
+	}
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		fmt.Println(string(userInfoJson))
 	}
