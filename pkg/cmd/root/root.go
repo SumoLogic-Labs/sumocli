@@ -9,6 +9,7 @@ import (
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
+	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic-parsing"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
 	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
@@ -43,6 +44,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
+	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
 	cmd.AddCommand(foldersCmd.NewCmdFolders())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
 	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())

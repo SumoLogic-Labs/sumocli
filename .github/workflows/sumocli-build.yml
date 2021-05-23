@@ -273,5 +273,5 @@ jobs:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           project: "Sumocli Release"
           server: ${{ secrets.OCTOPUS_SERVER }}
-          variables:
+          variable:
             version:${{ needs.create_semver.outputs.semvertag }}
