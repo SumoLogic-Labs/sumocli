@@ -1,4 +1,4 @@
-package list
+package get
 
 import (
 	"encoding/json"
@@ -8,34 +8,28 @@ import (
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
-	"net/url"
-	"strconv"
 )
 
-func NewCmdDynamicParsingList() *cobra.Command {
-	var (
-		limit int
-	)
+func NewCmdDynamicParsingGet() *cobra.Command {
+	var id string
 
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "Get a list of all dynamic parsing rules.",
+		Use:   "get",
+		Short: "Get a dynamic parsing rule with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			listDynamicParsingRules(limit)
+			getDynamicParsingRules(id)
 		},
 	}
-	cmd.Flags().IntVar(&limit, "limit", 100, "Specify the number of results to return maximum is 1000")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the dynamic parsing rule")
+	cmd.MarkFlagRequired("id")
 	return cmd
 }
 
-func listDynamicParsingRules(limit int) {
-	var dynamicParsingRulesResponse api.ListDynamicParsingRules
+func getDynamicParsingRules(id string) {
+	var dynamicParsingRulesResponse api.DynamicParsingRules
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/dynamicParsingRules"
+	requestUrl := "v1/dynamicParsingRules/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	query.Add("limit", strconv.Itoa(limit))
-	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)

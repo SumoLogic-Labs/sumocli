@@ -5,6 +5,32 @@ type CreateHTTPSource struct {
 	Source     HttpSource `json:"source"`
 }
 
+type CreateLocalFileSource struct {
+	ApiVersion string          `json:"api.version"`
+	Source     LocalFileSource `json:"source"`
+}
+
+type GetLocalFileSource struct {
+	Source LocalFileResponse `json:"source"`
+}
+
+type LocalFileResponse struct {
+	Id                         int             `json:"id"`
+	Name                       string          `json:"name"`
+	Category                   string          `json:"category"`
+	AutomaticDateParsing       bool            `json:"automaticDateParsing"`
+	MultilineProcessingEnabled bool            `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool            `json:"useAutolineMatching"`
+	ForceTimeZone              bool            `json:"forceTimeZone"`
+	Filters                    []SourceFilters `json:"filters"`
+	CutoffTimestamp            int             `json:"cutoffTimestamp"`
+	Encoding                   string          `json:"encoding"`
+	PathExpression             string          `json:"pathExpression"`
+	Blacklist                  []string        `json:"blacklist"`
+	SourceType                 string          `json:"sourceType"`
+	Alive                      bool            `json:"alive"`
+}
+
 type HttpSource struct {
 	SourceType                 string            `json:"sourceType"`
 	Name                       string            `json:"name"`
@@ -12,6 +38,22 @@ type HttpSource struct {
 	Fields                     map[string]string `json:"fields"`
 	MessagePerRequest          bool              `json:"messagePerRequest"`
 	MultilineProcessingEnabled bool              `json:"multilineProcessingEnabled"`
+}
+
+type LocalFileSource struct {
+	Name                       string          `json:"name"`
+	Category                   string          `json:"category"`
+	AutomaticDateParsing       bool            `json:"automaticDateParsing"`
+	MultilineProcessingEnabled bool            `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool            `json:"useAutolineMatching"`
+	ForceTimeZone              bool            `json:"forceTimeZone"`
+	TimeZone                   string          `json:"timeZone"`
+	Filters                    []SourceFilters `json:"filters"`
+	CutoffRelativeTime         string          `json:"cutoffRelativeTime"`
+	Encoding                   string          `json:"encoding"`
+	PathExpression             string          `json:"pathExpression"`
+	Blacklist                  []string        `json:"blacklist"`
+	SourceType                 string          `json:"sourceType"`
 }
 
 type ListSources struct {
@@ -23,7 +65,7 @@ type CreateSourceResponse struct {
 }
 
 type GetSourcesResponse struct {
-	Id                         int             `json:"id"`
+	Id                         string          `json:"id"`
 	Name                       string          `json:"name"`
 	Category                   string          `json:"category"`
 	HostName                   string          `json:"hostName"`
@@ -31,7 +73,7 @@ type GetSourcesResponse struct {
 	MultilineProcessingEnabled bool            `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool            `json:"useAutolineMatching"`
 	ForceTimeZone              bool            `json:"forceTimeZone"`
-	Filters                    []sourceFilters `json:"filters"`
+	Filters                    []SourceFilters `json:"filters"`
 	CutoffTimestamp            int             `json:"cutoffTimestamp"`
 	Encoding                   string          `json:"encoding"`
 	PathExpression             string          `json:"pathExpression"`
@@ -48,7 +90,7 @@ type SourcesResponse struct {
 	MultilineProcessingEnabled bool              `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool              `json:"useAutolineMatching"`
 	ForceTimezone              bool              `json:"forceTimezome"`
-	Filters                    []sourceFilters   `json:"filters"`
+	Filters                    []SourceFilters   `json:"filters"`
 	CutoffTimestamp            int               `json:"cutoffTimestamp"`
 	Encoding                   string            `json:"encoding"`
 	Interval                   int               `json:"interval"`
@@ -69,7 +111,7 @@ type UpdateSourcesResponse struct {
 	MultilineProcessingEnabled bool              `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool              `json:"useAutolineMatching"`
 	ForceTimezone              bool              `json:"forceTimezome"`
-	Filters                    []sourceFilters   `json:"filters"`
+	Filters                    []SourceFilters   `json:"filters"`
 	CutoffTimestamp            int               `json:"cutoffTimestamp"`
 	Encoding                   string            `json:"encoding"`
 	Interval                   int               `json:"interval"`
@@ -82,7 +124,7 @@ type UpdateSourcesResponse struct {
 	MessagePerRequest          bool              `json:"messagePerRequest"`
 }
 
-type sourceFilters struct {
+type SourceFilters struct {
 	FilterType string `json:"filterType"`
 	Name       string `json:"name"`
 	Regexp     string `json:"regexp"`
