@@ -63,5 +63,3 @@ jobs:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           project: "Sumocli Release"
           server: ${{ secrets.OCTOPUS_SERVER }}
-          variable:
-            version:0.0.1
