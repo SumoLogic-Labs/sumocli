@@ -30,12 +30,12 @@ jobs:
             ./cmd/sumocli
       - name: Zip Releases
         run: |
-          zip -r sumocli-linux-amd64-0.0.2.zip sumocli
+          zip -r sumocli-linux-0.0.2.zip sumocli
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: sumocli-linux-amd64-0.0.2
-          path: sumocli-linux-amd64-0.0.2.zip
+          name: sumocli-linux-0.0.2
+          path: sumocli-linux-0.0.2.zip
 
   create_octopus_release:
     name: Create Octopus Release
@@ -50,12 +50,12 @@ jobs:
       - name: Download Linux Artifact
         uses: actions/download-artifact@v2
         with:
-          name: sumocli-linux-amd64-0.0.2
+          name: sumocli-linux-0.0.2
       - name: Push New Package to Octopus
         uses: OctopusDeploy/push-package-action@v1.0.1
         with:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
-          packages: "sumocli-linux-amd64-0.0.2.zip"
+          packages: "sumocli-linux-0.0.2.zip"
           server: ${{ secrets.OCTOPUS_SERVER }}
       - name: Create New Octopus Release
         uses: OctopusDeploy/create-release-action@v1.0.2
