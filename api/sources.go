@@ -21,6 +21,7 @@ type LocalFileResponse struct {
 	AutomaticDateParsing       bool            `json:"automaticDateParsing"`
 	MultilineProcessingEnabled bool            `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool            `json:"useAutolineMatching"`
+	TimeZone                   string          `json:"timeZone"`
 	ForceTimeZone              bool            `json:"forceTimeZone"`
 	Filters                    []SourceFilters `json:"filters"`
 	CutoffTimestamp            int             `json:"cutoffTimestamp"`

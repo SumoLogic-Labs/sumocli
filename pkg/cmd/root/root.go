@@ -10,16 +10,20 @@ import (
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
 	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic-parsing"
+	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field-extraction-rules"
+	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field-management"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
 	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	partitionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/partitions"
 	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
 	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	samlCmd "github.com/wizedkyle/sumocli/pkg/cmd/saml"
+	scheduledViewsCmd "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views"
 	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
@@ -45,16 +49,20 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(contentCmd.NewCmdContent())
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
+	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
+	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
 	cmd.AddCommand(foldersCmd.NewCmdFolders())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
 	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole())
 	cmd.AddCommand(samlCmd.NewCmdSaml())
+	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
 	cmd.AddCommand(tokensCmd.NewCmdTokens())

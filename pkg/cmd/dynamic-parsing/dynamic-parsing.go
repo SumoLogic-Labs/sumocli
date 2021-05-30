@@ -12,7 +12,7 @@ import (
 func NewCmdDynamicParsing() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "dynamic-parsing",
-		Short: "Manage dynamic parsing settings",
+		Short: "Manage dynamic parsing rules",
 		Long:  "Dynamic Parsing allows automatic field extraction from your log messages when you run a search.",
 	}
 	cmd.AddCommand(NewCmdDynamicParsingCreate.NewCmdDynamicParsingCreate())

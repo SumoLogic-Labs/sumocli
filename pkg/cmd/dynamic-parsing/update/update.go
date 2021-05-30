@@ -29,7 +29,7 @@ func NewCmdDynamicParsingUpdate() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the dynamic parsing rule")
-	cmd.Flags().BoolVar(&merge, "merge", true, "If set to false it will overwrite the ingest budget configuration")
+	cmd.Flags().BoolVar(&merge, "merge", true, "If set to false it will overwrite the dynamic parsing rule configuration")
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the dynamic parsing rule")
 	cmd.Flags().StringVar(&scope, "scope", "", "Scope of the dynamic parsing rule. "+
 		"This could be a sourceCategory, sourceHost, or any other metadata that describes the data you want to extract from.")
