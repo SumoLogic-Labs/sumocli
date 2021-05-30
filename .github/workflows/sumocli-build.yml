@@ -256,22 +256,3 @@ jobs:
           asset_path: ./sumocli.zip
           asset_name: sumocli-macos-arm64.zip
           asset_content_type: application/zip
-
-  create_octopus_release:
-    name: Create Octopus Release
-    needs: [create_semver, create_github_release, build_windows, build_linux, build_macos_intel, build_macos_apple_silicon]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Octopus CLI
-        uses: OctopusDeploy/install-octopus-cli-action@v1.1.6
-        with:
-          version: latest
-      - name: Create New Octopus Release
-        uses: OctopusDeploy/create-release-action@v1.0.2
-        with:
-          api_key: ${{ secrets.OCTOPUS_API_KEY }}
-          project: "Sumocli Release"
-          server: ${{ secrets.OCTOPUS_SERVER }}
-          variables:
-            version:${{ needs.create_semver.outputs.semvertag }}
