@@ -66,7 +66,7 @@ type CreateSourceResponse struct {
 }
 
 type GetSourcesResponse struct {
-	Id                         string          `json:"id"`
+	Id                         int             `json:"id"`
 	Name                       string          `json:"name"`
 	Category                   string          `json:"category"`
 	HostName                   string          `json:"hostName"`
