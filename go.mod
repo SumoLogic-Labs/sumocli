@@ -9,6 +9,9 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.5
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/Azure/go-autorest/autorest/validation v0.3.0 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.3.1
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.9.0
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mattn/go-isatty v0.0.12 // indirect

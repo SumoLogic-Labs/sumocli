@@ -6,12 +6,20 @@ type AWSCloudTrailCollection struct {
 }
 
 type AWSCloudTrail struct {
-	SourceType    string              `json:"sourceType"`
-	Name          string              `json:"name"`
-	ContentType   string              `json:"contentType"`
-	ThirdPartyRef ThirdPartyReference `json:"thirdPartyRef"`
-	ScanInterval  int                 `json:"scanInterval"`
-	Paused        bool                `json:"paused"`
+	SourceType                 string              `json:"sourceType"`
+	Name                       string              `json:"name"`
+	ContentType                string              `json:"contentType"`
+	ThirdPartyRef              ThirdPartyReference `json:"thirdPartyRef"`
+	ScanInterval               int                 `json:"scanInterval"`
+	Paused                     bool                `json:"paused"`
+	AutomaticDateParsing       bool                `json:"automaticDateParsing"`
+	MultilineProcessingEnabled bool                `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool                `json:"useAutolineMatching"`
+	ForceTimeZone              bool                `json:"forceTimeZone"`
+	Filters                    []SourceFilters     `json:"filters"`
+	CutoffTimestamp            int                 `json:"cutoffTimestamp"`
+	Encoding                   string              `json:"encoding"`
+	Fields                     map[string]string   `json:"fields"`
 }
 
 type ThirdPartyReference struct {

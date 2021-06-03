@@ -5,6 +5,7 @@ import (
 	accessKeysCmd "github.com/wizedkyle/sumocli/pkg/cmd/access-keys"
 	accountCmd "github.com/wizedkyle/sumocli/pkg/cmd/account"
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
+	archiveIngestion "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion"
 	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
@@ -44,6 +45,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(accountCmd.NewCmdAccount())
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
 	cmd.AddCommand(appsCmd.NewCmdApps())
+	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion())
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
