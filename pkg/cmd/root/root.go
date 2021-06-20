@@ -14,11 +14,13 @@ import (
 	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field-extraction-rules"
 	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field-management"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
+	healthEventsCmd "github.com/wizedkyle/sumocli/pkg/cmd/health-events"
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
 	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
 	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	monitorsCmd "github.com/wizedkyle/sumocli/pkg/cmd/monitors"
 	partitionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/partitions"
 	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
 	permissionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/permissions"
@@ -54,11 +56,13 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
 	cmd.AddCommand(foldersCmd.NewCmdFolders())
+	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
 	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
 	cmd.AddCommand(loginCmd.NewCmdLogin())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())

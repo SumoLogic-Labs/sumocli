@@ -5,9 +5,14 @@ type AWSCloudTrailCollection struct {
 	Source     AWSCloudTrail `json:"source"`
 }
 
+type AWSCloudTrailCollectionResponse struct {
+	Source AWSCloudTrailResponse `json:"source"`
+}
+
 type AWSCloudTrail struct {
 	SourceType                 string              `json:"sourceType"`
 	Name                       string              `json:"name"`
+	Category                   string              `json:"category"`
 	ContentType                string              `json:"contentType"`
 	ThirdPartyRef              ThirdPartyReference `json:"thirdPartyRef"`
 	ScanInterval               int                 `json:"scanInterval"`
@@ -16,8 +21,33 @@ type AWSCloudTrail struct {
 	MultilineProcessingEnabled bool                `json:"multilineProcessingEnabled"`
 	UseAutolineMatching        bool                `json:"useAutolineMatching"`
 	ForceTimeZone              bool                `json:"forceTimeZone"`
+	TimeZone                   string              `json:"timeZone"`
 	Filters                    []SourceFilters     `json:"filters"`
-	CutoffTimestamp            int                 `json:"cutoffTimestamp"`
+	CutoffTimestamp            int                 `json:"cutoffTimestamp,omitempty"`
+	CutoffRelativeTime         string              `json:"cutoffRelativeTime"`
+	Encoding                   string              `json:"encoding"`
+	Fields                     map[string]string   `json:"fields"`
+}
+
+type AWSCloudTrailResponse struct {
+	Alive                      bool                `json:"alive"`
+	Id                         int                 `json:"id"`
+	Url                        string              `json:"url"`
+	SourceType                 string              `json:"sourceType"`
+	Name                       string              `json:"name"`
+	Category                   string              `json:"category"`
+	ContentType                string              `json:"contentType"`
+	ThirdPartyRef              ThirdPartyReference `json:"thirdPartyRef"`
+	ScanInterval               int                 `json:"scanInterval"`
+	Paused                     bool                `json:"paused"`
+	AutomaticDateParsing       bool                `json:"automaticDateParsing"`
+	MultilineProcessingEnabled bool                `json:"multilineProcessingEnabled"`
+	UseAutolineMatching        bool                `json:"useAutolineMatching"`
+	ForceTimeZone              bool                `json:"forceTimeZone"`
+	TimeZone                   string              `json:"timeZone"`
+	Filters                    []SourceFilters     `json:"filters"`
+	CutoffTimestamp            int                 `json:"cutoffTimestamp,omitempty"`
+	CutoffRelativeTime         string              `json:"cutoffRelativeTime"`
 	Encoding                   string              `json:"encoding"`
 	Fields                     map[string]string   `json:"fields"`
 }
@@ -46,7 +76,7 @@ type ThirdPartyReferenceResourcesPathSnsTopic struct {
 
 type ThirdPartyReferenceResourcesAuthentication struct {
 	Type    string `json:"type"`
-	AwsId   string `json:"aws_id,omitempty"`
-	AwsKey  string `json:"aws_key,omitempty"`
-	RoleArn string `json:"role_arn,omitempty"`
+	AwsId   string `json:"awsId,omitempty"`
+	AwsKey  string `json:"awsKey,omitempty"`
+	RoleArn string `json:"roleARN,omitempty"`
 }

@@ -12,6 +12,8 @@ func NewCmdArchiveIngestion() *cobra.Command {
 		Long: "Archive Ingestion allows you to ingest data from Archive destinations. " +
 			"You can use this command to ingest data from your Archive with an existing AWS S3 Archive Source.",
 	}
+	//cmd.AddCommand(NewCmdArchiveIngestionCreate.NewCmdArchiveIngestionCreate())
+	//cmd.AddCommand(NewCmdArchiveIngestionGet.NewCmdArchiveIngestionGet())
 	cmd.AddCommand(NewCmdArchiveIngestionList.NewCmdArchiveIngestionList())
 	return cmd
 }
