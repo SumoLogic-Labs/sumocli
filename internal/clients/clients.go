@@ -1,6 +1,7 @@
 package clients
 
 import (
+	"fmt"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/resources/mgmt/features"
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/storage/mgmt/storage"
 	"github.com/Azure/azure-sdk-for-go/services/appinsights/mgmt/2015-05-01/insights"
@@ -95,6 +96,7 @@ func GetQueueClient() servicebus.QueuesClient {
 func GetResourceGroupClient() features.ResourceGroupsClient {
 	rgClient := features.NewResourceGroupsClient(config.GetSubscriptionId())
 	auth, _ := authorizers.GetARMAuthorizer()
+	fmt.Println(auth)
 	rgClient.Authorizer = auth
 	rgClient.AddToUserAgent(config.GetUserAgent())
 	return rgClient
