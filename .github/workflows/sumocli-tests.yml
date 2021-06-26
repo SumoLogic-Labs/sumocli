@@ -3,17 +3,41 @@ name: Sumocli Tests
 on: [pull_request, push]
 
 jobs:
-  compile_authorizer_app:
-    name: Test Go Applications
+  compile_linux_binary:
+    name: Test Linux Binary
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go Environment
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.2'
-
+          go-version: '1.16.5'
       - name: Checkout Code
         uses: actions/checkout@v2
-
       - name: Build Sumocli
-        run: go build -v ./cmd/sumocli
+        run: go build ./cmd/sumocli
+
+  compile_macos_binary:
+    name: Test macOS Binary
+    runs-on: macos-latest
+    steps:
+      - name: Setup Go Environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.5'
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Build Sumocli
+        run: go build ./cmd/sumocli
+
+  compile_windows_binary:
+    name: Test Windows Binary
+    runs-on: windows-latest
+    steps:
+      - name: Setup Go Environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.5'
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Build Sumocli
+        run: go build ./cmd/sumocli
