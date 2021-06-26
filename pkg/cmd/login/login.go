@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/internal/authentication"
+	"github.com/wizedkyle/sumocli/internal/encryption"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"os"
 	"path/filepath"
@@ -14,16 +15,22 @@ import (
 )
 
 func NewCmdLogin() *cobra.Command {
+	var showAccessId bool
+
 	cmd := &cobra.Command{
 		Use:   "login",
 		Short: "Sets Sumo Logic credentials",
 		Long:  "Interactively sets the Sumo Logic Access Id, Access Key and API endpoint.",
 		Run: func(cmd *cobra.Command, args []string) {
+			if showAccessId == true {
+				accessId := authentication.ReadAccessId()
+				fmt.Println("The access id currently configured for authentication is: " + accessId)
+				os.Exit(1)
+			}
 			configFile := authentication.ConfigPath()
 			fmt.Println("Sumocli requires an access id and access key.")
-			fmt.Println("Sumocli will store the access id and access key in plain text in" +
-				" the following file for use by subsequent commands:")
-			fmt.Printf(configFile)
+			fmt.Println("Sumocli will encrypt and store the access id and access key in" +
+				" the following file for use by subsequent commands: " + configFile)
 			confirmation := userConfirmation()
 			if confirmation == true {
 				getCredentials()
@@ -33,6 +40,8 @@ func NewCmdLogin() *cobra.Command {
 			return
 		},
 	}
+	cmd.Flags().BoolVar(&showAccessId, "showAccessId", false, "Shows the plain text access key. This command "+
+		"is useful for identify which access key is being used. If this flag is set you cannot set login credentials.")
 	return cmd
 }
 
@@ -92,8 +101,8 @@ func getCredentials() {
 	accessKeyResult, err := promptAccessKey.Run()
 	regionResultIndex, _, err := promptRegion.Run()
 	credentials.Version = "v1"
-	credentials.AccessId = accessIdResult
-	credentials.AccessKey = accessKeyResult
+	credentials.AccessId = encryption.EncryptData(accessIdResult)
+	credentials.AccessKey = encryption.EncryptData(accessKeyResult)
 	credentials.Region = sumoApiEndpoints[regionResultIndex].Code
 	credentials.Endpoint = sumoApiEndpoints[regionResultIndex].Endpoint
 
@@ -134,7 +143,7 @@ func userConfirmation() bool {
 	if resultLower == "yes" {
 		return true
 	} else {
-		fmt.Println("Error: Login cancelled")
+		fmt.Println("Login cancelled")
 		return false
 	}
 }
