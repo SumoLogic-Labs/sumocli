@@ -2,7 +2,6 @@ package encryption
 
 import (
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -12,7 +11,7 @@ func getMachineId(log zerolog.Logger) string {
 		log.Error().Err(err).Msg("failed to open registry item")
 	}
 	defer registryKey.Close()
-	machineId, err := registryKey.GetStringValue("MachineGuid")
+	machineId, _, err := registryKey.GetStringValue("MachineGuid")
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get MachineGuid")
 	}

@@ -4,7 +4,7 @@ on: [pull_request, push]
 
 jobs:
   compile_linux_binary:
-    name: Test Linux Binary
+    name: Test and Compile Linux Binary
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go Environment
@@ -17,7 +17,7 @@ jobs:
         run: go build ./cmd/sumocli
 
   compile_macos_binary:
-    name: Test macOS Binary
+    name: Test and Compile macOS Binary
     runs-on: macos-latest
     steps:
       - name: Setup Go Environment
@@ -30,7 +30,7 @@ jobs:
         run: go build ./cmd/sumocli
 
   compile_windows_binary:
-    name: Test Windows Binary
+    name: Test and Compile Windows Binary
     runs-on: windows-latest
     steps:
       - name: Setup Go Environment
