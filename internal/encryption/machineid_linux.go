@@ -3,6 +3,7 @@ package encryption
 import (
 	"github.com/rs/zerolog"
 	"os"
+	"strings"
 )
 
 const (
