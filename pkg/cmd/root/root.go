@@ -42,7 +42,6 @@ func NewCmdRoot() *cobra.Command {
 		Long:             "Interact with and manage Sumo Logic and Cloud SIEM Enterprise from the command line.",
 		TraverseChildren: true,
 	}
-
 	// Add subcommands
 	cmd.AddCommand(accountCmd.NewCmdAccount())
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
@@ -76,6 +75,5 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
-
 	return cmd
 }

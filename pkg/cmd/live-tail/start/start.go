@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/internal/authentication"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
 	"reflect"
@@ -80,7 +80,7 @@ func IsEmpty(response liveTailSessionInfo) bool {
 
 func createLiveTailSession(filter string, log zerolog.Logger) string {
 	var session createLiveTailSessionResponse
-	accessId, accessKey, endpoint := login.ReadAccessKeys()
+	accessId, accessKey, endpoint := authentication.ReadAccessKeys()
 	requestBodySchema := &CreateLiveTailSessionRequest{
 		IsCLI:  true,
 		Filter: "_sourceCategory=ubuntu/syslog",
@@ -107,7 +107,7 @@ func createLiveTailSession(filter string, log zerolog.Logger) string {
 
 func startLiveTailSession(filter string, log zerolog.Logger) {
 	sessionId := createLiveTailSession(filter, log)
-	accessId, accessKey, endpoint := login.ReadAccessKeys()
+	accessId, accessKey, endpoint := authentication.ReadAccessKeys()
 	fmt.Println("### Starting Live Tail Session ###")
 	offset := 0
 

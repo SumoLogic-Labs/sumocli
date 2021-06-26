@@ -29,10 +29,7 @@ func NewCmdRoleUpdate() *cobra.Command {
 		Use:   "update",
 		Short: "Updates a Sumo Logic role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role update request started.")
 			updateRole(id, name, description, filter, users, capabilities, autofill, merge)
-			logger.Debug().Msg("Role update request finished.")
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to update.")

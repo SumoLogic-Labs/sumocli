@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/manifoldco/promptui"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -20,17 +19,15 @@ func NewCmdUserDisableMFA() *cobra.Command {
 		Use:   "disable mfa",
 		Short: "Disables MFA for a Sumo Logic user (this command only works interactively).",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User disable mfa request started.")
-			userDisableMFA(logger)
-			logger.Debug().Msg("User disable mfa request finished.")
+			userDisableMFA()
 		},
 	}
 
 	return cmd
 }
 
-func userDisableMFA(logger zerolog.Logger) {
+func userDisableMFA() {
+	log := logging.GetConsoleLogger()
 	validate := func(input string) error {
 		if input == "" {
 			return errors.New("Value is empty")
@@ -65,7 +62,7 @@ func userDisableMFA(logger zerolog.Logger) {
 	_, err = promptConfirm.Run()
 
 	if err != nil {
-		logging.LogError(err, logger)
+		log.Error().Err(err).Msg("failed to generate prompt")
 		os.Exit(0)
 	}
 
@@ -77,16 +74,22 @@ func userDisableMFA(logger zerolog.Logger) {
 	requestUrl := "v1/users/" + idResult + "/mfa/disable"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
-		jsonErr := json.Unmarshal(responseBody, &responseError)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &responseError)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 		if responseError.Errors[0].Message != "" {
 			fmt.Println(responseError.Errors[0].Message)
 		} else if responseError.Errors[0].Code == "auth1:mfa_not_allowed" {

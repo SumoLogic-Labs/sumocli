@@ -15,7 +15,7 @@ import (
 func NewCmdArchiveIngestionGet() *cobra.Command {
 	var (
 		limit    int
-		sourceId string
+		sourceId int
 	)
 
 	cmd := &cobra.Command{
@@ -26,15 +26,16 @@ func NewCmdArchiveIngestionGet() *cobra.Command {
 		},
 	}
 	cmd.Flags().IntVar(&limit, "limit", 10, "Specify the number of jobs to return")
-	cmd.Flags().StringVar(&sourceId, "sourceId", "", "Specify the id of the Archive Source")
+	cmd.Flags().IntVar(&sourceId, "sourceId", 0, "Specify the id of the Archive Source")
 	cmd.MarkFlagRequired("sourceId")
 	return cmd
 }
 
-func getArchiveIngestion(limit int, sourceId string) {
+func getArchiveIngestion(limit int, sourceId int) {
 	var archiveIngestionResponse api.GetArchiveIngestion
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/archive/" + sourceId + "/jobs"
+	sourceIdHex := fmt.Sprintf("%x", sourceId)
+	requestUrl := "v1/archive/" + sourceIdHex + "/jobs"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

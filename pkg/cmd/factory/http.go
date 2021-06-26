@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/internal/authentication"
 	"github.com/wizedkyle/sumocli/internal/config"
-	"github.com/wizedkyle/sumocli/pkg/cmd/login"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"net/http"
 	"time"
@@ -40,7 +40,7 @@ func StartLiveTailHttpRequest(method string, liveTailEndpoint string) (*http.Cli
 
 func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) {
 	client := newHttpClient()
-	authToken, endpoint := login.ReadCredentials()
+	authToken, endpoint := authentication.ReadCredentials()
 	request, _ := http.NewRequest(method, endpoint+apiUrl, nil)
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")
@@ -50,7 +50,7 @@ func NewHttpRequest(method string, apiUrl string) (*http.Client, *http.Request) 
 
 func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Client, *http.Request) {
 	client := newHttpClient()
-	authToken, endpoint := login.ReadCredentials()
+	authToken, endpoint := authentication.ReadCredentials()
 	request, _ := http.NewRequest(method, endpoint+apiUrl, bytes.NewBuffer(body))
 	request.Header.Add("Authorization", authToken)
 	request.Header.Add("Content-Type", "application/json")

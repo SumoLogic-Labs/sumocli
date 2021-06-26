@@ -34,7 +34,7 @@ func NewCmdAzureCreate() *cobra.Command {
 		Use:   "create",
 		Short: "Create Azure infrastructure to collect logs or metrics",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
+			logger := logging.GetConsoleLogger()
 			log := logging.GetConsoleLogger()
 			logger.Debug().Msg("Create Azure infrastructure request started")
 			if blob == true {
