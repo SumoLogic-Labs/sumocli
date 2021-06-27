@@ -23,7 +23,7 @@ You can find further information about the Sumo Logic APIs in their [documentati
 | Ingest Budgets | :white_check_mark: | |
 | Ingest Budgets v2 | :white_check_mark: | |
 | Lookup Tables | :white_check_mark: | Upload CSV file functionality is not currently supported however, it will be added in a future release. | 
-| Monitors | | Partial support for monitors API as functionality is still in development. |
+| Monitors | | Functionality is still in development. |
 | Partitions | :white_check_mark: | |
 | Password Policy | :white_check_mark: | |
 | Permissions | :white_check_mark: | |
