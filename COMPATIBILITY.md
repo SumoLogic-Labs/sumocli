@@ -2,7 +2,7 @@
 
 The following tables outline the functionality that Sumocli currently provides.
 
-## Sumo Logic CIP API
+## Sumo Logic API
 
 You can find further information about the Sumo Logic APIs in their [documentation](https://help.sumologic.com/APIs).
 
