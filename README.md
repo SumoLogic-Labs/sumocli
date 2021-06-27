@@ -81,6 +81,8 @@ The contents of the credential file is as follows:
 
 Documentation for each command can be found by using `sumocli <command> --help`
 
+You can find a list of API endpoints and sources that Sumocli supports in the [supported capabilities](COMPATIBILITY.md) documentation.
+
 ## Contributing
 
 Clone or fork the repo, make your changes and create a pull request. 
