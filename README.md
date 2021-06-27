@@ -46,7 +46,7 @@ https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and
 ### Credentials File
 
 The credentials file stores the same information as the environment variables however, it can be generated interactively using `sumocli login`. 
-The Sumo Logic Access ID and Access Key are encrypted before being written to the credentials file to reduce the risk of the credentials being 
+The Sumo Logic Access ID and Access Key are encrypted (using AES-256) before being written to the credentials file to reduce the risk of the credentials being 
 used outside of Sumocli.
 
 Encryption of the Sumo Logic Access ID and Access Key was added in v0.9.0 of Sumocli, if you are running

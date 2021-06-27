@@ -58,7 +58,6 @@ func NewHttpRequestWithBody(method string, apiUrl string, body []byte) (*http.Cl
 	return client, request
 }
 
-// TODO: update this to use log.Error().Msg("")
 func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 	if statusCode == 400 {
 		var responseError api.ResponseError
@@ -66,7 +65,7 @@ func HttpError(statusCode int, errorMessage []byte, logger zerolog.Logger) {
 		logging.LogError(jsonErr, logger)
 		fmt.Println(responseError.Errors[0].Message)
 	} else if statusCode == 401 {
-		fmt.Println("Unauthorized access please check the user exists,  are valid.")
+		fmt.Println("Unauthorized access please check the user exists, and credentials are valid.")
 	} else if statusCode == 403 {
 		fmt.Println("This operation is not allowed for your account type or the user doesn't have the role capability to perform this action.")
 	} else if statusCode == 404 {
