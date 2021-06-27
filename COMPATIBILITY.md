@@ -6,4 +6,4 @@ The following tables outline the functionality that Sumocli currently provides.
 
 | API | Status | Notes |
 | --- | --- | --- |
-| Access Keys | :heavy_check_mark: | |
+| Access Keys | :white_check_mark: | |
