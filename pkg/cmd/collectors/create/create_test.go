@@ -9,7 +9,7 @@ import (
 func TestCollector(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("POST", "v1/collectors",
+	httpmock.RegisterResponder("POST", "https://api.au.sumologic.com/api/v1/collectors",
 		httpmock.NewStringResponder(200, `
 {
   "collector":{

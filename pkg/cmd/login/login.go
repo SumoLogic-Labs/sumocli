@@ -24,8 +24,12 @@ func NewCmdLogin() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			if showAccessId == true {
 				accessId := authentication.ReadAccessId()
-				fmt.Println("The access id currently configured for authentication is: " + accessId)
-				os.Exit(1)
+				if accessId != "" {
+					fmt.Println("The access id currently configured for authentication is: " + accessId)
+					os.Exit(1)
+				} else {
+					os.Exit(1)
+				}
 			}
 			configFile := authentication.ConfigPath()
 			fmt.Println("Sumocli requires an access id and access key.")
