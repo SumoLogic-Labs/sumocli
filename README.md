@@ -25,7 +25,7 @@ Sumocli uses two authentication methods;
 - Environment variables
 - Credentials file
 
-When you run a command in sumocli it will first check to see if a credentials file exists, if it can't find one then it will fall back to environment variables this is to ensure that sumocli can run in CI/CD pipelines. 
+When you run a command in sumocli it will first check to see if a credentials file exists, if it can't find one then it will fall back to environment variables. This is to ensure that sumocli can run in CI/CD pipelines. 
 The sections below explain the requirements for each authentication type.
 
 ### Environment Variables
@@ -46,6 +46,15 @@ https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and
 ### Credentials File
 
 The credentials file stores the same information as the environment variables however, it can be generated interactively using `sumocli login`. 
+The Sumo Logic Access ID and Access Key are encrypted (using AES-256) before being written to the credentials file to reduce the risk of the credentials being 
+used outside of Sumocli.
+
+Encryption of the Sumo Logic Access ID and Access Key was added in v0.9.0 of Sumocli, if you are running
+an earlier version of Sumocli you will need to regenerate your credentials file by running `sumocli login` if you want 
+to leverage encryption at rest.
+If you need to know which Access ID sumocli is configured to use you can run `sumocli login --showAccessId` and
+the plaintext access ID will be displayed.
+
 The credential file is stored in the following locations depending on your operating system.
 
 ```
@@ -60,8 +69,10 @@ The contents of the credential file is as follows:
 
 ```
 {
+  "version": "v1",
   "accessid": "abcefghi",
   "accesskey": "AbCeFG123",
+  "region": "<regioncode>",
   "endpoint": "https://api.<regioncode>.sumologic.com/api/"
 }
 ```
@@ -69,6 +80,8 @@ The contents of the credential file is as follows:
 ## Documentation
 
 Documentation for each command can be found by using `sumocli <command> --help`
+
+You can find a list of API endpoints and sources that Sumocli supports in the [supported capabilities](COMPATIBILITY.md) documentation.
 
 ## Contributing
 

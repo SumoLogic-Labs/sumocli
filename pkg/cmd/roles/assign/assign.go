@@ -3,7 +3,6 @@ package assign
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -21,10 +20,7 @@ func NewCmdRoleAssign() *cobra.Command {
 		Use:   "assign",
 		Short: "Assigns the specified Sumo Logic user to the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role assign request started.")
-			assignRole(roleId, userId, logger)
-			logger.Debug().Msg("Role assign request finished.")
+			assignRole(roleId, userId)
 		},
 	}
 
@@ -35,26 +31,34 @@ func NewCmdRoleAssign() *cobra.Command {
 	return cmd
 }
 
-func assignRole(roleId string, userId string, logger zerolog.Logger) {
+func assignRole(roleId string, userId string) {
 	var roleInfo api.RoleData
-
+	log := logging.GetConsoleLogger()
 	requestUrl := "v1/roles/" + roleId + "/users/" + userId
 	client, request := factory.NewHttpRequest("PUT", requestUrl)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
-	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	logging.LogError(jsonErr, logger)
+	err = json.Unmarshal(responseBody, &roleInfo)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal response")
+	}
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		fmt.Println(string(roleInfoJson))
 	}

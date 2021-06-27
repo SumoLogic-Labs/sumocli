@@ -17,10 +17,7 @@ func NewCmdRoleGet() *cobra.Command {
 		Use:   "get",
 		Short: "Gets a Sumo Logic role information",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role get request started.")
 			getRole(id)
-			logger.Debug().Msg("Role get request finished.")
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to get")
@@ -51,7 +48,7 @@ func getRole(id string) {
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal roleInfo")
+		log.Error().Err(err).Msg("failed to marshal response")
 	}
 
 	if response.StatusCode != 200 {

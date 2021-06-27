@@ -14,7 +14,7 @@ func NewCmdArchiveIngestionCreate() *cobra.Command {
 	var (
 		endTime   string
 		name      string
-		sourceId  string
+		sourceId  int
 		startTime string
 	)
 
@@ -28,7 +28,7 @@ func NewCmdArchiveIngestionCreate() *cobra.Command {
 	cmd.Flags().StringVar(&endTime, "endTime", "", "Specify the ending timestamp of the ingestion job. "+
 		"The time format should be RFC3339 for example: 2021-06-01T12:00:00Z")
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the ingestion job")
-	cmd.Flags().StringVar(&sourceId, "sourceId", "", "Specify the source Id of the Archive Source for which "+
+	cmd.Flags().IntVar(&sourceId, "sourceId", 0, "Specify the source Id of the Archive Source for which "+
 		"the job is to be added. You can create an S3 Archive source by running sumocli sources aws-s3-archive create.")
 	cmd.Flags().StringVar(&startTime, "startTime", "", "Specify the starting timestamp of the ingestion job. "+
 		"The time format should be RFC3339 for example: 2021-06-01T12:00:00Z")
@@ -39,7 +39,7 @@ func NewCmdArchiveIngestionCreate() *cobra.Command {
 	return cmd
 }
 
-func createArchiveIngestion(endTime string, name string, sourceId string, startTime string) {
+func createArchiveIngestion(endTime string, name string, sourceId int, startTime string) {
 	var archiveIngestionResponse api.CreateArchiveIngestionResponse
 	log := logging.GetConsoleLogger()
 	requestBodySchema := &api.CreateArchiveIngestion{
@@ -51,7 +51,8 @@ func createArchiveIngestion(endTime string, name string, sourceId string, startT
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/archive/" + sourceId + "/jobs"
+	sourceIdHex := fmt.Sprintf("%x", sourceId)
+	requestUrl := "v1/archive/" + sourceIdHex + "/jobs"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {
@@ -64,7 +65,6 @@ func createArchiveIngestion(endTime string, name string, sourceId string, startT
 		log.Error().Err(err).Msg("failed to read response body")
 	}
 
-	fmt.Println(string(responseBody))
 	err = json.Unmarshal(responseBody, &archiveIngestionResponse)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal response body")

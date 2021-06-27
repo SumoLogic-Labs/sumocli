@@ -3,7 +3,6 @@ package list
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -22,10 +21,7 @@ func NewCmdRoleList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role list request started.")
-			listRoles(numberOfResults, filter, logger)
-			logger.Debug().Msg("Role list request finished.")
+			listRoles(numberOfResults, filter)
 		},
 	}
 
@@ -35,9 +31,9 @@ func NewCmdRoleList() *cobra.Command {
 	return cmd
 }
 
-func listRoles(numberOfResults string, filter string, logger zerolog.Logger) {
+func listRoles(numberOfResults string, filter string) {
 	var roleInfo api.Role
-
+	log := logging.GetConsoleLogger()
 	client, request := factory.NewHttpRequest("GET", "v1/roles")
 	query := url.Values{}
 	if numberOfResults != "" {
@@ -47,22 +43,29 @@ func listRoles(numberOfResults string, filter string, logger zerolog.Logger) {
 		query.Add("name", filter)
 	}
 	request.URL.RawQuery = query.Encode()
-
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
-	jsonErr := json.Unmarshal(responseBody, &roleInfo)
-	logging.LogError(jsonErr, logger)
+	err = json.Unmarshal(responseBody, &roleInfo)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
 
 	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal response")
+	}
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		fmt.Println(string(roleInfoJson))
 	}

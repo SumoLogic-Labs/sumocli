@@ -1,59 +1,57 @@
 package login
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/manifoldco/promptui"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/wizedkyle/sumocli/api"
+	"github.com/wizedkyle/sumocli/internal/authentication"
+	"github.com/wizedkyle/sumocli/internal/encryption"
 	"github.com/wizedkyle/sumocli/pkg/logging"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-var Logger zerolog.Logger
-
 func NewCmdLogin() *cobra.Command {
+	var showAccessId bool
+
 	cmd := &cobra.Command{
 		Use:   "login",
 		Short: "Sets Sumo Logic credentials",
 		Long:  "Interactively sets the Sumo Logic Access Id, Access Key and API endpoint.",
 		Run: func(cmd *cobra.Command, args []string) {
-			Logger = logging.GetLoggerForCommand(cmd)
-			Logger.Debug().Msg("Credential setup started.")
-			configFile := configPath()
+			if showAccessId == true {
+				accessId := authentication.ReadAccessId()
+				if accessId != "" {
+					fmt.Println("The access id currently configured for authentication is: " + accessId)
+					os.Exit(1)
+				} else {
+					os.Exit(1)
+				}
+			}
+			configFile := authentication.ConfigPath()
 			fmt.Println("Sumocli requires an access id and access key.")
-			fmt.Println("Sumocli will store the access id and access key in plain text in" +
-				" the following file for use by subsequent commands:")
-			fmt.Printf(configFile)
+			fmt.Println("Sumocli will encrypt and store the access id and access key in" +
+				" the following file for use by subsequent commands: " + configFile)
 			confirmation := userConfirmation()
 			if confirmation == true {
 				getCredentials()
 			} else {
 				os.Exit(1)
 			}
-			Logger.Debug().Msg("Credential setup finished.")
 			return
 		},
 	}
-
+	cmd.Flags().BoolVar(&showAccessId, "showAccessId", false, "Shows the plain text access key. This command "+
+		"is useful for identify which access key is being used. If this flag is set you cannot set login credentials.")
 	return cmd
-}
-
-func configPath() string {
-	var filePath string = ".sumocli/credentials/creds.json"
-	homeDirectory, _ := os.UserHomeDir()
-	configFile := filepath.Join(homeDirectory, filePath)
-	return configFile
 }
 
 func getCredentials() {
 	var credentials api.SumoAuth
-
+	log := logging.GetConsoleLogger()
 	sumoApiEndpoints := []api.SumoApiEndpoint{
 		{Name: "Australia", Code: "au", Endpoint: "https://api.au.sumologic.com/api/"},
 		{Name: "Canada", Code: "ca", Endpoint: "https://api.ca.sumologic.com/api/"},
@@ -106,8 +104,9 @@ func getCredentials() {
 	accessIdResult, err := promptAccessId.Run()
 	accessKeyResult, err := promptAccessKey.Run()
 	regionResultIndex, _, err := promptRegion.Run()
-	credentials.AccessId = accessIdResult
-	credentials.AccessKey = accessKeyResult
+	credentials.Version = "v1"
+	credentials.AccessId = encryption.EncryptData(accessIdResult)
+	credentials.AccessKey = encryption.EncryptData(accessKeyResult)
 	credentials.Region = sumoApiEndpoints[regionResultIndex].Code
 	credentials.Endpoint = sumoApiEndpoints[regionResultIndex].Endpoint
 
@@ -115,64 +114,22 @@ func getCredentials() {
 		fmt.Printf("Prompt failed %v\n", err)
 	}
 
-	configFilePath := filepath.Dir(configPath())
+	configFilePath := filepath.Dir(authentication.ConfigPath())
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 		err := os.MkdirAll(configFilePath, 0755)
 		if err != nil {
-			Logger.Fatal().Err(err)
+			log.Fatal().Err(err)
 		}
 	}
 	credentialFile, _ := json.MarshalIndent(credentials, "", "  ")
-	err = os.WriteFile(configPath(), credentialFile, 0644)
+	err = os.WriteFile(authentication.ConfigPath(), credentialFile, 0644)
 	if err != nil {
-		Logger.Fatal().Err(err)
+		log.Fatal().Err(err)
 	} else {
-		fmt.Println("Credentials file saved to: " + configPath())
+		fmt.Println("Credentials file saved to: " + authentication.ConfigPath())
 	}
 
 	return
-}
-
-func ReadCredentials() (string, string) {
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(configPath()))
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig()
-	if err != nil {
-		accessidenv := viper.GetString("SUMO_ACCESS_ID")
-		accesskeyenv := viper.GetString("SUMO_ACCESS_KEY")
-		endpointenv := viper.GetString("SUMO_ENDPOINT")
-
-		accessCredentials := accessidenv + ":" + accesskeyenv
-		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
-		accessCredentialsComplete := "Basic " + accessCredentialsEnc
-		return accessCredentialsComplete, endpointenv
-	} else {
-		accessid := viper.GetString("accessid")
-		accesskey := viper.GetString("accesskey")
-		endpoint := viper.GetString("endpoint")
-
-		accessCredentials := accessid + ":" + accesskey
-		accessCredentialsEnc := base64.StdEncoding.EncodeToString([]byte(accessCredentials))
-		accessCredentialsComplete := "Basic " + accessCredentialsEnc
-		return accessCredentialsComplete, endpoint
-	}
-}
-
-func ReadAccessKeys() (string, string, string) {
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(configPath()))
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Println("No authentication credentials, please run sumocli login")
-		return "", "", ""
-	} else {
-		accessId := viper.GetString("accessid")
-		accessKey := viper.GetString("accesskey")
-		endpoint := viper.GetString("endpoint")
-		return accessId, accessKey, endpoint
-	}
 }
 
 func userConfirmation() bool {
@@ -190,7 +147,7 @@ func userConfirmation() bool {
 	if resultLower == "yes" {
 		return true
 	} else {
-		fmt.Println("Error: Login cancelled")
+		fmt.Println("Login cancelled")
 		return false
 	}
 }

@@ -7,6 +7,7 @@ type SumoApiEndpoint struct {
 }
 
 type SumoAuth struct {
+	Version   string `json:"version"`
 	AccessId  string `json:"accessid"`
 	AccessKey string `json:"accesskey"`
 	Region    string `json:"region"`

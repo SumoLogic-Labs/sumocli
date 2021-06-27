@@ -3,7 +3,6 @@ package change
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -21,10 +20,7 @@ func NewCmdUserChangeEmail() *cobra.Command {
 		Use:   "change email",
 		Short: "Changes the email address of a Sumo Logic user.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User change email request started.")
-			userChangeEmail(id, email, logger)
-			logger.Debug().Msg("User change email request finished.")
+			userChangeEmail(id, email)
 		},
 	}
 
@@ -36,7 +32,8 @@ func NewCmdUserChangeEmail() *cobra.Command {
 	return cmd
 }
 
-func userChangeEmail(id string, email string, logger zerolog.Logger) {
+func userChangeEmail(id string, email string) {
+	log := logging.GetConsoleLogger()
 	requestBodySchema := &api.UpdateUserEmail{
 		Email: email,
 	}
@@ -44,16 +41,22 @@ func userChangeEmail(id string, email string, logger zerolog.Logger) {
 	requestUrl := "v1/users/" + id + "/email/requestChange"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
-		jsonErr := json.Unmarshal(responseBody, &responseError)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &responseError)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 		if responseError.Errors[0].Code == "um1:unverified_email" {
 			fmt.Println(responseError.Errors[0].Message)
 		}

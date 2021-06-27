@@ -3,7 +3,6 @@ package remove
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -21,10 +20,7 @@ func NewCmdRoleRemoveUser() *cobra.Command {
 		Use:   "remove user",
 		Short: "Removes the specified Sumo Logic user from the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Role remove request started.")
-			removeUserRole(roleId, userId, logger)
-			logger.Debug().Msg("Role remove request finished.")
+			removeUserRole(roleId, userId)
 		},
 	}
 
@@ -35,20 +31,27 @@ func NewCmdRoleRemoveUser() *cobra.Command {
 	return cmd
 }
 
-func removeUserRole(roleId string, userId string, logger zerolog.Logger) {
+func removeUserRole(roleId string, userId string) {
+	log := logging.GetConsoleLogger()
 	requestUrl := "v1/roles/" + roleId + "/users/" + userId
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
 	if response.StatusCode != 204 {
 		var responseError api.ResponseError
-		jsonErr := json.Unmarshal(responseBody, &responseError)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &responseError)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 		fmt.Println(responseError.Errors[0].Message)
 	} else {
 		fmt.Println("User: " + userId + " was removed from role: " + roleId)

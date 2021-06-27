@@ -3,7 +3,6 @@ package update
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -28,10 +27,7 @@ func NewCmdUserUpdate() *cobra.Command {
 		Use:   "update",
 		Short: "Updates a Sumo Logic user.",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("Update user request started.")
-			updateUser(id, firstName, lastName, isActive, roleIds, merge, logger)
-			logger.Debug().Msg("Update user request finished.")
+			updateUser(id, firstName, lastName, isActive, roleIds, merge)
 		},
 	}
 
@@ -49,24 +45,30 @@ func NewCmdUserUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, merge bool, logger zerolog.Logger) {
+func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, merge bool) {
 	var userInfo api.UserResponse
-
+	log := logging.GetConsoleLogger()
 	if merge == true {
 		requestUrl := "v1/users/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request")
+		}
 
 		defer response.Body.Close()
 		responseBody, err := io.ReadAll(response.Body)
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to read response body")
+		}
 
-		jsonErr := json.Unmarshal(responseBody, &userInfo)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &userInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
+			factory.HttpError(response.StatusCode, responseBody, log)
 			os.Exit(0)
 		}
 
@@ -96,19 +98,28 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		requestBody, _ := json.Marshal(requestBodySchema)
 		client, request = factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err = client.Do(request)
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request")
+		}
 
 		defer response.Body.Close()
 		responseBody, err = io.ReadAll(response.Body)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to read response body")
+		}
 
-		jsonErr = json.Unmarshal(responseBody, &userInfo)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &userInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 
 		userInfoJson, err := json.MarshalIndent(userInfo, "", "    ")
-		logging.LogError(jsonErr, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal response")
+		}
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
+			factory.HttpError(response.StatusCode, responseBody, log)
 		} else {
 			fmt.Println(string(userInfoJson))
 		}
@@ -124,19 +135,28 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 		requestUrl := "v1/users/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to make http request")
+		}
 
 		defer response.Body.Close()
 		responseBody, err := io.ReadAll(response.Body)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to read response body")
+		}
 
-		jsonErr := json.Unmarshal(responseBody, &userInfo)
-		logging.LogError(jsonErr, logger)
+		err = json.Unmarshal(responseBody, &userInfo)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to unmarshal response body")
+		}
 
 		userInfoJson, err := json.MarshalIndent(userInfo, "", "    ")
-		logging.LogError(err, logger)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal response")
+		}
 
 		if response.StatusCode != 200 {
-			factory.HttpError(response.StatusCode, responseBody, logger)
+			factory.HttpError(response.StatusCode, responseBody, log)
 		} else {
 			fmt.Println(string(userInfoJson))
 		}

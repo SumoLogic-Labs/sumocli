@@ -3,7 +3,6 @@ package list
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
@@ -23,10 +22,7 @@ func NewCmdUserList() *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic users",
 		Run: func(cmd *cobra.Command, args []string) {
-			logger := logging.GetLoggerForCommand(cmd)
-			logger.Debug().Msg("User list request started.")
-			listUsers(email, numberOfResults, sortBy, logger)
-			logger.Debug().Msg("User list request finished.")
+			listUsers(email, numberOfResults, sortBy)
 		},
 	}
 
@@ -37,9 +33,9 @@ func NewCmdUserList() *cobra.Command {
 	return cmd
 }
 
-func listUsers(email string, numberOfResults string, sortBy string, logger zerolog.Logger) {
+func listUsers(email string, numberOfResults string, sortBy string) {
 	var userInfo api.Users
-
+	log := logging.GetConsoleLogger()
 	client, request := factory.NewHttpRequest("GET", "v1/users")
 	query := url.Values{}
 	if numberOfResults != "" {
@@ -56,22 +52,29 @@ func listUsers(email string, numberOfResults string, sortBy string, logger zerol
 		query.Add("email", email)
 	}
 	request.URL.RawQuery = query.Encode()
-
 	response, err := client.Do(request)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make http request")
+	}
 
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to read response body")
+	}
 
-	jsonErr := json.Unmarshal(responseBody, &userInfo)
-	logging.LogError(jsonErr, logger)
+	err = json.Unmarshal(responseBody, &userInfo)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to unmarshal response body")
+	}
 
 	userInfoJson, err := json.MarshalIndent(userInfo.Data, "", "    ")
-	logging.LogError(err, logger)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to marshal response")
+	}
 
 	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, logger)
+		factory.HttpError(response.StatusCode, responseBody, log)
 	} else {
 		fmt.Println(string(userInfoJson))
 	}
