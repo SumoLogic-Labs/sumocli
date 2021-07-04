@@ -7,10 +7,10 @@ import (
 	cmdFoldersAdminRecommendedFolderStatus "github.com/wizedkyle/sumocli/pkg/cmd/folders/admin-recommended-folder-status"
 	cmdFoldersCreate "github.com/wizedkyle/sumocli/pkg/cmd/folders/create"
 	cmdFoldersGet "github.com/wizedkyle/sumocli/pkg/cmd/folders/get"
+	cmdFoldersPersonalFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_personal_folder"
 	cmdFoldersGlobalFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/global-folder"
 	cmdFoldersGlobalFolderResult "github.com/wizedkyle/sumocli/pkg/cmd/folders/global-folder-result"
 	cmdFoldersGlobalFolderStatus "github.com/wizedkyle/sumocli/pkg/cmd/folders/global-folder-status"
-	cmdFoldersPersonalFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/personal_folder"
 	cmdFoldersUpdate "github.com/wizedkyle/sumocli/pkg/cmd/folders/update"
 )
 

@@ -40,6 +40,7 @@ func listRoles(limit int32, name string, sortBy bool) {
 			SortBy: optional.NewString(sortByField),
 			Name:   optional.NewString(name),
 		})
+
 	if errorResponse != nil {
 		fmt.Println(errorResponse.Error())
 	} else {
@@ -47,6 +48,6 @@ func listRoles(limit int32, name string, sortBy bool) {
 	}
 }
 
-func listRolesRequest() {
+func listRolesRequest(token string) {
 
 }

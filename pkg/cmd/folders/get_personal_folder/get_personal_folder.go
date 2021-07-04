@@ -24,6 +24,6 @@ func getPersonalFolder() {
 	if errorResponse != nil {
 		fmt.Println(errorResponse.Error())
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse)
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }
