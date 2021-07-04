@@ -3,11 +3,11 @@ package remove
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/config"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdRoleRemoveUser() *cobra.Command {
+func NewCmdRoleRemoveUser(client *cip.APIClient) *cobra.Command {
 	var (
 		roleId string
 		userId string
@@ -16,18 +16,17 @@ func NewCmdRoleRemoveUser() *cobra.Command {
 		Use:   "remove user",
 		Short: "Removes the specified Sumo Logic user from the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			removeUserRole(roleId, userId)
+			removeRoleFromUser(client, roleId, userId)
 		},
 	}
-	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the identifier of the role")
-	cmd.Flags().StringVar(&userId, "userId", "", "Specify the identifier of the user to remove")
+	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the identifier of the role.")
+	cmd.Flags().StringVar(&userId, "userId", "", "Specify the identifier of the user to remove from the role.")
 	cmd.MarkFlagRequired("roleId")
 	cmd.MarkFlagRequired("userId")
 	return cmd
 }
 
-func removeUserRole(roleId string, userId string) {
-	client := config.GetSumoLogicSDKConfig()
+func removeRoleFromUser(client *cip.APIClient, roleId string, userId string) {
 	httpResponse, errorResponse := client.RemoveRoleFromUser(roleId, userId)
 	if errorResponse != nil {
 		fmt.Println(errorResponse.Error())

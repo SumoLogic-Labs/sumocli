@@ -2,6 +2,7 @@ package root
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/config"
 	accessKeysCmd "github.com/wizedkyle/sumocli/pkg/cmd/access-keys"
 	accountCmd "github.com/wizedkyle/sumocli/pkg/cmd/account"
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
@@ -42,6 +43,7 @@ func NewCmdRoot() *cobra.Command {
 		Long:             "Interact with and manage Sumo Logic and Cloud SIEM Enterprise from the command line.",
 		TraverseChildren: true,
 	}
+	client := config.GetSumoLogicSDKConfig()
 	// Add subcommands
 	cmd.AddCommand(accountCmd.NewCmdAccount())
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
@@ -65,7 +67,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
-	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
