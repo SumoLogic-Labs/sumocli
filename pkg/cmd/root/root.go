@@ -33,6 +33,7 @@ import (
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 )
 
 func NewCmdRoot() *cobra.Command {
@@ -44,6 +45,7 @@ func NewCmdRoot() *cobra.Command {
 		TraverseChildren: true,
 	}
 	client := config.GetSumoLogicSDKConfig()
+	log := logging.GetLogger()
 	// Add subcommands
 	cmd.AddCommand(accountCmd.NewCmdAccount())
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
@@ -67,7 +69,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
-	cmd.AddCommand(roleCmd.NewCmdRole(client))
+	cmd.AddCommand(roleCmd.NewCmdRole(client, log))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
