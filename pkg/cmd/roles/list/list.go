@@ -1,72 +1,52 @@
 package list
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
+	"github.com/wizedkyle/sumocli/config"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
 func NewCmdRoleList() *cobra.Command {
 	var (
-		numberOfResults string
-		filter          string
+		limit  int32
+		name   string
+		sortBy bool
 	)
-
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
-			listRoles(numberOfResults, filter)
+			listRoles(limit, name, sortBy)
 		},
 	}
-
-	cmd.Flags().StringVar(&numberOfResults, "results", "", "Specify the number of results, this is set to 100 by default.")
-	cmd.Flags().StringVar(&filter, "filter", "", "Specify the name of the role you want to retrieve")
-
+	cmd.Flags().Int32Var(&limit, "limit", 100, "Specify the number of results, this is set to 100 by default.")
+	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the role you want to retrieve")
+	cmd.Flags().BoolVar(&sortBy, "sortBy", false, "Sorts the roles by the name field")
 	return cmd
 }
 
-func listRoles(numberOfResults string, filter string) {
-	var roleInfo api.Role
-	log := logging.GetConsoleLogger()
-	client, request := factory.NewHttpRequest("GET", "v1/roles")
-	query := url.Values{}
-	if numberOfResults != "" {
-		query.Add("limit", numberOfResults)
+func listRoles(limit int32, name string, sortBy bool) {
+	var sortByField string
+	if sortBy == true {
+		sortByField = "name"
 	}
-	if filter != "" {
-		query.Add("name", filter)
-	}
-	request.URL.RawQuery = query.Encode()
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &roleInfo)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	roleInfoJson, err := json.MarshalIndent(roleInfo.Data, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+	client := config.GetSumoLogicSDKConfig()
+	apiResponse, httpResponse, errorResponse := client.ListRoles(
+		&types.ListRolesOpts{
+			Limit:  optional.NewInt32(limit),
+			SortBy: optional.NewString(sortByField),
+			Name:   optional.NewString(name),
+		})
+	if errorResponse != nil {
+		fmt.Println(errorResponse.Error())
 	} else {
-		fmt.Println(string(roleInfoJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse)
 	}
+}
+
+func listRolesRequest() {
+
 }

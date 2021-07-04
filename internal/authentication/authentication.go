@@ -96,3 +96,31 @@ func ReadCredentials() (string, string) {
 	}
 	return accessCredentialsComplete, endpoint
 }
+
+func ReadAuthCredentials() (string, string, string) {
+	var endpoint string
+	viper.SetConfigName("creds")
+	viper.AddConfigPath(filepath.Dir(ConfigPath()))
+	viper.AutomaticEnv()
+	err := viper.ReadInConfig()
+	if err != nil {
+		accessIdEnv := viper.GetString("SUMO_ACCESS_ID")
+		accessKeyEnv := viper.GetString("SUMO_ACCESS_KEY")
+		endpointEnv := viper.GetString("SUMO_ENDPOINT")
+		return accessIdEnv, accessKeyEnv, endpointEnv
+	} else {
+		version := viper.GetString("version")
+		accessId := viper.GetString("accessid")
+		accessKey := viper.GetString("accesskey")
+		endpoint = viper.GetString("endpoint")
+		// Determines if the access key/access id are encrypted at rest and need to be decrypted
+		// before being used in requests.
+		if version == "v1" {
+			accessIdDecrypted := encryption.DecryptData(accessId)
+			accessKeyDecrypted := encryption.DecryptData(accessKey)
+			return accessIdDecrypted, accessKeyDecrypted, endpoint
+		} else {
+			return accessId, accessKey, endpoint
+		}
+	}
+}
