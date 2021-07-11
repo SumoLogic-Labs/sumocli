@@ -48,7 +48,7 @@ func NewCmdRoot() *cobra.Command {
 	log := logging.GetLogger()
 	// Add subcommands
 	cmd.AddCommand(accountCmd.NewCmdAccount())
-	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
+	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client, log))
 	cmd.AddCommand(appsCmd.NewCmdApps())
 	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion())
 	cmd.AddCommand(azureCmd.NewCmdAzure())
@@ -58,7 +58,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
-	cmd.AddCommand(foldersCmd.NewCmdFolders())
+	cmd.AddCommand(foldersCmd.NewCmdFolders(client, log))
 	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
 	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())

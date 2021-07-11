@@ -1,63 +1,51 @@
 package list_all
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/antihax/optional"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
-	"strconv"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdAccessKeysListAll() *cobra.Command {
-	var limit int
-
+func NewCmdAccessKeysListAll(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+	var limit int32
 	cmd := &cobra.Command{
 		Use:   "list-all",
 		Short: "List all access keys in your account.",
 		Run: func(cmd *cobra.Command, args []string) {
-			listAllAccessKeys(limit)
+			listAllAccessKeys(limit, client, log)
 		},
 	}
-	cmd.Flags().IntVar(&limit, "limit", 100, "Specify the number of access keys returned")
+	cmd.Flags().Int32Var(&limit, "limit", 100, "Specify the number of access keys returned")
 	return cmd
 }
 
-func listAllAccessKeys(limit int) {
-	var accessKeyResponse api.ListAccessKeysResponse
-	log := logging.GetConsoleLogger()
-	requestUrl := "v1/accessKeys"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	query.Add("limit", strconv.Itoa(limit))
-	request.URL.RawQuery = query.Encode()
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &accessKeyResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	accessKeyResponseJson, err := json.MarshalIndent(accessKeyResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+func listAllAccessKeys(limit int32, client *cip.APIClient, log *zerolog.Logger) {
+	var options types.AccessKeyManagementApiListAccessKeysOpts
+	var paginationToken string
+	options.Limit = optional.NewInt32(limit)
+	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to list access keys")
 	} else {
-		fmt.Println(string(accessKeyResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
+	paginationToken = apiResponse.Next
+	for paginationToken != "" {
+		apiResponse = listAllAccessKeysPagination(client, options, paginationToken, log)
+		paginationToken = apiResponse.Next
+	}
+}
+
+func listAllAccessKeysPagination(client *cip.APIClient, options types.AccessKeyManagementApiListAccessKeysOpts, token string, log *zerolog.Logger) types.PaginatedListAccessKeysResult {
+	options.Token = optional.NewString(token)
+	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to list access keys")
+	} else {
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+	}
+	return apiResponse
 }
