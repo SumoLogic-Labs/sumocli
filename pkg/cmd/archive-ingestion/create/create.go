@@ -38,7 +38,7 @@ func NewCmdArchiveIngestionCreate(client *cip.APIClient, log *zerolog.Logger) *c
 }
 
 func createArchiveIngestion(endTime string, name string, sourceId string, startTime string, client *cip.APIClient, log *zerolog.Logger) {
-	format := "2006-01-02T15:04:05Z07:00"
+	format := "2006-01-02T15:04:05Z"
 	endTimeParsed, err := time.Parse(format, endTime)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to parse endTime, ensure time format is RFC3339 compliant")

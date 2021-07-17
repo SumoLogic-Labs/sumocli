@@ -2,7 +2,7 @@ package aws_cloudtrail
 
 import (
 	"github.com/spf13/cobra"
-	NewCmdAWSCloudTrailSourceCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/aws-cloudtrail/create"
+	NewCmdAWSCloudTrailSourceCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/aws_cloudtrail/create"
 )
 
 func NewCmdAWSCloudTrailSource() *cobra.Command {

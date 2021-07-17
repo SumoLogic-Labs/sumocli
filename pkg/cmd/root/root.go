@@ -7,7 +7,6 @@ import (
 	accountCmd "github.com/wizedkyle/sumocli/pkg/cmd/account"
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	archiveIngestion "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion"
-	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
@@ -51,7 +50,6 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client, log))
 	cmd.AddCommand(appsCmd.NewCmdApps(client, log))
 	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client, log))
-	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
@@ -73,7 +71,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
-	cmd.AddCommand(sourcesCmd.NewCmdSources())
+	cmd.AddCommand(sourcesCmd.NewCmdSources(client, log))
 	cmd.AddCommand(tokensCmd.NewCmdTokens(client, log))
 	cmd.AddCommand(usersCmd.NewCmdUser(client, log))
 	cmd.AddCommand(version.NewCmdVersion())

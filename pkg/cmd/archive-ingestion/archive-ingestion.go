@@ -18,7 +18,7 @@ func NewCmdArchiveIngestion(client *cip.APIClient, log *zerolog.Logger) *cobra.C
 			"You can use this command to ingest data from your Archive with an existing AWS S3 Archive Source.",
 	}
 	cmd.AddCommand(NewCmdArchiveIngestionCreate.NewCmdArchiveIngestionCreate(client, log))
-	cmd.AddCommand(NewCmdArchiveIngestionDelete.NewCmdArchiveIngestionDelete())
+	cmd.AddCommand(NewCmdArchiveIngestionDelete.NewCmdArchiveIngestionDelete(client, log))
 	cmd.AddCommand(NewCmdArchiveIngestionGet.NewCmdArchiveIngestionGet(client, log))
 	cmd.AddCommand(NewCmdArchiveIngestionList.NewCmdArchiveIngestionList(client, log))
 	return cmd

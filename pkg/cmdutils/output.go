@@ -18,7 +18,7 @@ func Output(apiResponse interface{}, httpResponse *http.Response, errorResponse 
 			fmt.Println(message)
 		}
 	} else {
-		if httpResponse.StatusCode != 200 {
+		if httpResponse.StatusCode != 200 && httpResponse.StatusCode != 201 {
 			fmt.Println(errorResponse)
 		} else {
 			fmt.Println(string(apiResponseJsonFormatted))
