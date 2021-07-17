@@ -277,6 +277,16 @@ github.com/wizedkyle/sumologic-go-sdk/service/cip v0.3.1-0.20210707122828-fa14fd
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.3.1-0.20210707122828-fa14fd300408/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.4.1-0.20210709115309-98b55a73cf5f h1:lOyPbAteVUmdpJybIY0wpUY1mJs3Kq+5Asmj4CbXgDs=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.4.1-0.20210709115309-98b55a73cf5f/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.5.1-0.20210711122518-1aaeff4ce2e3 h1:tyKXf96pT3VhEdJAOYuzKmIQftcCKyiIpzUTn3oZIfU=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.5.1-0.20210711122518-1aaeff4ce2e3/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.5.1-0.20210712103741-5cfff717ade0 h1:LwjRI+tl2tkvTlYYP+CrMSNYACDCIUlr9OIIcVouWBw=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.5.1-0.20210712103741-5cfff717ade0/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210713112155-9ab7badb114b h1:oOadHHSYQthi/l1NkWCtiqxmNF2nX58xl8prezF7SEQ=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210713112155-9ab7badb114b/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210713121036-1b878fe27d96 h1:l+Jr42D9BT1qXFWrFixKfBhNgu/dW+MH5xHHIp0uG9o=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210713121036-1b878fe27d96/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210714122851-38d93d7e5568 h1:V6k4GiPxZWE9JHb0qRgus6yuFCIykzKSUHvkI02F104=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210714122851-38d93d7e5568/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=

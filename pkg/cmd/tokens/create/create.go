@@ -1,27 +1,24 @@
 package create
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdTokensCreate() *cobra.Command {
+func NewCmdTokensCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	var (
 		description string
 		inactive    bool
 		name        string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a token in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			createToken(description, inactive, name)
+			createToken(description, inactive, name, client, log)
 		},
 	}
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the token")
@@ -31,49 +28,20 @@ func NewCmdTokensCreate() *cobra.Command {
 	return cmd
 }
 
-func createToken(description string, inactive bool, name string) {
-	var createTokenResponse api.GetTokenResponse
-	log := logging.GetConsoleLogger()
-	requestBodySchema := &api.CreateTokenRequest{
-		Name:        name,
-		Description: description,
-		Type:        "CollectorRegistration",
-	}
-	if inactive == false {
-		requestBodySchema.Status = "Active"
+func createToken(description string, inactive bool, name string, client *cip.APIClient, log *zerolog.Logger) {
+	var options types.TokenBaseDefinition
+	if inactive == true {
+		options.Status = "Inactive"
 	} else {
-		requestBodySchema.Status = "Inactive"
+		options.Status = "Active"
 	}
-	requestBody, err := json.Marshal(requestBodySchema)
-	if err != nil {
-		log.Error().Err(err).Msg("error marshalling request body")
-	}
-	requestUrl := "v1/tokens"
-	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &createTokenResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	createTokenResponseJson, err := json.MarshalIndent(createTokenResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+	options.Name = name
+	options.Description = description
+	options.Type_ = "CollectorRegistration"
+	apiResponse, httpResponse, errorResponse := client.CreateToken(options)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to create token")
 	} else {
-		fmt.Println(string(createTokenResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }

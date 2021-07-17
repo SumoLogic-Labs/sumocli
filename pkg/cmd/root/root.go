@@ -47,10 +47,10 @@ func NewCmdRoot() *cobra.Command {
 	client := config.GetSumoLogicSDKConfig()
 	log := logging.GetLogger()
 	// Add subcommands
-	cmd.AddCommand(accountCmd.NewCmdAccount())
+	cmd.AddCommand(accountCmd.NewCmdAccount(client, log))
 	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client, log))
-	cmd.AddCommand(appsCmd.NewCmdApps())
-	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion())
+	cmd.AddCommand(appsCmd.NewCmdApps(client, log))
+	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client, log))
 	cmd.AddCommand(azureCmd.NewCmdAzure())
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
@@ -74,8 +74,8 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
 	cmd.AddCommand(sourcesCmd.NewCmdSources())
-	cmd.AddCommand(tokensCmd.NewCmdTokens())
-	cmd.AddCommand(usersCmd.NewCmdUser())
+	cmd.AddCommand(tokensCmd.NewCmdTokens(client, log))
+	cmd.AddCommand(usersCmd.NewCmdUser(client, log))
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands
