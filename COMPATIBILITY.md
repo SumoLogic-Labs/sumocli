@@ -74,7 +74,7 @@ You can find further information about supported Sumo Logic sources in their [do
 | AWS CloudTrail Source | :white_check_mark: | |
 | AWS S3 Audit Source | | |
 | AWS Metadata (Tag) Source | | |
-| Azure Event Hubs Source | | |
+| Azure Event Hubs Source | :white_check_mark: | |
 | Carbon Black Cloud Source | | |
 | Cloud Syslog Source | | |
 | Cisco AMP Source | | |
