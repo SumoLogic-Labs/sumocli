@@ -65,7 +65,7 @@ func createIngestBudget(action string, auditThreshold int, capacityBytes int, de
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal request body")
 	}
-	requestUrl := "v1/ingestBudgets"
+	requestUrl := "/v1/ingestBudgets"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

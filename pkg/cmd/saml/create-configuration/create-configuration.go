@@ -102,7 +102,7 @@ func createSamlConfiguration(spInitiatedLoginPath string, configurationName stri
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/saml/identityProviders"
+	requestUrl := "/v1/saml/identityProviders"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

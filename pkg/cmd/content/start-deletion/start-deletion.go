@@ -32,7 +32,7 @@ func NewCmdStartDeletion() *cobra.Command {
 func startDeletion(id string, isAdminMode bool) {
 	var deletionResponse api.StartExportResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/delete"
+	requestUrl := "/v2/content/" + id + "/delete"
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

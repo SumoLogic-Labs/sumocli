@@ -27,7 +27,7 @@ func NewCmdDashboardsDelete() *cobra.Command {
 
 func deleteDashboards(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/dashboards/" + id
+	requestUrl := "/v2/dashboards/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

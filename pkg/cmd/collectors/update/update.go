@@ -58,7 +58,7 @@ func updateCollector(category string, collectorId int, cutoffTimestamp int, desc
 	log := logging.GetConsoleLogger()
 	var collectorInfo api.CollectorResponse
 
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId)
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId)
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

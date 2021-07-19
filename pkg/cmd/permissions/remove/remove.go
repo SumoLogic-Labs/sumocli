@@ -64,7 +64,7 @@ func removePermissions(id string, isAdminMode bool, notifyRecipients bool, notif
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v2/content/" + id + "/permissions/remove"
+	requestUrl := "/v2/content/" + id + "/permissions/remove"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

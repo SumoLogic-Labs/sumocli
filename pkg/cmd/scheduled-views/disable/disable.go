@@ -27,7 +27,7 @@ func NewCmdScheduledViewsDisable() *cobra.Command {
 
 func disableScheduledView(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/scheduledViews/" + id + "/disable"
+	requestUrl := "/v1/scheduledViews/" + id + "/disable"
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

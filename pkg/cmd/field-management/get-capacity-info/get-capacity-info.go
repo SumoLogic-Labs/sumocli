@@ -25,7 +25,7 @@ func NewCmdFieldManagementGetCapacityInfo() *cobra.Command {
 func getCapacityInfo() {
 	var capacityResponse api.GetCapacityInformation
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/quota"
+	requestUrl := "/v1/fields/quota"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

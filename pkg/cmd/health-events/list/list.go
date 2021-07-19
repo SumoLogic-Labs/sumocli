@@ -29,7 +29,7 @@ func NewCmdHealthEventsList() *cobra.Command {
 func listHealthEvents(limit int) {
 	var healthEventsResponse api.ListHealthEvent
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/healthEvents"
+	requestUrl := "/v1/healthEvents"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

@@ -34,7 +34,7 @@ func NewCmdPartitionsList() *cobra.Command {
 func listPartitions(limit int, viewTypes string) {
 	var partitionsResponse api.GetPartitions
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/partitions"
+	requestUrl := "/v1/partitions"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

@@ -29,7 +29,7 @@ func NewCmdScheduledViewsList() *cobra.Command {
 func listScheduledViews(limit int) {
 	var scheduledViewsResponse api.GetScheduledViews
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/scheduledViews"
+	requestUrl := "/v1/scheduledViews"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

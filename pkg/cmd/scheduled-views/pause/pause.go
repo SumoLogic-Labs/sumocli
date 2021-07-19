@@ -28,7 +28,7 @@ func NewCmdScheduledViewsPause() *cobra.Command {
 func pauseScheduledView(id string) {
 	var scheduledViewsResponse api.ScheduledViews
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/scheduledViews/" + id + "/pause"
+	requestUrl := "/v1/scheduledViews/" + id + "/pause"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

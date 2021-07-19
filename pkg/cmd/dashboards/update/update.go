@@ -49,7 +49,7 @@ func updateDashboard(file string, id string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v2/dashboards/" + id
+	requestUrl := "/v2/dashboards/" + id
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

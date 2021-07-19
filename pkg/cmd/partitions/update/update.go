@@ -52,7 +52,7 @@ func updatePartition(id string, retentionPeriod int, reduceRetentionPeriodImmedi
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/partitions/" + id
+	requestUrl := "/v1/partitions/" + id
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

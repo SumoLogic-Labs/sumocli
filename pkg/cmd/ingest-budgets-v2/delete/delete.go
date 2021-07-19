@@ -27,7 +27,7 @@ func NewCmdIngestBudgetsV2Delete() *cobra.Command {
 
 func deleteIngestBudgetV2(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/ingestBudgets/" + id
+	requestUrl := "/v2/ingestBudgets/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

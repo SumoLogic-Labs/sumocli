@@ -42,7 +42,7 @@ func removeServiceAllowlistCidr(cidr string, description string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/serviceAllowlist/addresses/remove"
+	requestUrl := "/v1/serviceAllowlist/addresses/remove"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

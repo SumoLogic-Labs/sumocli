@@ -23,7 +23,7 @@ func NewCmdSamlDisableLockdown() *cobra.Command {
 
 func disableSamlLockdown() {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/saml/lockdown/disable"
+	requestUrl := "/v1/saml/lockdown/disable"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

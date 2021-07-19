@@ -58,7 +58,7 @@ func createScheduledView(query string, indexName string, startTime string, reten
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/scheduledViews"
+	requestUrl := "/v1/scheduledViews"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

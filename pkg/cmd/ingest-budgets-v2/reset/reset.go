@@ -27,7 +27,7 @@ func NewCmdIngestBudgetsV2Reset() *cobra.Command {
 
 func resetIngestBudgetV2(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/ingestBudgets/" + id + "/usage/reset"
+	requestUrl := "/v2/ingestBudgets/" + id + "/usage/reset"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

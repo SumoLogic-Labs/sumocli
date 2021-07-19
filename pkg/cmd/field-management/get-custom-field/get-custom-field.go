@@ -28,7 +28,7 @@ func NewCmdFieldManagementGetCustomField() *cobra.Command {
 func getCustomField(id string) {
 	var fieldsResponse api.Fields
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/" + id
+	requestUrl := "/v1/fields/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

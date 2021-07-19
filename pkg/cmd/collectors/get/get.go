@@ -34,7 +34,7 @@ func NewCmdCollectorGet() *cobra.Command {
 func getCollector(id int, name string) {
 	log := logging.GetConsoleLogger()
 	var collectorInfo api.CollectorResponse
-	requestUrl := "v1/collectors/"
+	requestUrl := "/v1/collectors/"
 	if id != 0 {
 		requestUrl = requestUrl + strconv.Itoa(id)
 	} else if name != "" {

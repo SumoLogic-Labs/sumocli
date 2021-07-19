@@ -52,7 +52,7 @@ func updateFieldExtractionRule(id string, name string, scope string, parseExpres
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal request body")
 	}
-	requestUrl := "v1/extractionRules/" + id
+	requestUrl := "/v1/extractionRules/" + id
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

@@ -13,6 +13,7 @@ func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger)
 		authorizationRuleName string
 		category              string
 		collectorId           string
+		consumerGroup         string
 		description           string
 		eventHubKey           string
 		eventHubName          string
@@ -22,18 +23,17 @@ func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger)
 		namespace             string
 	)
 	cmd := &cobra.Command{
-		Use: "create",
-		Short: "The Azure Event Hubs Source provides a secure endpoint to receive data from Azure Event Hubs. " +
-			"It securely stores the required authentication, scheduling, and state tracking information. " +
-			"This source is used to collect activity and resource logs from Azure.",
+		Use:   "create",
+		Short: "Creates an Azure Event Hub source",
 		Run: func(cmd *cobra.Command, args []string) {
-			createEventHubSource(authorizationRuleName, category, collectorId, description, eventHubKey, eventHubName,
-				fieldNames, fieldValues, name, namespace, client, log)
+			createEventHubSource(authorizationRuleName, category, collectorId, consumerGroup, description, eventHubKey,
+				eventHubName, fieldNames, fieldValues, name, namespace, client, log)
 		},
 	}
 	cmd.Flags().StringVar(&authorizationRuleName, "authorizationRuleName", "", "Specify the name of the Event Hub Authorization Rule")
 	cmd.Flags().StringVar(&category, "category", "", "Specify the source category for the source")
 	cmd.Flags().StringVar(&collectorId, "collectorId", "", "Specify the collector id to associate the source to")
+	cmd.Flags().StringVar(&consumerGroup, "consumerGroup", "$Default", "Specify a custom event hub consumer group if required")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the source")
 	cmd.Flags().StringVar(&eventHubKey, "eventHubKey", "", "Specify either the primary or secondary Event Hub key")
 	cmd.Flags().StringVar(&eventHubName, "eventHubName", "", "Specify the name of the Event Hub")
@@ -53,8 +53,9 @@ func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger)
 	return cmd
 }
 
-func createEventHubSource(authorizationRuleName string, category string, collectorId string, description string, eventHubKey string, eventHubName string,
-	fieldNames []string, fieldValues []string, name string, namespace string, client *cip.APIClient, log *zerolog.Logger) {
+func createEventHubSource(authorizationRuleName string, category string, collectorId string, consumerGroup string, description string,
+	eventHubKey string, eventHubName string, fieldNames []string, fieldValues []string, name string, namespace string,
+	client *cip.APIClient, log *zerolog.Logger) {
 	fields := cmdutils.GenerateFieldsMap(fieldNames, fieldValues)
 	body := types.CreateEventHubSourceRequest{
 		ApiVersion: "v1",
@@ -69,7 +70,7 @@ func createEventHubSource(authorizationRuleName string, category string, collect
 				HubName:                 eventHubName,
 				AccessPolicyName:        authorizationRuleName,
 				AccessPolicyKey:         eventHubKey,
-				ConsumerGroup:           "$Default",
+				ConsumerGroup:           consumerGroup,
 				Fields:                  fields,
 				Category:                category,
 				ReceiveWithLatestOffset: true,

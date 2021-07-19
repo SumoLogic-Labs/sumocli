@@ -37,7 +37,7 @@ func NewCmdPermissionsGet() *cobra.Command {
 func getPermissions(id string, explicitOnly bool, isAdminMode bool) {
 	var permissionsResponse api.GetPermissions
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/permissions"
+	requestUrl := "/v2/content/" + id + "/permissions"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	if explicitOnly == false {

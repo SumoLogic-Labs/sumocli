@@ -44,7 +44,7 @@ func NewCmdExportResult() *cobra.Command {
 func exportResult(contentId string, jobId string, isAdminMode bool, saveToFile bool, filePath string, fileName string) {
 	var responseType api.ResponseType
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + contentId + "/export/" + jobId + "/result"
+	requestUrl := "/v2/content/" + contentId + "/export/" + jobId + "/result"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

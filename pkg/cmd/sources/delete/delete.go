@@ -30,7 +30,7 @@ func NewCmdDeleteSource() *cobra.Command {
 
 func deleteSource(collectorId int, sourceId int) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources/" + strconv.Itoa(sourceId)
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources/" + strconv.Itoa(sourceId)
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

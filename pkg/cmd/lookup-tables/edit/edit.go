@@ -48,7 +48,7 @@ func editLookupTable(description string, id string, ttl int, sizeLimitAction str
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "/v1/lookupTables/" + id
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

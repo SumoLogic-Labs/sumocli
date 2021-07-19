@@ -33,7 +33,7 @@ func NewCmdServiceAllowlistDisable() *cobra.Command {
 
 func disableServiceAllowlist(login bool, content bool, both bool) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/serviceAllowlist/disable"
+	requestUrl := "/v1/serviceAllowlist/disable"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	query := url.Values{}
 	if login == true {

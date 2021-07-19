@@ -24,7 +24,7 @@ func NewCmdSamlGetAllowListUsers() *cobra.Command {
 func getAllowListUsers() {
 	var allowListResponse []api.GetSamlAllowListUsers
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/saml/allowlistedUsers"
+	requestUrl := "/v1/saml/allowlistedUsers"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

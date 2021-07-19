@@ -28,7 +28,7 @@ func NewCmdFieldManagementDisableCustomField() *cobra.Command {
 
 func disableCustomField(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/" + id + "/disable"
+	requestUrl := "/v1/fields/" + id + "/disable"
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

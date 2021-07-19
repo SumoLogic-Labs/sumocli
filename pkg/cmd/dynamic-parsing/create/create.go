@@ -45,7 +45,7 @@ func createDynamicParsingRule(name string, scope string, enabled bool) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/dynamicParsingRules"
+	requestUrl := "/v1/dynamicParsingRules"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

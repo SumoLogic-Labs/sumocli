@@ -27,7 +27,7 @@ func NewCmdFieldExtractionRulesDelete() *cobra.Command {
 
 func deleteFieldExtractionRules(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/extractionRules/" + id
+	requestUrl := "/v1/extractionRules/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

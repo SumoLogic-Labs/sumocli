@@ -27,7 +27,7 @@ func NewCmdPartitionsCancelRetentionUpdate() *cobra.Command {
 
 func cancelRetentionUpdate(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/partitions/" + id + "/cancelRetentionUpdate"
+	requestUrl := "/v1/partitions/" + id + "/cancelRetentionUpdate"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

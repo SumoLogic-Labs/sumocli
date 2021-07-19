@@ -28,7 +28,7 @@ func NewCmdGetPath() *cobra.Command {
 func getPath(id string) {
 	var pathResponse api.GetPathResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/path"
+	requestUrl := "/v2/content/" + id + "/path"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

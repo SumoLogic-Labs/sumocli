@@ -43,7 +43,7 @@ func createDashboard(file string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v2/dashboards"
+	requestUrl := "/v2/dashboards"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

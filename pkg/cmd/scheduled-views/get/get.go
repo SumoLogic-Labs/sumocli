@@ -28,7 +28,7 @@ func NewCmdScheduledViewsGet() *cobra.Command {
 func getScheduledView(id string) {
 	var scheduledViewsResponse api.ScheduledViews
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/scheduledViews/" + id
+	requestUrl := "/v1/scheduledViews/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

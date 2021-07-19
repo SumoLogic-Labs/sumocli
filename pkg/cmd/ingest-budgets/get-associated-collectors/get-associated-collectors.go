@@ -34,7 +34,7 @@ func NewCmdIngestBudgetsGetAssociatedCollectors() *cobra.Command {
 func getAssociatedCollectors(id string, limit int) {
 	var associatedCollectorsResponse api.GetAssociatedCollectors
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/ingestBudgets/" + id + "/collectors"
+	requestUrl := "/v1/ingestBudgets/" + id + "/collectors"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

@@ -27,7 +27,7 @@ func NewCmdDynamicParsingDelete() *cobra.Command {
 
 func deleteDynamicParsingRules(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/dynamicParsingRules/" + id
+	requestUrl := "/v1/dynamicParsingRules/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

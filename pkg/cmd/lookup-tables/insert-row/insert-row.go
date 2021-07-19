@@ -55,7 +55,7 @@ func insertLookupTableRow(id string, columnNames string, columnValues string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/lookupTables/" + id + "/row"
+	requestUrl := "/v1/lookupTables/" + id + "/row"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

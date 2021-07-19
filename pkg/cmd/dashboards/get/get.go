@@ -28,7 +28,7 @@ func NewCmdDashboardsGet() *cobra.Command {
 func getDashboards(id string) {
 	var dashboardResponse api.GetDashboard
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/dashboards/" + id
+	requestUrl := "/v2/dashboards/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

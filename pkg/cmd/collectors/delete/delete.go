@@ -37,7 +37,7 @@ func deleteCollector(aliveBeforeDays int, force bool, id string, offline bool) {
 	log := logging.GetConsoleLogger()
 	if offline == true {
 		if force == true {
-			requestUrl := "v1/collectors/offline"
+			requestUrl := "/v1/collectors/offline"
 			client, request := factory.NewHttpRequest("DELETE", requestUrl)
 			query := url.Values{}
 			query.Add("aliveBeforeDays", strconv.Itoa(aliveBeforeDays))
@@ -62,7 +62,7 @@ func deleteCollector(aliveBeforeDays int, force bool, id string, offline bool) {
 				log.Fatal().Err(err).Msg("failed to perform confirmation")
 			}
 
-			requestUrl := "v1/collectors/offline"
+			requestUrl := "/v1/collectors/offline"
 			client, request := factory.NewHttpRequest("DELETE", requestUrl)
 			query := url.Values{}
 			query.Add("aliveBeforeDays", strconv.Itoa(aliveBeforeDays))
@@ -83,7 +83,7 @@ func deleteCollector(aliveBeforeDays int, force bool, id string, offline bool) {
 			log.Fatal().Msg("a valid collector id needs to be provided, you can run sumocli collectors list to get ids")
 		}
 
-		requestUrl := "v1/collectors/" + id
+		requestUrl := "/v1/collectors/" + id
 		client, request := factory.NewHttpRequest("DELETE", requestUrl)
 		response, err := client.Do(request)
 		if err != nil {

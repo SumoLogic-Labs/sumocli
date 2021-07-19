@@ -124,7 +124,7 @@ func createAWSCloudTrailSource(automaticDateParsing bool, awsId string, awsKey s
 	scanInterval int, timeZone string, useAutolineMatching bool) {
 	var awsCloudTrailResponse api.AWSCloudTrailCollectionResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
 	s3BucketExistence := false
 	kmsKeyExistence := false
 	kmsKeyId := ""

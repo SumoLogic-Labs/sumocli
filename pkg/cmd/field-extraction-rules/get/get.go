@@ -28,7 +28,7 @@ func NewCmdFieldExtractionRulesGet() *cobra.Command {
 func getFieldExtractionRule(id string) {
 	var fieldExtractionRulesResponse api.FieldExtractionRules
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/extractionRules/" + id
+	requestUrl := "/v1/extractionRules/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

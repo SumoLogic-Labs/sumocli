@@ -59,7 +59,7 @@ func NewCmdCreateSource() *cobra.Command {
 func HTTPSource(category string, fields map[string]string, messagePerRequest bool, multilineProcessingEnabled bool,
 	name string, collectorId int, log zerolog.Logger) api.CreateSourceResponse {
 	var sourceResponse api.CreateSourceResponse
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
 	requestBodySchema := &api.CreateHTTPSource{
 		ApiVersion: "",
 		Source: api.HttpSource{

@@ -98,7 +98,7 @@ func createAWSS3ArchiveSource(automaticDateParsing bool, awsId string, awsKey st
 	pathExpression string, paused bool, s3BucketName string, scanInterval int, timeZone string, useAutolineMatching bool) {
 	var s3ArchiveResponse api.AWSCloudTrailCollectionResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
 	fieldsMap := make(map[string]string)
 	if fieldNames != "" && fieldValues != "" {
 		fieldNamesSlice := strings.Split(fieldNames, ",")

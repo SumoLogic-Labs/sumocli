@@ -24,7 +24,7 @@ func NewCmdMonitorsGetUsageInfo() *cobra.Command {
 func getUsageInfo() {
 	var usageInfoResponse []api.GetUsageInfo
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/monitors/usageInfo"
+	requestUrl := "/v1/monitors/usageInfo"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

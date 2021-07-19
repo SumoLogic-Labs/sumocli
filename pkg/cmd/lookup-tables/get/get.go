@@ -27,7 +27,7 @@ func NewCmdLookupTablesGet() *cobra.Command {
 func getLookupTable(id string) {
 	var lookupTableResponse api.LookupTableResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id
+	requestUrl := "/v1/lookupTables/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

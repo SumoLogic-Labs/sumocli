@@ -28,7 +28,7 @@ func NewCmdPartitionsGet() *cobra.Command {
 func getPartition(id string) {
 	var partitionsResponse api.Partitions
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/partitions/" + id
+	requestUrl := "/v1/partitions/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

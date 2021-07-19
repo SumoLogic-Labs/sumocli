@@ -24,7 +24,7 @@ func NewCmdSamlGetConfigurations() *cobra.Command {
 func getSaml() {
 	var samlResponse []api.GetSaml
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/saml/identityProviders"
+	requestUrl := "/v1/saml/identityProviders"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

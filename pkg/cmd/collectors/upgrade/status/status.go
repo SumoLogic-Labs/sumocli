@@ -36,7 +36,7 @@ The status of the upgrade can be one of the following
 func upgradableCollectorStatus(upgradeTaskId int) {
 	log := logging.GetConsoleLogger()
 	var status api.UpgradeTaskStatus
-	requestUrl := "v1/collectors/upgrades/" + strconv.Itoa(upgradeTaskId)
+	requestUrl := "/v1/collectors/upgrades/" + strconv.Itoa(upgradeTaskId)
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("upgradeTaskId", strconv.Itoa(upgradeTaskId))

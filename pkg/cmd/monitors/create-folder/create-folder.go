@@ -45,7 +45,7 @@ func createFolder(description string, name string, parentId string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/monitors"
+	requestUrl := "/v1/monitors"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	query := url.Values{}
 	query.Add("parentId", parentId)
