@@ -53,7 +53,7 @@ func deleteLookupTableRow(id string, columnNames string, columnValues string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/lookupTables/" + id + "/deleteTableRow"
+	requestUrl := "/v1/lookupTables/" + id + "/deleteTableRow"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

@@ -28,7 +28,7 @@ func NewCmdLookupTablesDeleteData() *cobra.Command {
 func deleteLookupTableData(id string) {
 	var deleteDataResponse api.LookupTableRequestId
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id + "/truncate"
+	requestUrl := "/v1/lookupTables/" + id + "/truncate"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

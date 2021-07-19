@@ -84,7 +84,7 @@ func updateSamlConfiguration(spInitiatedLoginPath string, configurationName stri
 	var samlResponse api.GetSaml
 	log := logging.GetConsoleLogger()
 	if merge == true {
-		requestUrl := "v1/saml/identityProviders/" + id
+		requestUrl := "/v1/saml/identityProviders/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
 		if err != nil {
@@ -276,7 +276,7 @@ func updateSamlConfiguration(spInitiatedLoginPath string, configurationName stri
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal request body")
 		}
-		requestUrl := "v1/saml/identityProviders/" + id
+		requestUrl := "/v1/saml/identityProviders/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
 		if err != nil {

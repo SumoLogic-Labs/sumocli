@@ -29,7 +29,7 @@ func NewCmdIngestBudgetsV2List() *cobra.Command {
 func listIngestBudgetsV2(limit int) {
 	var ingestBudgetResponse api.ListIngestBudgetsV2
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/ingestBudgets"
+	requestUrl := "/v2/ingestBudgets"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

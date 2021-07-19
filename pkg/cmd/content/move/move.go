@@ -36,7 +36,7 @@ func NewCmdMove() *cobra.Command {
 func move(id string, destinationFolderId string, isAdminMode bool) {
 	var moveResponse api.MoveResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/move"
+	requestUrl := "/v2/content/" + id + "/move"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

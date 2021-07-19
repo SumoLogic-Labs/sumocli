@@ -35,7 +35,7 @@ func NewCmdExportStatus() *cobra.Command {
 func exportStatus(contentId string, jobId string, isAdminMode bool) {
 	var exportStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + contentId + "/export/" + jobId + "/status"
+	requestUrl := "/v2/content/" + contentId + "/export/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

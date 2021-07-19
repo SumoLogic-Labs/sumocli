@@ -1,23 +1,19 @@
 package delete
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdTokensDelete() *cobra.Command {
+func NewCmdTokensDelete(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	var id string
-
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a token with the given identifier in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			deleteToken(id)
+			deleteToken(id, client, log)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify id of the token to delete")
@@ -25,28 +21,11 @@ func NewCmdTokensDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteToken(id string) {
-	log := logging.GetConsoleLogger()
-	requestUrl := "v1/tokens/" + id
-	client, request := factory.NewHttpRequest("DELETE", requestUrl)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	if response.StatusCode != 204 {
-		var responseError api.ResponseError
-		err := json.Unmarshal(responseBody, &responseError)
-		if err != nil {
-			log.Error().Err(err).Msg("error unmarshalling response body")
-		}
+func deleteToken(id string, client *cip.APIClient, log *zerolog.Logger) {
+	httpResponse, errorResponse := client.DeleteToken(id)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to delete token")
 	} else {
-		fmt.Println("Token was deleted.")
+		cmdutils.Output(nil, httpResponse, errorResponse, "Token was deleted.")
 	}
 }

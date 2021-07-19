@@ -44,7 +44,7 @@ func updateDynamicParsingRule(id string, name string, scope string, enabled bool
 	var dynamicParsingRuleResponse api.DynamicParsingRules
 	log := logging.GetConsoleLogger()
 	if merge == true {
-		requestUrl := "v1/dynamicParsingRules/" + id
+		requestUrl := "/v1/dynamicParsingRules/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
 		if err != nil {
@@ -121,7 +121,7 @@ func updateDynamicParsingRule(id string, name string, scope string, enabled bool
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal request body")
 		}
-		requestUrl := "v1/dynamicParsingRules/" + id
+		requestUrl := "/v1/dynamicParsingRules/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
 		if err != nil {

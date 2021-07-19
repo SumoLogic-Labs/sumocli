@@ -35,7 +35,7 @@ func NewCmdDeletionStatus() *cobra.Command {
 func deletionStatus(id string, jobId string, isAdminMode bool) {
 	var deletionStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/delete/" + jobId + "/status"
+	requestUrl := "/v2/content/" + id + "/delete/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

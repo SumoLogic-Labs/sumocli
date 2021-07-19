@@ -24,7 +24,7 @@ func NewCmdPasswordPolicyGet() *cobra.Command {
 func getPasswordPolicy() {
 	var passwordPolicyResponse api.GetPasswordPolicy
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/passwordPolicy"
+	requestUrl := "/v1/passwordPolicy"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

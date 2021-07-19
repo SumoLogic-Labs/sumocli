@@ -33,7 +33,7 @@ func NewCmdSourceList() *cobra.Command {
 func listSources(collectorId string, log zerolog.Logger) {
 	var sourcesInfo api.ListSources
 
-	requestUrl := "v1/collectors/" + collectorId + "/sources"
+	requestUrl := "/v1/collectors/" + collectorId + "/sources"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

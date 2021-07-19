@@ -57,7 +57,7 @@ func Collector(name string, description string, category string, fields string) 
 	}
 
 	requestBody, _ := json.Marshal(requestBodySchema)
-	client, request := factory.NewHttpRequestWithBody("POST", "v1/collectors", requestBody)
+	client, request := factory.NewHttpRequestWithBody("POST", "/v1/collectors", requestBody)
 	response, err := client.Do(request)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to make http request")

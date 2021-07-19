@@ -35,7 +35,7 @@ func NewCmdCopyStatus() *cobra.Command {
 func copyStatus(id string, jobId string, isAdminMode bool) {
 	var copyStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/copy/" + jobId + "/status"
+	requestUrl := "/v2/content/" + id + "/copy/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

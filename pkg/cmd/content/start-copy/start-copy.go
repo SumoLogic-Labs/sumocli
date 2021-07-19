@@ -36,7 +36,7 @@ func NewCmdStartCopy() *cobra.Command {
 func startCopy(id string, destinationFolder string, isAdminMode bool) {
 	var copyResponse api.StartExportResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/" + id + "/copy"
+	requestUrl := "/v2/content/" + id + "/copy"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

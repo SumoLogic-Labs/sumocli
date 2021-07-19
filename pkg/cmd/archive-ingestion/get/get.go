@@ -1,69 +1,57 @@
 package get
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/antihax/optional"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
-	"strconv"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdArchiveIngestionGet() *cobra.Command {
+func NewCmdArchiveIngestionGet(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	var (
-		limit    int
-		sourceId int
+		limit    int32
+		sourceId string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a list of all the ingestion jobs created on an Archive Source.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getArchiveIngestion(limit, sourceId)
+			getArchiveIngestion(limit, sourceId, client, log)
 		},
 	}
-	cmd.Flags().IntVar(&limit, "limit", 10, "Specify the number of jobs to return")
-	cmd.Flags().IntVar(&sourceId, "sourceId", 0, "Specify the id of the Archive Source")
+	cmd.Flags().Int32Var(&limit, "limit", 10, "Specify the number of jobs to return")
+	cmd.Flags().StringVar(&sourceId, "sourceId", "", "Specify the id of the Archive Source")
 	cmd.MarkFlagRequired("sourceId")
 	return cmd
 }
 
-func getArchiveIngestion(limit int, sourceId int) {
-	var archiveIngestionResponse api.GetArchiveIngestion
-	log := logging.GetConsoleLogger()
-	sourceIdHex := fmt.Sprintf("%x", sourceId)
-	requestUrl := "v1/archive/" + sourceIdHex + "/jobs"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	query.Add("limit", strconv.Itoa(limit))
-	request.URL.RawQuery = query.Encode()
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &archiveIngestionResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	archiveIngestionResponseJson, err := json.MarshalIndent(archiveIngestionResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+func getArchiveIngestion(limit int32, sourceId string, client *cip.APIClient, log *zerolog.Logger) {
+	var options types.ArchiveManagementApiListArchiveJobsBySourceIdOpts
+	var paginationToken string
+	options.Limit = optional.NewInt32(limit)
+	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to list archive jobs by source id")
 	} else {
-		fmt.Println(string(archiveIngestionResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
+	paginationToken = apiResponse.Next
+	for paginationToken != "" {
+		apiResponse = getArchiveIngestionPagination(client, options, paginationToken, sourceId, log)
+		paginationToken = apiResponse.Next
+	}
+}
+
+func getArchiveIngestionPagination(client *cip.APIClient, options types.ArchiveManagementApiListArchiveJobsBySourceIdOpts, token string, sourceId string, log *zerolog.Logger) types.ListArchiveJobsResponse {
+	options.Token = optional.NewString(token)
+	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to list archive jobs by source id")
+	} else {
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+	}
+	return apiResponse
 }

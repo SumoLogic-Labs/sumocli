@@ -88,7 +88,7 @@ func getCollectorEvents(collector bool, collectorId string, collectorName string
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal request body")
 	}
-	requestUrl := "v1/healthEvents/resources"
+	requestUrl := "/v1/healthEvents/resources"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

@@ -1,41 +1,33 @@
 package get_owner
 
 import (
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	GetUser "github.com/wizedkyle/sumocli/pkg/cmd/users/get"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"strings"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdAccountGetOwner() *cobra.Command {
+func NewCmdAccountGetOwner(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-owner",
-		Short: "Returns the user identifier of the account owner.",
+		Short: "Returns the user identifier as the account owner.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getOwner()
+			getOwner(client, log)
 		},
 	}
 	return cmd
 }
 
-func getOwner() {
-	var userId string
-	log := logging.GetConsoleLogger()
-	requestUrl := "v1/account/accountOwner"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
+func getOwner(client *cip.APIClient, log *zerolog.Logger) {
+	userId, _, errorResponse := client.GetAccountOwner()
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to get account owner")
+	} else {
+		userResponse, httpResponse, errorResponse := client.GetUser(userId)
+		if errorResponse != nil {
+			log.Error().Err(errorResponse).Msg("failed to get user")
+		} else {
+			cmdutils.Output(userResponse, httpResponse, errorResponse, "")
+		}
 	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-	userId = string(responseBody)
-	userId = strings.Trim(userId, "\"")
-	GetUser.GetUser(userId)
 }

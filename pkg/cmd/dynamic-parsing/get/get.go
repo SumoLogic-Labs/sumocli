@@ -28,7 +28,7 @@ func NewCmdDynamicParsingGet() *cobra.Command {
 func getDynamicParsingRules(id string) {
 	var dynamicParsingRulesResponse api.DynamicParsingRules
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/dynamicParsingRules/" + id
+	requestUrl := "/v1/dynamicParsingRules/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

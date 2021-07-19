@@ -31,7 +31,7 @@ func NewCmdDynamicParsingList() *cobra.Command {
 func listDynamicParsingRules(limit int) {
 	var dynamicParsingRulesResponse api.ListDynamicParsingRules
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/dynamicParsingRules"
+	requestUrl := "/v1/dynamicParsingRules"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

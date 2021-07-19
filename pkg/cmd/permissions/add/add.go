@@ -64,7 +64,7 @@ func addPermissions(id string, isAdminMode bool, notifyRecipients bool, notifica
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v2/content/" + id + "/permissions/add"
+	requestUrl := "/v2/content/" + id + "/permissions/add"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

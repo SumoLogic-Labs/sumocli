@@ -32,7 +32,7 @@ func NewCmdLookupTableEmpty() *cobra.Command {
 func emptyLookupTable(id string, jsonFormat bool) {
 	var emptyLookupTableRequest api.LookupTableRequestId
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/" + id + "/truncate"
+	requestUrl := "/v1/lookupTables/" + id + "/truncate"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

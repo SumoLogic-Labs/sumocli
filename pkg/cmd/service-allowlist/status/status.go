@@ -24,7 +24,7 @@ func NewCmdServiceAllowlistStatus() *cobra.Command {
 func getServiceAllowlistStatus() {
 	var allowlistStatusResponse api.GetAllowlistStatus
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/serviceAllowlist/status"
+	requestUrl := "/v1/serviceAllowlist/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

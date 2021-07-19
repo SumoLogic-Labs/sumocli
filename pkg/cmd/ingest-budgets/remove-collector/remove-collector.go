@@ -33,7 +33,7 @@ func NewCmIngestBudgetsRemoveAssociatedCollector() *cobra.Command {
 func removeAssociatedCollector(collectorId string, id string) {
 	var ingestBudgetResponse api.GetIngestBudget
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/ingestBudgets/" + id + "/collectors/" + collectorId
+	requestUrl := "/v1/ingestBudgets/" + id + "/collectors/" + collectorId
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

@@ -25,7 +25,7 @@ func NewCmdFieldManagementListDroppedFields() *cobra.Command {
 func listDroppedFields() {
 	var fieldsResponse api.GetDroppedFields
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/dropped"
+	requestUrl := "/v1/fields/dropped"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

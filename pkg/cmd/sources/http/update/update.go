@@ -53,7 +53,7 @@ func updateHttpSource(category string, collectorId int, fieldNames string, field
 	var sourceResponse api.CreateSourceResponse
 	log := logging.GetConsoleLogger()
 
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources/" + sourceId
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources/" + sourceId
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

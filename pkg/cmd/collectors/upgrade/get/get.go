@@ -36,7 +36,7 @@ func NewCmdGetUpgradableCollectors() *cobra.Command {
 func getUpgradableCollectors(toVersion string, offset int, limit int) {
 	log := logging.GetConsoleLogger()
 	var collectorInfo api.Collectors
-	requestUrl := "v1/collectors/upgrades/collectors"
+	requestUrl := "/v1/collectors/upgrades/collectors"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("toVersion", toVersion)

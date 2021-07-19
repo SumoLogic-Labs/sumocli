@@ -37,7 +37,7 @@ SUMO_ACCESS_ID: abcefghi
 
 SUMO_ACCESS_KEY: AbCeFG123
 
-SUMO_ENDPOINT: https://api.<regioncode>.sumologic.com/api/
+SUMO_ENDPOINT: https://api.<regioncode>.sumologic.com/api
 ```
 
 For a full list of Sumo Logic regions to API endpoints see this page: 
@@ -73,7 +73,7 @@ The contents of the credential file is as follows:
   "accessid": "abcefghi",
   "accesskey": "AbCeFG123",
   "region": "<regioncode>",
-  "endpoint": "https://api.<regioncode>.sumologic.com/api/"
+  "endpoint": "https://api.<regioncode>.sumologic.com/api"
 }
 ```
 

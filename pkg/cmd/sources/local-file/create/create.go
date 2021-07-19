@@ -70,7 +70,7 @@ func createLocalFileSource(automaticDateParsing bool, blacklist []string, catego
 	useAutolineMatching bool) {
 	var sourceResponse api.GetLocalFileSource
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
 	requestBodySchema := &api.CreateLocalFileSource{
 		ApiVersion: "v1",
 		Source: api.LocalFileSource{

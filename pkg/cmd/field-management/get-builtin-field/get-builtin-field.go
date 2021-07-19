@@ -28,7 +28,7 @@ func NewCmdFieldManagementGetBuiltinField() *cobra.Command {
 func getBuiltinField(id string) {
 	var fieldsResponse api.Fields
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/builtin/" + id
+	requestUrl := "/v1/fields/builtin/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

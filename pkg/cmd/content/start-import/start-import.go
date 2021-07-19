@@ -41,7 +41,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool)
 	var responseStatusCode int
 	var responseBodyData []byte
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/folders/" + folderId + "/import"
+	requestUrl := "/v2/content/folders/" + folderId + "/import"
 	fileData, err := os.ReadFile(file)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to read file")

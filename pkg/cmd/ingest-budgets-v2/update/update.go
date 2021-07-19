@@ -60,7 +60,7 @@ func updateIngestBudgetV2(action string, auditThreshold int, capacityBytes int, 
 	var ingestBudgetResponse api.GetIngestBudgetV2
 	log := logging.GetConsoleLogger()
 	if merge == true {
-		requestUrl := "v2/ingestBudgets/" + id
+		requestUrl := "/v2/ingestBudgets/" + id
 		client, request := factory.NewHttpRequest("GET", requestUrl)
 		response, err := client.Do(request)
 		if err != nil {
@@ -172,7 +172,7 @@ func updateIngestBudgetV2(action string, auditThreshold int, capacityBytes int, 
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal request body")
 		}
-		requestUrl := "v2/ingestBudgets/" + id
+		requestUrl := "/v2/ingestBudgets/" + id
 		client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 		response, err := client.Do(request)
 		if err != nil {

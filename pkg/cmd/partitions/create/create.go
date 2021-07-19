@@ -52,7 +52,7 @@ func createPartition(name string, routingExpression string, analyticsTier string
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/partitions"
+	requestUrl := "/v1/partitions"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

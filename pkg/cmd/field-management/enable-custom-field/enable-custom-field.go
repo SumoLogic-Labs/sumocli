@@ -29,7 +29,7 @@ func NewCmdFieldManagementEnableCustomField() *cobra.Command {
 
 func enableCustomField(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/" + id + "/enable"
+	requestUrl := "/v1/fields/" + id + "/enable"
 	client, request := factory.NewHttpRequest("PUT", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

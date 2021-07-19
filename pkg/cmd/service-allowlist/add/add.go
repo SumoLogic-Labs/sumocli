@@ -43,7 +43,7 @@ func addServiceAllowlistCidr(cidr string, description string) {
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/serviceAllowlist/addresses/add"
+	requestUrl := "/v1/serviceAllowlist/addresses/add"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

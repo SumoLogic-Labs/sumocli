@@ -49,7 +49,7 @@ func createHttpSource(category string, collectorId int, fieldNames string, field
 	messagePerRequest bool, multilineProcessingEnabled bool, name string) {
 	var sourceResponse api.CreateSourceResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
+	requestUrl := "/v1/collectors/" + strconv.Itoa(collectorId) + "/sources"
 	fieldsMap := make(map[string]string)
 	if fieldNames != "" && fieldValues != "" {
 		fieldNamesSlice := strings.Split(fieldNames, ",")

@@ -53,14 +53,14 @@ func getCredentials() {
 	var credentials api.SumoAuth
 	log := logging.GetConsoleLogger()
 	sumoApiEndpoints := []api.SumoApiEndpoint{
-		{Name: "Australia", Code: "au", Endpoint: "https://api.au.sumologic.com/api/"},
-		{Name: "Canada", Code: "ca", Endpoint: "https://api.ca.sumologic.com/api/"},
-		{Name: "Germany", Code: "de", Endpoint: "https://api.de.sumologic.com/api/"},
-		{Name: "Ireland", Code: "eu", Endpoint: "https://api.eu.sumologic.com/api/"},
-		{Name: "India", Code: "in", Endpoint: "https://api.in.sumologic.com/api/"},
-		{Name: "Japan", Code: "jp", Endpoint: "https://api.jp.sumologic.com/api/"},
-		{Name: "USA1", Code: "us1", Endpoint: "https://api.sumologic.com/api/"},
-		{Name: "USA2", Code: "us2", Endpoint: "https://api.us2.sumologic.com/api/"},
+		{Name: "Australia", Code: "au", Endpoint: "https://api.au.sumologic.com/api"},
+		{Name: "Canada", Code: "ca", Endpoint: "https://api.ca.sumologic.com/api"},
+		{Name: "Germany", Code: "de", Endpoint: "https://api.de.sumologic.com/api"},
+		{Name: "Ireland", Code: "eu", Endpoint: "https://api.eu.sumologic.com/api"},
+		{Name: "India", Code: "in", Endpoint: "https://api.in.sumologic.com/api"},
+		{Name: "Japan", Code: "jp", Endpoint: "https://api.jp.sumologic.com/api"},
+		{Name: "USA1", Code: "us1", Endpoint: "https://api.sumologic.com/api"},
+		{Name: "USA2", Code: "us2", Endpoint: "https://api.us2.sumologic.com/api"},
 	}
 
 	templates := &promptui.SelectTemplates{

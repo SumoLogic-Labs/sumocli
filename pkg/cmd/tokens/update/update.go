@@ -1,86 +1,54 @@
 package update
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdTokensUpdate() *cobra.Command {
+func NewCmdTokensUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	var (
 		description string
 		id          string
 		inactive    bool
 		name        string
-		version     int
+		version     int64
 	)
-
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a token with the given identifier in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateToken(description, id, inactive, name, version)
+			updateToken(description, id, inactive, name, version, client, log)
 		},
 	}
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the token")
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the token to update")
 	cmd.Flags().BoolVar(&inactive, "inactive", false, "Set to true if you want the token to be inactive")
 	cmd.Flags().StringVar(&name, "name", "", "Specify a name for the token")
-	cmd.Flags().IntVar(&version, "version", 0, "Specify a version of the token")
+	cmd.Flags().Int64Var(&version, "version", 0, "Specify a version of the token (can be retrieved by running sumocli tokens list)")
 	cmd.MarkFlagRequired("id")
 	cmd.MarkFlagRequired("name")
 	cmd.MarkFlagRequired("version")
 	return cmd
 }
 
-func updateToken(description string, id string, inactive bool, name string, version int) {
-	var updateTokenResponse api.GetTokenResponse
-	log := logging.GetConsoleLogger()
-	requestBodySchema := &api.UpdateTokenRequest{
-		Name:        name,
-		Description: description,
-		Type:        "CollectorRegistration",
-		Version:     0,
-	}
-	if inactive == false {
-		requestBodySchema.Status = "Active"
+func updateToken(description string, id string, inactive bool, name string, version int64, client *cip.APIClient, log *zerolog.Logger) {
+	var options types.TokenBaseDefinitionUpdate
+	if inactive == true {
+		options.Status = "Inactive"
 	} else {
-		requestBodySchema.Status = "Inactive"
+		options.Status = "Active"
 	}
-	requestBody, err := json.Marshal(requestBodySchema)
-	if err != nil {
-		log.Error().Err(err).Msg("error marshalling request body")
-	}
-	requestUrl := "v1/tokens/" + id
-	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &updateTokenResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	updateTokenResponseJson, err := json.MarshalIndent(updateTokenResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal lookupTableResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+	options.Name = name
+	options.Description = description
+	options.Type_ = "CollectorRegistration"
+	options.Version = version
+	apiResponse, httpResponse, errorResponse := client.UpdateToken(options, id)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to update token")
 	} else {
-		fmt.Println(string(updateTokenResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }

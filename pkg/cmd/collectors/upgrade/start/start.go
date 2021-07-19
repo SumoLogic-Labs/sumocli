@@ -43,7 +43,7 @@ func upgradeStart(collectorId int, toVersion string) {
 		log.Error().Err(err).Msg("failed to marshal response body")
 	}
 
-	requestUrl := "v1/collectors/upgrades"
+	requestUrl := "/v1/collectors/upgrades"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

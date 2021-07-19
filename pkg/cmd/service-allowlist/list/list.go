@@ -24,7 +24,7 @@ func NewCmdServiceAllowlistList() *cobra.Command {
 func listServiceAllowlist() {
 	var allowlistResponse api.ListServiceAllowlist
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/serviceAllowlist/addresses"
+	requestUrl := "/v1/serviceAllowlist/addresses"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

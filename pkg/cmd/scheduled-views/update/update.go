@@ -48,7 +48,7 @@ func updateScheduledView(id string, dataForwardingId string, retentionPeriod int
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/scheduledViews/" + id
+	requestUrl := "/v1/scheduledViews/" + id
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

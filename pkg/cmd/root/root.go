@@ -2,11 +2,11 @@ package root
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/wizedkyle/sumocli/config"
 	accessKeysCmd "github.com/wizedkyle/sumocli/pkg/cmd/access-keys"
 	accountCmd "github.com/wizedkyle/sumocli/pkg/cmd/account"
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	archiveIngestion "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion"
-	azureCmd "github.com/wizedkyle/sumocli/pkg/cmd/azure"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
@@ -32,6 +32,7 @@ import (
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
+	"github.com/wizedkyle/sumocli/pkg/logging"
 )
 
 func NewCmdRoot() *cobra.Command {
@@ -42,19 +43,20 @@ func NewCmdRoot() *cobra.Command {
 		Long:             "Interact with and manage Sumo Logic and Cloud SIEM Enterprise from the command line.",
 		TraverseChildren: true,
 	}
+	client := config.GetSumoLogicSDKConfig()
+	log := logging.GetLogger()
 	// Add subcommands
-	cmd.AddCommand(accountCmd.NewCmdAccount())
-	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys())
-	cmd.AddCommand(appsCmd.NewCmdApps())
-	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion())
-	cmd.AddCommand(azureCmd.NewCmdAzure())
+	cmd.AddCommand(accountCmd.NewCmdAccount(client, log))
+	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client, log))
+	cmd.AddCommand(appsCmd.NewCmdApps(client, log))
+	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client, log))
 	cmd.AddCommand(collectorCmd.NewCmdCollectors())
 	cmd.AddCommand(contentCmd.NewCmdContent())
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
-	cmd.AddCommand(foldersCmd.NewCmdFolders())
+	cmd.AddCommand(foldersCmd.NewCmdFolders(client, log))
 	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents())
 	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
 	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
@@ -65,13 +67,13 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
-	cmd.AddCommand(roleCmd.NewCmdRole())
+	cmd.AddCommand(roleCmd.NewCmdRole(client, log))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
-	cmd.AddCommand(sourcesCmd.NewCmdSources())
-	cmd.AddCommand(tokensCmd.NewCmdTokens())
-	cmd.AddCommand(usersCmd.NewCmdUser())
+	cmd.AddCommand(sourcesCmd.NewCmdSources(client, log))
+	cmd.AddCommand(tokensCmd.NewCmdTokens(client, log))
+	cmd.AddCommand(usersCmd.NewCmdUser(client, log))
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands

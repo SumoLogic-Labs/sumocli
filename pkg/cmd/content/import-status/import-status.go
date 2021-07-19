@@ -35,7 +35,7 @@ func NewCmdImportStatus() *cobra.Command {
 func importStatus(folderId string, jobId string, isAdminMode bool) {
 	var importStatusResponse api.ExportStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/folders/" + folderId + "/import/" + jobId + "/status"
+	requestUrl := "/v2/content/folders/" + folderId + "/import/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	if isAdminMode == true {
 		request.Header.Add("isAdminMode", "true")

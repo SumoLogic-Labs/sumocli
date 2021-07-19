@@ -29,7 +29,7 @@ func NewCmdFieldManagementDeleteField() *cobra.Command {
 
 func deleteField(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/fields/" + id
+	requestUrl := "/v1/fields/" + id
 	client, request := factory.NewHttpRequest("DELETE", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

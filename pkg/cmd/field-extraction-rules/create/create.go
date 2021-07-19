@@ -49,7 +49,7 @@ func createFieldExtractionRule(name string, scope string, parseExpression string
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/extractionRules"
+	requestUrl := "/v1/extractionRules"
 	client, request := factory.NewHttpRequestWithBody("POST", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {

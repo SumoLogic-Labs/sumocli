@@ -42,9 +42,9 @@ func listCollectors(filter string, limit int, offset string, offline bool, jsonF
 	var collectorInfo api.Collectors
 	var requestUrl string
 	if offline == true {
-		requestUrl = "v1/collectors/offline"
+		requestUrl = "/v1/collectors/offline"
 	} else {
-		requestUrl = "v1/collectors"
+		requestUrl = "/v1/collectors"
 	}
 
 	client, request := factory.NewHttpRequest("GET", requestUrl)

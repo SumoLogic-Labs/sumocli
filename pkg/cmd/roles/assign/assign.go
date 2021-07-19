@@ -1,65 +1,36 @@
 package assign
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdRoleAssign() *cobra.Command {
+func NewCmdRoleAssign(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	var (
 		roleId string
 		userId string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "assign",
 		Short: "Assigns the specified Sumo Logic user to the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			assignRole(roleId, userId)
+			assignRoleToUser(client, roleId, userId, log)
 		},
 	}
-
-	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the id of the role")
-	cmd.Flags().StringVar(&userId, "userId", "", "Specify the id of the user to remove")
+	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the identifier of the role to assign.")
+	cmd.Flags().StringVar(&userId, "userId", "", "Specify the identifier of the user to assign the role to.")
 	cmd.MarkFlagRequired("roleId")
 	cmd.MarkFlagRequired("userId")
 	return cmd
 }
 
-func assignRole(roleId string, userId string) {
-	var roleInfo api.RoleData
-	log := logging.GetConsoleLogger()
-	requestUrl := "v1/roles/" + roleId + "/users/" + userId
-	client, request := factory.NewHttpRequest("PUT", requestUrl)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &roleInfo)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	roleInfoJson, err := json.MarshalIndent(roleInfo, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+func assignRoleToUser(client *cip.APIClient, roleId string, userId string, log *zerolog.Logger) {
+	apiResponse, httpResponse, errorResponse := client.AssignRoleToUser(roleId, userId)
+	if errorResponse != nil {
+		log.Error().Err(errorResponse).Msg("failed to assign role to user")
 	} else {
-		fmt.Println(string(roleInfoJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }

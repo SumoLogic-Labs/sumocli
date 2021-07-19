@@ -32,7 +32,7 @@ func NewCmdLookupTableJobStatus() *cobra.Command {
 func getLookupTableJobStatus(jobId string, jsonFormat bool) {
 	var statusResponse api.LookupTableStatusResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/lookupTables/jobs/" + jobId + "/status"
+	requestUrl := "/v1/lookupTables/jobs/" + jobId + "/status"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

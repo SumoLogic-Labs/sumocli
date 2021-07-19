@@ -27,7 +27,7 @@ func NewCmdPartitionsDecommission() *cobra.Command {
 
 func decommissionPartition(id string) {
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/partitions/" + id + "/decommission"
+	requestUrl := "/v1/partitions/" + id + "/decommission"
 	client, request := factory.NewHttpRequest("POST", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

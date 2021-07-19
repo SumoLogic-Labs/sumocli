@@ -24,7 +24,7 @@ func NewCmdMonitorsGetRootFolder() *cobra.Command {
 func getRootFolder() {
 	var rootFolderRepsonse api.RootMonitorFolder
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/monitors/root"
+	requestUrl := "/v1/monitors/root"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

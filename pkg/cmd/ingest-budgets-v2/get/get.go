@@ -28,7 +28,7 @@ func NewCmdIngestBudgetsV2Get() *cobra.Command {
 func getIngestBudgetV2(id string) {
 	var ingestBudgetResponse api.GetIngestBudgetV2
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/ingestBudgets/" + id
+	requestUrl := "/v2/ingestBudgets/" + id
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

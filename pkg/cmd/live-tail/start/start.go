@@ -86,7 +86,7 @@ func createLiveTailSession(filter string, log zerolog.Logger) string {
 		Filter: "_sourceCategory=ubuntu/syslog",
 	}
 	requestBody, _ := json.Marshal(requestBodySchema)
-	client, request := factory.NewLiveTailHttpRequest("POST", endpoint+"v1/livetail/session", requestBody)
+	client, request := factory.NewLiveTailHttpRequest("POST", endpoint+"/v1/livetail/session", requestBody)
 	request.SetBasicAuth(accessId, accessKey)
 	response, err := client.Do(request)
 	if err != nil {
@@ -112,7 +112,7 @@ func startLiveTailSession(filter string, log zerolog.Logger) {
 	offset := 0
 
 	for true {
-		latestLiveTailResultsUrl := endpoint + "v1/livetail/session/" + sessionId + "/latest/" + strconv.Itoa(offset)
+		latestLiveTailResultsUrl := endpoint + "/v1/livetail/session/" + sessionId + "/latest/" + strconv.Itoa(offset)
 		time.Sleep(2 * time.Second)
 		tailSession := func() liveTailSessionResponse {
 			var tailSession liveTailSessionResponse

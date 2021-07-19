@@ -27,7 +27,7 @@ func NewCmdGetBuilds() *cobra.Command {
 func getBuilds() {
 	log := logging.GetConsoleLogger()
 	var builds api.Targets
-	requestUrl := "v1/collectors/upgrades/targets"
+	requestUrl := "/v1/collectors/upgrades/targets"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	response, err := client.Do(request)
 	if err != nil {

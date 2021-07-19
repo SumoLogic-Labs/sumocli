@@ -31,7 +31,7 @@ func NewCmdFieldExtractionRulesList() *cobra.Command {
 func listFieldExtractionRules(limit int) {
 	var fieldExtractionRulesResponse api.ListFieldExtractionRules
 	log := logging.GetConsoleLogger()
-	requestUrl := "v1/extractionRules"
+	requestUrl := "/v1/extractionRules"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("limit", strconv.Itoa(limit))

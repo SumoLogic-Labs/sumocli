@@ -29,7 +29,7 @@ func NewCmdGet() *cobra.Command {
 func getContent(path string) {
 	var contentResponse api.GetContentResponse
 	log := logging.GetConsoleLogger()
-	requestUrl := "v2/content/path"
+	requestUrl := "/v2/content/path"
 	client, request := factory.NewHttpRequest("GET", requestUrl)
 	query := url.Values{}
 	query.Add("path", path)

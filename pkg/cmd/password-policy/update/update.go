@@ -77,7 +77,7 @@ func updatePasswordPolicy(minLength int, maxLength int, mustContainLowercase boo
 	if err != nil {
 		log.Error().Err(err).Msg("error marshalling request body")
 	}
-	requestUrl := "v1/passwordPolicy"
+	requestUrl := "/v1/passwordPolicy"
 	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
 	response, err := client.Do(request)
 	if err != nil {
