@@ -1,5 +1,8 @@
 name: Sumocli Build and Release
 
+env:
+  GOVERSION: '1.16.6'
+
 on:
   push:
     tags:
@@ -12,7 +15,7 @@ jobs:
     steps:
       - name: Set Version Variable
         run: |
-          echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -34,14 +37,14 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.5'
+          go-version: env.GOVERSION
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '2.1.x'
       - name: Set Version Variable
         run: |
-          echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
       - name: Install AzureSignTool
         shell: pwsh
         run: dotnet tool install --global AzureSignTool --version 2.0.17
@@ -94,10 +97,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.5'
+          go-version: env.GOVERSION
       - name: Set Version Variable
         run: |
-          echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
@@ -135,10 +138,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.5'
+          go-version: env.GOVERSION
       - name: Set Version Variable
         run: |
-          echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
@@ -205,10 +208,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.5'
+          go-version: env.GOVERSION
       - name: Set Version Variable
         run: |
-          echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
