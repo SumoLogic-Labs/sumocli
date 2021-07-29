@@ -7,37 +7,38 @@ import (
 	"github.com/wizedkyle/sumocli/api"
 	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
 	"github.com/wizedkyle/sumocli/pkg/logging"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"io"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-func NewCmdCollectorUpdate() *cobra.Command {
+func NewCmdCollectorUpdate(client *cip.APIClient) *cobra.Command {
 	var (
-		category        string
-		collectorId     int
-		cutoffTimestamp int
-		description     string
-		ephemeral       bool
-		fields          string
-		hostName        string
-		name            string
-		sourceSyncMode  string
-		timeZone        string
-		targetCPU       int
+		category           string
+		cutoffTimestamp    int
+		description        string
+		ephemeral          bool
+		fields             string
+		hostName           string
+		id                 string
+		installedCollector bool
+		name               string
+		sourceSyncMode     string
+		timeZone           string
+		targetCPU          int
 	)
-
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "updates a Sumo Logic collector settings",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateCollector(category, collectorId, cutoffTimestamp, description, ephemeral, fields, hostName,
-				name, sourceSyncMode, timeZone, targetCPU)
+			updateCollector(category, id, cutoffTimestamp, description, ephemeral, fields, hostName,
+				name, sourceSyncMode, timeZone, targetCPU, client)
 		},
 	}
 	cmd.Flags().StringVar(&category, "category", "", "Specify a category for the collector")
-	cmd.Flags().IntVar(&collectorId, "id", 0, "Id of the collector you want to update")
+	cmd.Flags().StringVar(&id, "id", "", "Id of the collector you want to update")
 	cmd.Flags().IntVar(&cutoffTimestamp, "cutoffTimestamp", 0, "Specify a cutoff timestamp for the collector, specified as milliseconds since epoch")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the collector")
 	cmd.Flags().BoolVar(&ephemeral, "ephemeral", false, "When true the collector will be deleted after 12 hours of inactivity, defaults to false")
@@ -53,8 +54,14 @@ func NewCmdCollectorUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateCollector(category string, collectorId int, cutoffTimestamp int, description string, ephemeral bool,
-	fields string, hostName string, name string, sourceSyncMode string, timeZone string, targetCPU int) {
+func updateCollector(category string, id string, cutoffTimestamp int, description string, ephemeral bool,
+	fields string, hostName string, installedCollector bool, name string, sourceSyncMode string, timeZone string, targetCPU int, client *cip.APIClient) {
+	if installedCollector == true {
+		apiResponse, httpResponse, errorResponse := client.UpdateInstalledCollector()
+	} else {
+		apiResponse, httpResponse, errorResponse := client.UpdateHostedCollector()
+	}
+
 	log := logging.GetConsoleLogger()
 	var collectorInfo api.CollectorResponse
 

@@ -12,7 +12,7 @@ func Output(apiResponse interface{}, httpResponse *http.Response, errorResponse 
 		fmt.Println("failed to marshal api response")
 	}
 	if apiResponse == nil {
-		if httpResponse.StatusCode != 204 {
+		if httpResponse.StatusCode != 204 && httpResponse.StatusCode != 200 {
 			fmt.Println(errorResponse)
 		} else {
 			fmt.Println(message)

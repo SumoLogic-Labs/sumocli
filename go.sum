@@ -297,6 +297,16 @@ github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210719061101-63492f
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210719061101-63492f3f5d32/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210719061942-806042656638 h1:4tBaTbQLL51r1DEsmtOUhtEDoPNJbjs1JKS5l3yBj0E=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210719061942-806042656638/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210727114424-40a2881b50ee h1:XPGgD2p4+0WWDhVVuRF1PghlVA8DH8CErBuRmzuqgyQ=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210727114424-40a2881b50ee/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728102326-178acadf45c6 h1:klJI4bjiDrILdU9HKbs2IqDaj+tra+Jx09TDjkqV/Ms=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728102326-178acadf45c6/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728102654-bcd3a74cc9ec h1:3mq4J/Ot2QJ5N0fYm5GS9qL5ow6HwW1bsQKnWeoCQrs=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728102654-bcd3a74cc9ec/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728103122-b8ab8fad71f9 h1:DTM7sSsjURSjM7t71wiExLwqst1mTzMfpIEq5lIxOAc=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728103122-b8ab8fad71f9/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728115025-0781f4c0b333 h1:v0rfxpGyVLF0DDcBrFkxWXJw98KAM8tXZESp7Es+VG4=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728115025-0781f4c0b333/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.7.0 h1:cdg72+DsU6jyBc5PVB+jI6wsxAjUaijyKh3PmabNFq0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.7.0/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=

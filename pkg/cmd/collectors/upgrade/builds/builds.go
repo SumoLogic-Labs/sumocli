@@ -1,54 +1,27 @@
 package builds
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdGetBuilds() *cobra.Command {
-	var ()
-
+func NewCmdGetBuilds(client *cip.APIClient) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "builds",
 		Short: "Gets available Sumo Logic collector builds",
 		Run: func(cmd *cobra.Command, args []string) {
-			getBuilds()
+			getBuilds(client)
 		},
 	}
-
 	return cmd
 }
 
-func getBuilds() {
-	log := logging.GetConsoleLogger()
-	var builds api.Targets
-	requestUrl := "/v1/collectors/upgrades/targets"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("error reading response body from request")
-	}
-
-	err = json.Unmarshal(responseBody, &builds)
-	if err != nil {
-		log.Error().Err(err).Msg("error unmarshalling response body")
-	}
-
-	buildsJson, err := json.MarshalIndent(builds, "", "    ")
-
-	if response.StatusCode == 200 {
-		fmt.Println(string(buildsJson))
+func getBuilds(client *cip.APIClient) {
+	apiResponse, httpResponse, errorResponse := client.GetAvailableBuilds()
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse)
 	} else {
-		factory.HttpError(response.StatusCode, responseBody, log)
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }

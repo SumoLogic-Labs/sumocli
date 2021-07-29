@@ -8,5 +8,4 @@ COPY . .
 RUN chmod +x ./scripts/build.sh
 RUN ./scripts/build.sh
 
-WORKDIR $GOPATH
-ENTRYPOINT ["sumocli"]
+ENTRYPOINT ["/go/bin/sumocli"]
