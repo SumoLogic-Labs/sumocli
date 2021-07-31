@@ -1,14 +1,13 @@
 package create
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdTokensCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdTokensCreate(client *cip.APIClient) *cobra.Command {
 	var (
 		description string
 		inactive    bool
@@ -18,7 +17,7 @@ func NewCmdTokensCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Comma
 		Use:   "create",
 		Short: "Create a token in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			createToken(description, inactive, name, client, log)
+			createToken(description, inactive, name, client)
 		},
 	}
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the token")
@@ -28,7 +27,7 @@ func NewCmdTokensCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Comma
 	return cmd
 }
 
-func createToken(description string, inactive bool, name string, client *cip.APIClient, log *zerolog.Logger) {
+func createToken(description string, inactive bool, name string, client *cip.APIClient) {
 	var options types.TokenBaseDefinition
 	if inactive == true {
 		options.Status = "Inactive"
@@ -40,7 +39,7 @@ func createToken(description string, inactive bool, name string, client *cip.API
 	options.Type_ = "CollectorRegistration"
 	apiResponse, httpResponse, errorResponse := client.CreateToken(options)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to create token")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

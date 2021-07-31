@@ -1,14 +1,13 @@
 package update
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdUserUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdUserUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		id        string
 		firstName string
@@ -20,7 +19,7 @@ func NewCmdUserUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 		Use:   "update",
 		Short: "Updates a Sumo Logic user.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateUser(id, firstName, lastName, isActive, roleIds, client, log)
+			updateUser(id, firstName, lastName, isActive, roleIds, client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the user to update.")
@@ -36,7 +35,7 @@ func NewCmdUserUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 	return cmd
 }
 
-func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, client *cip.APIClient, log *zerolog.Logger) {
+func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.UpdateUser(types.UpdateUserDefinition{
 		FirstName: firstName,
 		LastName:  lastName,
@@ -45,7 +44,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 	},
 		id)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to update user")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

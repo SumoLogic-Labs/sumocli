@@ -1,13 +1,12 @@
 package get
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdAzureEventHubSourceGet(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdAzureEventHubSourceGet(client *cip.APIClient) *cobra.Command {
 	var (
 		collectorId string
 		sourceId    string
@@ -16,7 +15,7 @@ func NewCmdAzureEventHubSourceGet(client *cip.APIClient, log *zerolog.Logger) *c
 		Use:   "get",
 		Short: "Gets information about an Azure Event Hub source",
 		Run: func(cmd *cobra.Command, args []string) {
-			getEventHubSource(collectorId, sourceId, client, log)
+			getEventHubSource(collectorId, sourceId, client)
 		},
 	}
 	cmd.Flags().StringVar(&collectorId, "collectorId", "", "Specify the collector id that the source is associated to")
@@ -24,10 +23,10 @@ func NewCmdAzureEventHubSourceGet(client *cip.APIClient, log *zerolog.Logger) *c
 	return cmd
 }
 
-func getEventHubSource(collectorId string, sourceId string, client *cip.APIClient, log *zerolog.Logger) {
+func getEventHubSource(collectorId string, sourceId string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetEventHubSource(collectorId, sourceId)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to get event hub source")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

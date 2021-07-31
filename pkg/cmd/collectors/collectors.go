@@ -21,7 +21,7 @@ func NewCmdCollectors(client *cip.APIClient) *cobra.Command {
 	cmd.AddCommand(cmdCollectorDelete.NewCmdCollectorDelete(client))
 	cmd.AddCommand(cmdCollectorGet.NewCmdCollectorGet(client))
 	cmd.AddCommand(cmdCollectorList.NewCmdCollectorList(client))
-	cmd.AddCommand(cmdCollectorUpdate.NewCmdCollectorUpdate())
+	cmd.AddCommand(cmdCollectorUpdate.NewCmdCollectorUpdate(client))
 	cmd.AddCommand(cmdCollectorUpgrade.NewCmdUpgradeCollectors(client))
 	return cmd
 }

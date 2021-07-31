@@ -307,6 +307,14 @@ github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728103122-b8ab8f
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728103122-b8ab8fad71f9/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728115025-0781f4c0b333 h1:v0rfxpGyVLF0DDcBrFkxWXJw98KAM8tXZESp7Es+VG4=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210728115025-0781f4c0b333/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210729114550-45a8e0ad18b2 h1:9dmcMJ1RAurpiKe/mxm/yzbvlPL2iQBVSoSFlkHrYsw=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210729114550-45a8e0ad18b2/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210730120941-c211249fe285 h1:tb1IzgeCfccYPFcsiR5PJh406AwVSY0D6ZKOEYVo82A=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210730120941-c211249fe285/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210730121644-d774c6c843d1 h1:ijl+s4iA66wWAobp0yUDlyFo8viH1t7Iw2TKC9FUIp0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210730121644-d774c6c843d1/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210731123533-8086bde9e18f h1:zX5HOIAxhsRcGo7QcCHyoDly4xklTNufP2LplRsFnWM=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210731123533-8086bde9e18f/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.7.0 h1:cdg72+DsU6jyBc5PVB+jI6wsxAjUaijyKh3PmabNFq0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.7.0/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=

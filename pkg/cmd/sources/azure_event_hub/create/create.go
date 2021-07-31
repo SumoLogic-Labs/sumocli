@@ -1,14 +1,13 @@
 package create
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdAzureEventHubSourceCreate(client *cip.APIClient) *cobra.Command {
 	var (
 		authorizationRuleName string
 		category              string
@@ -27,7 +26,7 @@ func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger)
 		Short: "Creates an Azure Event Hub source",
 		Run: func(cmd *cobra.Command, args []string) {
 			createEventHubSource(authorizationRuleName, category, collectorId, consumerGroup, description, eventHubKey,
-				eventHubName, fieldNames, fieldValues, name, namespace, client, log)
+				eventHubName, fieldNames, fieldValues, name, namespace, client)
 		},
 	}
 	cmd.Flags().StringVar(&authorizationRuleName, "authorizationRuleName", "", "Specify the name of the Event Hub Authorization Rule")
@@ -55,7 +54,7 @@ func NewCmdAzureEventHubSourceCreate(client *cip.APIClient, log *zerolog.Logger)
 
 func createEventHubSource(authorizationRuleName string, category string, collectorId string, consumerGroup string, description string,
 	eventHubKey string, eventHubName string, fieldNames []string, fieldValues []string, name string, namespace string,
-	client *cip.APIClient, log *zerolog.Logger) {
+	client *cip.APIClient) {
 	fields := cmdutils.GenerateFieldsMap(fieldNames, fieldValues)
 	body := types.CreateEventHubSourceRequest{
 		ApiVersion: "v1",
@@ -80,7 +79,7 @@ func createEventHubSource(authorizationRuleName string, category string, collect
 	}
 	apiResponse, httpResponse, errorResponse := client.CreateEventHubSource(body, collectorId)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to create azure event hub source")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -1,14 +1,14 @@
 package update
 
 import (
-	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdRoleUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdRoleUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		id           string
 		name         string
@@ -22,7 +22,7 @@ func NewCmdRoleUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 		Use:   "update",
 		Short: "Updates a Sumo Logic role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateRole(client, id, name, description, filter, users, capabilities, autofill, log)
+			updateRole(client, id, name, description, filter, users, capabilities, autofill)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the role to update.")
@@ -38,7 +38,7 @@ func NewCmdRoleUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 }
 
 func updateRole(client *cip.APIClient, id string, name string, description string, filter string, users []string,
-	capabilities []string, autofill bool, log *zerolog.Logger) {
+	capabilities []string, autofill bool) {
 	for i, capability := range capabilities {
 		if cmdutils.ValidateCapabilities(capability) == false {
 			log.Error().Msg(capability + " is not a valid Sumo Logic role capability.")
@@ -55,7 +55,7 @@ func updateRole(client *cip.APIClient, id string, name string, description strin
 	}
 	apiResponse, httpResponse, errorResponse := client.UpdateRole(body, id)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to update role")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

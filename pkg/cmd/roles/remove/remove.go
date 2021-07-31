@@ -1,13 +1,12 @@
 package remove
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdRoleRemoveUser(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdRoleRemoveUser(client *cip.APIClient) *cobra.Command {
 	var (
 		roleId string
 		userId string
@@ -16,7 +15,7 @@ func NewCmdRoleRemoveUser(client *cip.APIClient, log *zerolog.Logger) *cobra.Com
 		Use:   "remove user",
 		Short: "Removes the specified Sumo Logic user from the role.",
 		Run: func(cmd *cobra.Command, args []string) {
-			removeRoleFromUser(client, roleId, userId, log)
+			removeRoleFromUser(client, roleId, userId)
 		},
 	}
 	cmd.Flags().StringVar(&roleId, "roleId", "", "Specify the identifier of the role.")
@@ -26,10 +25,10 @@ func NewCmdRoleRemoveUser(client *cip.APIClient, log *zerolog.Logger) *cobra.Com
 	return cmd
 }
 
-func removeRoleFromUser(client *cip.APIClient, roleId string, userId string, log *zerolog.Logger) {
+func removeRoleFromUser(client *cip.APIClient, roleId string, userId string) {
 	httpResponse, errorResponse := client.RemoveRoleFromUser(roleId, userId)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to remove role from user")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User: "+userId+" was removed from role: "+roleId)
 	}

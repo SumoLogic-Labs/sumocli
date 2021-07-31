@@ -3,25 +3,25 @@ package disable_mfa
 import (
 	"errors"
 	"github.com/manifoldco/promptui"
-	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdUserDisableMFA(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdUserDisableMFA(client *cip.APIClient) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "disable-mfa",
 		Short: "Disables MFA for a Sumo Logic user (this command only works interactively).",
 		Run: func(cmd *cobra.Command, args []string) {
-			userDisableMFA(client, log)
+			userDisableMFA(client)
 		},
 	}
 	return cmd
 }
 
-func userDisableMFA(client *cip.APIClient, log *zerolog.Logger) {
+func userDisableMFA(client *cip.APIClient) {
 	validate := func(input string) error {
 		if input == "" {
 			return errors.New("Value is empty")
@@ -58,7 +58,7 @@ func userDisableMFA(client *cip.APIClient, log *zerolog.Logger) {
 	},
 		idResult)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to disable mfa")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User's MFA was disabled successfully.")
 	}

@@ -1,14 +1,13 @@
 package update
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdTokensUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdTokensUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		description string
 		id          string
@@ -20,7 +19,7 @@ func NewCmdTokensUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Comma
 		Use:   "update",
 		Short: "Update a token with the given identifier in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateToken(description, id, inactive, name, version, client, log)
+			updateToken(description, id, inactive, name, version, client)
 		},
 	}
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the token")
@@ -34,7 +33,7 @@ func NewCmdTokensUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Comma
 	return cmd
 }
 
-func updateToken(description string, id string, inactive bool, name string, version int64, client *cip.APIClient, log *zerolog.Logger) {
+func updateToken(description string, id string, inactive bool, name string, version int64, client *cip.APIClient) {
 	var options types.TokenBaseDefinitionUpdate
 	if inactive == true {
 		options.Status = "Inactive"
@@ -47,7 +46,7 @@ func updateToken(description string, id string, inactive bool, name string, vers
 	options.Version = version
 	apiResponse, httpResponse, errorResponse := client.UpdateToken(options, id)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to update token")
+		cmdutils.OutputError(httpResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
