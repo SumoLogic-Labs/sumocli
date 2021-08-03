@@ -49,7 +49,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(appsCmd.NewCmdApps(client))
 	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client))
 	cmd.AddCommand(collectorCmd.NewCmdCollectors(client))
-	cmd.AddCommand(contentCmd.NewCmdContent())
+	cmd.AddCommand(contentCmd.NewCmdContent(client))
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
