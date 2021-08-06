@@ -50,7 +50,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client))
 	cmd.AddCommand(collectorCmd.NewCmdCollectors(client))
 	cmd.AddCommand(contentCmd.NewCmdContent(client))
-	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
+	cmd.AddCommand(dashboardsCmd.NewCmdDashboards(client))
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())

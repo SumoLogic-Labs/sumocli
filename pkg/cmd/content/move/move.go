@@ -1,28 +1,24 @@
 package move
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdMove() *cobra.Command {
+func NewCmdMove(client *cip.APIClient) *cobra.Command {
 	var (
 		id                  string
 		destinationFolderId string
 		isAdminMode         bool
 	)
-
 	cmd := &cobra.Command{
 		Use:   "move",
 		Short: "Moves an item from its current location to another folder.",
 		Run: func(cmd *cobra.Command, args []string) {
-			move(id, destinationFolderId, isAdminMode)
+			move(id, destinationFolderId, isAdminMode, client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the content to move")
@@ -33,42 +29,17 @@ func NewCmdMove() *cobra.Command {
 	return cmd
 }
 
-func move(id string, destinationFolderId string, isAdminMode bool) {
-	var moveResponse api.MoveResponse
-	log := logging.GetConsoleLogger()
-	requestUrl := "/v2/content/" + id + "/move"
-	client, request := factory.NewHttpRequest("POST", requestUrl)
+func move(id string, destinationFolderId string, isAdminMode bool, client *cip.APIClient) {
+	var options types.ContentManagementApiMoveItemOpts
 	if isAdminMode == true {
-		request.Header.Add("isAdminMode", "true")
-	}
-	query := url.Values{}
-	query.Add("destinationFolderId", destinationFolderId)
-	request.URL.RawQuery = query.Encode()
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to ")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &moveResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	moveJson, err := json.MarshalIndent(moveResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal copyResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
-		fmt.Println(string(moveJson))
+		options.IsAdminMode = optional.NewString("true")
 	} else {
-		fmt.Println("Content successfully moved.")
+		options.IsAdminMode = optional.NewString("false")
+	}
+	httpResponse, errorResponse := client.MoveItem(destinationFolderId, id, &options)
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse)
+	} else {
+		cmdutils.Output(nil, httpResponse, errorResponse, "Content was moved successfully.")
 	}
 }
