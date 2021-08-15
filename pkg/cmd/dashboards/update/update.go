@@ -2,16 +2,15 @@ package update
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 	"os"
 )
 
-func NewCmdDashboardsUpdate() *cobra.Command {
+func NewCmdDashboardsUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		id   string
 		file string
@@ -21,7 +20,7 @@ func NewCmdDashboardsUpdate() *cobra.Command {
 		Use:   "update",
 		Short: "Update a dashboard by the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateDashboard(file, id)
+			updateDashboard(file, id, client)
 		},
 	}
 	cmd.Flags().StringVar(&file, "file", "", "Specify the full file path to a json file containing a dashboard definition."+
@@ -33,48 +32,20 @@ func NewCmdDashboardsUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateDashboard(file string, id string) {
-	var dashboardResponse api.GetDashboard
-	var dashboardRequest api.CreateDashboard
-	log := logging.GetConsoleLogger()
+func updateDashboard(file string, id string, client *cip.APIClient) {
+	var dashboardDefinition types.DashboardRequest
 	fileData, err := os.ReadFile(file)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to read file " + file)
 	}
-	err = json.Unmarshal(fileData, &dashboardRequest)
+	err = json.Unmarshal(fileData, &dashboardDefinition)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal file")
 	}
-	requestBody, err := json.Marshal(dashboardRequest)
-	if err != nil {
-		log.Error().Err(err).Msg("error marshalling request body")
-	}
-	requestUrl := "/v2/dashboards/" + id
-	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &dashboardResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	dashboardResponseJson, err := json.MarshalIndent(dashboardResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal foldersResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+	apiResponse, httpResponse, errorResponse := client.UpdateDashboard(dashboardDefinition, id)
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse)
 	} else {
-		fmt.Println(string(dashboardResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }
