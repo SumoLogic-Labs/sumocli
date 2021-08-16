@@ -16,6 +16,8 @@ func NewCmdDashboardsCreate(client *cip.APIClient) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Creates a new dashboard.",
+		Long: "Note: When exporting a dashboard spec from the Sumo Logic portal ensure that you have the timeRange.to object set as well as the " +
+			"timeRange.from set otherwise you will get errors when trying to create.",
 		Run: func(cmd *cobra.Command, args []string) {
 			createDashboard(file, client)
 		},

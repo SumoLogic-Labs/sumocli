@@ -10,7 +10,7 @@ import (
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
-	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic-parsing"
+	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing"
 	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field-extraction-rules"
 	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field-management"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
@@ -51,7 +51,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(collectorCmd.NewCmdCollectors(client))
 	cmd.AddCommand(contentCmd.NewCmdContent(client))
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards(client))
-	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
+	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing(client))
 	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
 	cmd.AddCommand(foldersCmd.NewCmdFolders(client))
