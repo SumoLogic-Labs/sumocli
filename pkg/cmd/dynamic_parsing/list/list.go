@@ -22,7 +22,7 @@ func NewCmdDynamicParsingList(client *cip.APIClient) *cobra.Command {
 }
 
 func listDynamicParsingRules(limit int32, client *cip.APIClient) {
-	var options types.DynamicParsingRuleManagementApiListDynamicParsingRulesOpts
+	var options types.DynamicParsingRuleOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListDynamicParsingRules(&options)
@@ -38,7 +38,7 @@ func listDynamicParsingRules(limit int32, client *cip.APIClient) {
 	}
 }
 
-func listDynamicRulesPagination(client *cip.APIClient, options types.DynamicParsingRuleManagementApiListDynamicParsingRulesOpts, token string) types.ListDynamicRulesResponse {
+func listDynamicRulesPagination(client *cip.APIClient, options types.DynamicParsingRuleOpts, token string) types.ListDynamicRulesResponse {
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListDynamicParsingRules(&options)
 	if errorResponse != nil {

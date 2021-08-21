@@ -38,7 +38,7 @@ func create(name string, description string, parentId string, isAdminMode bool, 
 		Description: description,
 		ParentId:    parentId,
 	},
-		&types.FolderManagementApiCreateFolderOpts{
+		&types.FolderOpts{
 			IsAdminMode: optional.NewString(adminMode),
 		})
 	if errorResponse != nil {

@@ -27,7 +27,7 @@ func NewCmdUserDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteUser(id string, transferTo string, client *cip.APIClient) {
-	var options types.UserManagementApiDeleteUserOpts
+	var options types.DeleteUserOpts
 	if transferTo != "" {
 		options.TransferTo = optional.NewString(transferTo)
 	}

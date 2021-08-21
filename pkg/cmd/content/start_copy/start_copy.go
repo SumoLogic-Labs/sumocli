@@ -30,7 +30,7 @@ func NewCmdStartCopy(client *cip.APIClient) *cobra.Command {
 }
 
 func startCopy(id string, destinationFolder string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiBeginAsyncCopyOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

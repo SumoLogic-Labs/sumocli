@@ -30,7 +30,7 @@ func NewCmdGetImportStatus(client *cip.APIClient) *cobra.Command {
 }
 
 func importStatus(folderId string, jobId string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiGetAsyncImportStatusOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

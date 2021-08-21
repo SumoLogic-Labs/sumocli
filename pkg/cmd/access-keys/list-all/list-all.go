@@ -22,7 +22,7 @@ func NewCmdAccessKeysListAll(client *cip.APIClient) *cobra.Command {
 }
 
 func listAllAccessKeys(limit int32, client *cip.APIClient) {
-	var options types.AccessKeyManagementApiListAccessKeysOpts
+	var options types.AccessKeyOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
@@ -38,7 +38,7 @@ func listAllAccessKeys(limit int32, client *cip.APIClient) {
 	}
 }
 
-func listAllAccessKeysPagination(client *cip.APIClient, options types.AccessKeyManagementApiListAccessKeysOpts, token string) types.PaginatedListAccessKeysResult {
+func listAllAccessKeysPagination(client *cip.APIClient, options types.AccessKeyOpts, token string) types.PaginatedListAccessKeysResult {
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
 	if errorResponse != nil {

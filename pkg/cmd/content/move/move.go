@@ -30,7 +30,7 @@ func NewCmdMove(client *cip.APIClient) *cobra.Command {
 }
 
 func move(id string, destinationFolderId string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiMoveItemOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

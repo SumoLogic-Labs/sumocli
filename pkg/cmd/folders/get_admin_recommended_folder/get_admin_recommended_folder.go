@@ -24,7 +24,7 @@ func NewCmdGetAdminRecommendedFolder(client *cip.APIClient) *cobra.Command {
 
 func getAdminRecommendedFolder(isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.GetAdminRecommendedFolderAsync(&types.FolderManagementApiGetAdminRecommendedFolderAsyncOpts{
+	apiResponse, httpResponse, errorResponse := client.GetAdminRecommendedFolderAsync(&types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {

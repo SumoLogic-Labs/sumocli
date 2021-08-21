@@ -28,7 +28,7 @@ func NewCmdUserList(client *cip.APIClient) *cobra.Command {
 }
 
 func listUsers(email string, limit int32, sortBy string, client *cip.APIClient) {
-	var options types.UserManagementApiListUsersOpts
+	var options types.ListUsersOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
 	if email != "" {
@@ -50,7 +50,7 @@ func listUsers(email string, limit int32, sortBy string, client *cip.APIClient) 
 	}
 }
 
-func listUsersPagination(client *cip.APIClient, options types.UserManagementApiListUsersOpts, token string) types.ListUserModelsResponse {
+func listUsersPagination(client *cip.APIClient, options types.ListUsersOpts, token string) types.ListUserModelsResponse {
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListUsers(&options)
 	if errorResponse != nil {

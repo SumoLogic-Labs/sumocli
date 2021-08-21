@@ -36,7 +36,7 @@ func update(name string, description string, id string, isAdminMode bool, client
 	apiResponse, httpResponse, errorResponse := client.UpdateFolder(types.UpdateFolderRequest{
 		Name:        name,
 		Description: description,
-	}, id, &types.FolderManagementApiUpdateFolderOpts{
+	}, id, &types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {

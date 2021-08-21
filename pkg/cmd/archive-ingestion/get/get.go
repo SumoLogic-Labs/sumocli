@@ -28,7 +28,7 @@ func NewCmdArchiveIngestionGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getArchiveIngestion(limit int32, sourceId string, client *cip.APIClient) {
-	var options types.ArchiveManagementApiListArchiveJobsBySourceIdOpts
+	var options types.ArchiveOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
@@ -44,7 +44,7 @@ func getArchiveIngestion(limit int32, sourceId string, client *cip.APIClient) {
 	}
 }
 
-func getArchiveIngestionPagination(client *cip.APIClient, options types.ArchiveManagementApiListArchiveJobsBySourceIdOpts, token string, sourceId string) types.ListArchiveJobsResponse {
+func getArchiveIngestionPagination(client *cip.APIClient, options types.ArchiveOpts, token string, sourceId string) types.ListArchiveJobsResponse {
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
 	if errorResponse != nil {

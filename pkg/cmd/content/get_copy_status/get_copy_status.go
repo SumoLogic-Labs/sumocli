@@ -30,7 +30,7 @@ func NewCmdGetCopyStatus(client *cip.APIClient) *cobra.Command {
 }
 
 func copyStatus(id string, jobId string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiAsyncCopyStatusOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

@@ -43,7 +43,7 @@ func NewCmdGetExportResult(client *cip.APIClient) *cobra.Command {
 
 func exportResult(contentId string, jobId string, isAdminMode bool, saveToFile bool, filePath string, fileName string,
 	client *cip.APIClient) {
-	var options types.ContentManagementApiGetAsyncExportResultOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

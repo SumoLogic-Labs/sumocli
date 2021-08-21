@@ -29,7 +29,7 @@ func NewCmdStartExport(client *cip.APIClient) *cobra.Command {
 }
 
 func startExport(id string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiBeginAsyncExportOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

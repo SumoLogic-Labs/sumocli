@@ -27,7 +27,7 @@ func NewCmdStartDeletion(client *cip.APIClient) *cobra.Command {
 }
 
 func startDeletion(id string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiBeginAsyncDeleteOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

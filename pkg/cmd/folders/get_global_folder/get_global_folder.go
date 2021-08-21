@@ -25,7 +25,7 @@ func NewCmdGetGlobalFolder(client *cip.APIClient) *cobra.Command {
 
 func getGlobalFolder(isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.GetGlobalFolderAsync(&types.FolderManagementApiGetGlobalFolderAsyncOpts{
+	apiResponse, httpResponse, errorResponse := client.GetGlobalFolderAsync(&types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {

@@ -30,7 +30,7 @@ func NewCmdGetDeletionStatus(client *cip.APIClient) *cobra.Command {
 }
 
 func deletionStatus(id string, jobId string, isAdminMode bool, client *cip.APIClient) {
-	var options types.ContentManagementApiGetAsyncDeleteStatusOpts
+	var options types.ContentOpts
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")
 	} else {

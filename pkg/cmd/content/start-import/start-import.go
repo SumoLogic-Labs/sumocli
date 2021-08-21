@@ -36,7 +36,7 @@ func NewCmdStartImport(client *cip.APIClient) *cobra.Command {
 func startImport(file string, folderId string, isAdminMode bool, overwrite bool, client *cip.APIClient) {
 	var (
 		contentType types.ContentSyncDefinition
-		options     types.ContentManagementApiBeginAsyncImportOpts
+		options     types.ContentImportOpts
 	)
 	if isAdminMode == true {
 		options.IsAdminMode = optional.NewString("true")

@@ -28,7 +28,7 @@ func NewCmdGet(client *cip.APIClient) *cobra.Command {
 
 func get(id string, isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.GetFolder(id, &types.FolderManagementApiGetFolderOpts{
+	apiResponse, httpResponse, errorResponse := client.GetFolder(id, &types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {
