@@ -1,16 +1,13 @@
 package update
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdFieldExtractionRulesUpdate() *cobra.Command {
+func NewCmdFieldExtractionRulesUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		id              string
 		name            string
@@ -18,12 +15,11 @@ func NewCmdFieldExtractionRulesUpdate() *cobra.Command {
 		parseExpression string
 		enabled         bool
 	)
-
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update an existing field extraction rule.",
 		Run: func(cmd *cobra.Command, args []string) {
-			updateFieldExtractionRule(id, name, scope, parseExpression, enabled)
+			updateFieldExtractionRule(id, name, scope, parseExpression, enabled, client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the field extraction rule")
@@ -39,42 +35,17 @@ func NewCmdFieldExtractionRulesUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateFieldExtractionRule(id string, name string, scope string, parseExpression string, enabled bool) {
-	var fieldExtractionRulesResponse api.FieldExtractionRules
-	log := logging.GetConsoleLogger()
-	requestBodySchema := &api.CreateFieldExtractionRule{
+func updateFieldExtractionRule(id string, name string, scope string, parseExpression string, enabled bool, client *cip.APIClient) {
+	apiResponse, httpResponse, errorResponse := client.UpdateExtractionRule(types.UpdateExtractionRuleDefinition{
 		Name:            name,
 		Scope:           scope,
 		ParseExpression: parseExpression,
 		Enabled:         enabled,
-	}
-	requestBody, err := json.Marshal(requestBodySchema)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal request body")
-	}
-	requestUrl := "/v1/extractionRules/" + id
-	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("error reading response body from request")
-	}
-	err = json.Unmarshal(responseBody, &fieldExtractionRulesResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("error unmarshalling response body")
-	}
-	fieldExtractionRulesResponseJson, err := json.MarshalIndent(fieldExtractionRulesResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("error marshalling response body")
-	}
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+	},
+		id)
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
-		fmt.Println(string(fieldExtractionRulesResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
 }
