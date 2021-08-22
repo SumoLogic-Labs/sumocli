@@ -39,7 +39,7 @@ func listRoles(client *cip.APIClient, limit int32, name string, sortBy bool) {
 	}
 	apiResponse, httpResponse, errorResponse := client.ListRoles(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
@@ -54,7 +54,7 @@ func listRolesPagination(client *cip.APIClient, options types.ListRolesOpts, tok
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListRoles(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

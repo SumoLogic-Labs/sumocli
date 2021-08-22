@@ -52,7 +52,7 @@ func createRole(client *cip.APIClient, name string, description string, filter s
 	}
 	apiResponse, httpResponse, errorResponse := client.CreateRole(body)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -34,7 +34,7 @@ func updateAccessKey(corsHeaders []string, disabled bool, id string, client *cip
 	},
 		id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

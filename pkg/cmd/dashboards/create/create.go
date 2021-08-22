@@ -40,7 +40,7 @@ func createDashboard(file string, client *cip.APIClient) {
 	}
 	apiResponse, httpResponse, errorResponse := client.CreateDashboard(dashboardDefinition)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -55,7 +55,7 @@ func updateRole(client *cip.APIClient, id string, name string, description strin
 	}
 	apiResponse, httpResponse, errorResponse := client.UpdateRole(body, id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

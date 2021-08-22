@@ -42,7 +42,7 @@ func create(name string, description string, parentId string, isAdminMode bool, 
 			IsAdminMode: optional.NewString(adminMode),
 		})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -44,7 +44,7 @@ func updateDashboard(file string, id string, client *cip.APIClient) {
 	}
 	apiResponse, httpResponse, errorResponse := client.UpdateDashboard(dashboardDefinition, id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

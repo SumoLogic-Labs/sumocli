@@ -44,7 +44,7 @@ func updateUser(id string, firstName string, lastName string, isActive bool, rol
 	},
 		id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

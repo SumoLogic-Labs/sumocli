@@ -38,7 +38,7 @@ func deletionStatus(id string, jobId string, isAdminMode bool, client *cip.APICl
 	}
 	apiResponse, httpResponse, errorResponse := client.GetAsyncDeleteStatus(id, jobId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

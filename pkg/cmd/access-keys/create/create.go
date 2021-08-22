@@ -31,7 +31,7 @@ func createAccessKey(name string, corsHeaders []string, client *cip.APIClient) {
 		CorsHeaders: corsHeaders,
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

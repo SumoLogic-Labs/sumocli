@@ -38,7 +38,7 @@ func startCopy(id string, destinationFolder string, isAdminMode bool, client *ci
 	}
 	apiResponse, httpResponse, errorResponse := client.BeginAsyncCopy(id, destinationFolder, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -60,7 +60,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginFolderAsyncImport(folderContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -72,7 +72,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginDashboardAsyncImport(dashboardContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -84,7 +84,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginMewboardAsyncImport(mewboardContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -96,7 +96,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginSavedSearchAsyncImport(savedSearchContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -108,7 +108,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginMetricsSavedSearchAsyncImport(metricsSavedSearchContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -120,7 +120,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginMetricsSearchAsyncImport(metricsSearchContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -132,7 +132,7 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		}
 		apiResponse, httpResponse, errorResponse := client.BeginLookupTableAsyncImport(lookupTableContent, folderId, &options)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}

@@ -45,7 +45,7 @@ func installApp(destinationFolderId string, description string, logSource string
 	},
 		uuid)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

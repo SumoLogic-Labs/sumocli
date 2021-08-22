@@ -28,7 +28,7 @@ func getAdminRecommendedFolder(isAdminMode bool, client *cip.APIClient) {
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

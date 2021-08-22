@@ -27,7 +27,7 @@ func listAllAccessKeys(limit int32, client *cip.APIClient) {
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
@@ -42,7 +42,7 @@ func listAllAccessKeysPagination(client *cip.APIClient, options types.AccessKeyO
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

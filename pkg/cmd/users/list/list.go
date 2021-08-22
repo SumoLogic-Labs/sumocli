@@ -39,7 +39,7 @@ func listUsers(email string, limit int32, sortBy string, client *cip.APIClient) 
 	}
 	apiResponse, httpResponse, errorResponse := client.ListUsers(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
@@ -54,7 +54,7 @@ func listUsersPagination(client *cip.APIClient, options types.ListUsersOpts, tok
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListUsers(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

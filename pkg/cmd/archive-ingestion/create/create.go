@@ -54,7 +54,7 @@ func createArchiveIngestion(endTime string, name string, sourceId string, startT
 	},
 		sourceId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

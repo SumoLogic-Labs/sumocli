@@ -51,54 +51,54 @@ func exportResult(contentId string, jobId string, isAdminMode bool, saveToFile b
 	}
 	apiResponse, httpResponse, errorResponse := client.GetAsyncExportResult(contentId, jobId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		if apiResponse.Type_ == "FolderSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetFolderAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "DashboardSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetDashboardAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "MewboardSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetMewboardAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "SavedSearchWithScheduleSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetSavedSearchAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "MetricsSavedSearchSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "MetricsSearchSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}
 		} else if apiResponse.Type_ == "LookupTableSyncDefinition" {
 			results, httpResponse, errorResponse := client.GetLookupTableAsyncExportResult(contentId, jobId, &options)
 			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse)
+				cmdutils.OutputError(httpResponse, errorResponse)
 			} else {
 				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
 			}

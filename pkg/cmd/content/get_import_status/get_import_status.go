@@ -38,7 +38,7 @@ func importStatus(folderId string, jobId string, isAdminMode bool, client *cip.A
 	}
 	apiResponse, httpResponse, errorResponse := client.GetAsyncImportStatus(folderId, jobId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

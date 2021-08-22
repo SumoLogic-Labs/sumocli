@@ -20,7 +20,7 @@ func NewCmdAccountGetSubdomain(client *cip.APIClient) *cobra.Command {
 func getSubdomain(client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetSubdomain()
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

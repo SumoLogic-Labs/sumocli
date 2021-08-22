@@ -32,7 +32,7 @@ func userChangeEmail(id string, email string, client *cip.APIClient) {
 	},
 		id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "Email change request was submitted successfully.")
 	}

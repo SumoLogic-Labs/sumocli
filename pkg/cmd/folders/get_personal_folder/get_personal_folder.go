@@ -20,7 +20,7 @@ func NewCmdGetPersonalFolder(client *cip.APIClient) *cobra.Command {
 func getPersonalFolder(client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetPersonalFolder()
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

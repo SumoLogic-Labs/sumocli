@@ -23,7 +23,7 @@ func NewCmdUnlockUser(client *cip.APIClient) *cobra.Command {
 func unlockUser(id string, client *cip.APIClient) {
 	httpResponse, errorResponse := client.UnlockUser(id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User's account was unlocked successfully.")
 	}

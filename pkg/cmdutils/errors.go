@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-func OutputError(httpResponse *http.Response) {
+func OutputError(httpResponse *http.Response, err error) {
 	if httpResponse.StatusCode == 400 {
-		fmt.Println("Bad request, this could mean the resource already exists or the request is incorrect.")
+		fmt.Println(err)
 	} else if httpResponse.StatusCode == 401 {
 		fmt.Println("Unauthorized access please check the user exists, and credentials are valid.")
 	} else if httpResponse.StatusCode == 403 {

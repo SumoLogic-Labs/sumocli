@@ -31,7 +31,7 @@ func deleteCollector(aliveBeforeDays int32, id string, offline bool, client *cip
 	if id != "" {
 		httpResponse, errorResponse := client.DeleteCollectorById(id)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(nil, httpResponse, errorResponse, "Collector with id "+id+" has been deleted")
 		}
@@ -40,7 +40,7 @@ func deleteCollector(aliveBeforeDays int32, id string, offline bool, client *cip
 			AliveBeforeDays: optional.NewInt32(aliveBeforeDays),
 		})
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(nil, httpResponse, errorResponse, "Offline collectors have been deleted")
 		}

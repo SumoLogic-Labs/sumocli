@@ -28,14 +28,14 @@ func getContent(contentId string, path string, client *cip.APIClient) {
 	if contentId != "" {
 		apiResponse, httpResponse, errorResponse := client.GetPathById(contentId)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
 	} else if path != "" {
 		apiResponse, httpResponse, errorResponse := client.GetItemByPath(path)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}

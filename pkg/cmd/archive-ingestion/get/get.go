@@ -33,7 +33,7 @@ func getArchiveIngestion(limit int32, sourceId string, client *cip.APIClient) {
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
@@ -48,7 +48,7 @@ func getArchiveIngestionPagination(client *cip.APIClient, options types.ArchiveO
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsBySourceId(sourceId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

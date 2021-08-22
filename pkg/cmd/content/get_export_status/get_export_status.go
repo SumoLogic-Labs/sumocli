@@ -38,7 +38,7 @@ func exportStatus(contentId string, jobId string, isAdminMode bool, client *cip.
 	}
 	apiResponse, httpResponse, errorResponse := client.GetAsyncExportStatus(contentId, jobId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

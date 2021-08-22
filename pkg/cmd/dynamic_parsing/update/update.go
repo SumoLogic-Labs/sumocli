@@ -40,7 +40,7 @@ func updateDynamicParsingRule(id string, name string, scope string, enabled bool
 	},
 		id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

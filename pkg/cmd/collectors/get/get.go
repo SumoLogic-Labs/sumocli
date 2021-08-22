@@ -31,14 +31,14 @@ func getCollector(id string, name string, client *cip.APIClient) {
 	} else if id != "" {
 		apiResponse, httpResponse, errorResponse := client.GetCollectorById(id)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
 	} else if name != "" {
 		apiResponse, httpResponse, errorResponse := client.GetCollectorByName(name)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}

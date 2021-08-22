@@ -39,7 +39,7 @@ func listCollectors(aliveBeforeDays int32, filter string, limit int32, offset in
 			Offset:          optional.NewInt32(offset),
 		})
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -50,7 +50,7 @@ func listCollectors(aliveBeforeDays int32, filter string, limit int32, offset in
 			Offset: optional.NewInt32(offset),
 		})
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}

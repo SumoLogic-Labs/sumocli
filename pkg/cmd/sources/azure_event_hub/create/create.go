@@ -79,7 +79,7 @@ func createEventHubSource(authorizationRuleName string, category string, collect
 	}
 	apiResponse, httpResponse, errorResponse := client.CreateEventHubSource(body, collectorId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

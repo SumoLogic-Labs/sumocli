@@ -38,7 +38,7 @@ func copyStatus(id string, jobId string, isAdminMode bool, client *cip.APIClient
 	}
 	apiResponse, httpResponse, errorResponse := client.AsyncCopyStatus(id, jobId, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

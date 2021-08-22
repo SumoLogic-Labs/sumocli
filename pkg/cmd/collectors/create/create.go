@@ -46,7 +46,7 @@ func Collector(name string, description string, category string, fieldNames []st
 		},
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

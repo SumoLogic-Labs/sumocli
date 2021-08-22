@@ -20,7 +20,7 @@ func NewCmdTokensList(client *cip.APIClient) *cobra.Command {
 func listTokens(client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.ListTokens()
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

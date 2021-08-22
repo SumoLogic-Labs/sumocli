@@ -26,7 +26,7 @@ func createSubdomain(subdomain string, client *cip.APIClient) {
 		Subdomain: subdomain,
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

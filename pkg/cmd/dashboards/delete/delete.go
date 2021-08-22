@@ -23,7 +23,7 @@ func NewCmdDashboardsDelete(client *cip.APIClient) *cobra.Command {
 func deleteDashboards(id string, client *cip.APIClient) {
 	httpResponse, errorResponse := client.DeleteDashboard(id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "Dashboard was deleted successfully.")
 	}

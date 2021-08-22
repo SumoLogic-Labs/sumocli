@@ -11,8 +11,8 @@ import (
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
 	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing"
-	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field-extraction-rules"
 	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field-management"
+	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field_extraction_rules"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	healthEventsCmd "github.com/wizedkyle/sumocli/pkg/cmd/health-events"
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
@@ -52,7 +52,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(contentCmd.NewCmdContent(client))
 	cmd.AddCommand(dashboardsCmd.NewCmdDashboards(client))
 	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing(client))
-	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
+	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules(client))
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
 	cmd.AddCommand(foldersCmd.NewCmdFolders(client))
 	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents())

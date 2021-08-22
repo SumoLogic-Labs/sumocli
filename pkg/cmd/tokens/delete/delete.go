@@ -23,7 +23,7 @@ func NewCmdTokensDelete(client *cip.APIClient) *cobra.Command {
 func deleteToken(id string, client *cip.APIClient) {
 	httpResponse, errorResponse := client.DeleteToken(id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "Token was deleted.")
 	}

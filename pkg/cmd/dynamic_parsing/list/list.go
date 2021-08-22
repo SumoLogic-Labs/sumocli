@@ -27,7 +27,7 @@ func listDynamicParsingRules(limit int32, client *cip.APIClient) {
 	options.Limit = optional.NewInt32(limit)
 	apiResponse, httpResponse, errorResponse := client.ListDynamicParsingRules(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
@@ -42,7 +42,7 @@ func listDynamicRulesPagination(client *cip.APIClient, options types.DynamicPars
 	options.Token = optional.NewString(token)
 	apiResponse, httpResponse, errorResponse := client.ListDynamicParsingRules(&options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

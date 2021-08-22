@@ -37,7 +37,7 @@ func startExport(id string, isAdminMode bool, client *cip.APIClient) {
 	}
 	apiResponse, httpResponse, errorResponse := client.BeginAsyncExport(id, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

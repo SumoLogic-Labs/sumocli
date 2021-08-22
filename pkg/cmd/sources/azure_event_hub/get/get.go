@@ -26,7 +26,7 @@ func NewCmdAzureEventHubSourceGet(client *cip.APIClient) *cobra.Command {
 func getEventHubSource(collectorId string, sourceId string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetEventHubSource(collectorId, sourceId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

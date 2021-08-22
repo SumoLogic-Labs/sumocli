@@ -23,7 +23,7 @@ func NewCmdDynamicParsingGet(client *cip.APIClient) *cobra.Command {
 func getDynamicParsingRules(id string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetDynamicParsingRule(id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

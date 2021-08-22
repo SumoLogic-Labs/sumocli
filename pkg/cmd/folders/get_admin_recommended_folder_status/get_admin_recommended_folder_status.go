@@ -24,7 +24,7 @@ func NewCmdGetAdminRecommendedFolderStatus(client *cip.APIClient) *cobra.Command
 func getAdminRecommendedFolderStatus(jobId string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetAdminRecommendedFolderAsyncStatus(jobId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

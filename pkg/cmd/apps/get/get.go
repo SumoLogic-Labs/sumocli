@@ -23,7 +23,7 @@ func NewCmdAppsGet(client *cip.APIClient) *cobra.Command {
 func getApp(uuid string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.GetApp(uuid)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

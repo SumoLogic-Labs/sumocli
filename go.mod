@@ -24,7 +24,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1 // indirect
-	github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210821093612-ca4fa98788be
+	github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210822051838-c2c102eb43f9
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c
 	golang.org/x/text v0.3.5 // indirect

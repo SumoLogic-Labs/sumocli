@@ -28,7 +28,7 @@ func NewCmdRoleRemoveUser(client *cip.APIClient) *cobra.Command {
 func removeRoleFromUser(client *cip.APIClient, roleId string, userId string) {
 	httpResponse, errorResponse := client.RemoveRoleFromUser(roleId, userId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User: "+userId+" was removed from role: "+roleId)
 	}

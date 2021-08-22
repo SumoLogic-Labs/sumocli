@@ -23,7 +23,7 @@ func NewCmdDynamicParsingDelete(client *cip.APIClient) *cobra.Command {
 func deleteDynamicParsingRules(id string, client *cip.APIClient) {
 	httpResponse, errorResponse := client.DeleteDynamicParsingRule(id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "Dynamic Parsing rule was deleted successfully.")
 	}

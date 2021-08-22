@@ -20,7 +20,7 @@ func NewCmdAccountDeleteSubdomain(client *cip.APIClient) *cobra.Command {
 func deleteSubdomain(client *cip.APIClient) {
 	httpResponse, errorResponse := client.DeleteSubdomain()
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "The subdomain was successfully deleted.")
 	}

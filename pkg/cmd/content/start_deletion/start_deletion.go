@@ -35,7 +35,7 @@ func startDeletion(id string, isAdminMode bool, client *cip.APIClient) {
 	}
 	apiResponse, httpResponse, errorResponse := client.BeginAsyncDelete(id, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -37,7 +37,7 @@ func upgradeStart(id string, toVersion string, client *cip.APIClient) {
 		ToVersion:   toVersion,
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

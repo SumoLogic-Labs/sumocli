@@ -33,7 +33,7 @@ func deleteUser(id string, transferTo string, client *cip.APIClient) {
 	}
 	httpResponse, errorResponse := client.DeleteUser(id, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User was deleted successfully.")
 	}

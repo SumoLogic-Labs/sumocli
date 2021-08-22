@@ -38,7 +38,7 @@ func move(id string, destinationFolderId string, isAdminMode bool, client *cip.A
 	}
 	httpResponse, errorResponse := client.MoveItem(destinationFolderId, id, &options)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "Content was moved successfully.")
 	}

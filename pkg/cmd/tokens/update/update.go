@@ -46,7 +46,7 @@ func updateToken(description string, id string, inactive bool, name string, vers
 	options.Version = version
 	apiResponse, httpResponse, errorResponse := client.UpdateToken(options, id)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

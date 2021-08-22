@@ -40,7 +40,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 		RoleIds:   roleIds,
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

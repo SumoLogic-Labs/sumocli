@@ -74,7 +74,7 @@ func updateCollector(category string, id string, cutoffTimestamp int32, descript
 		},
 			id)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
@@ -92,7 +92,7 @@ func updateCollector(category string, id string, cutoffTimestamp int32, descript
 		},
 			id)
 		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse)
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
 			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}

@@ -58,7 +58,7 @@ func userDisableMFA(client *cip.APIClient) {
 	},
 		idResult)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(nil, httpResponse, errorResponse, "User's MFA was disabled successfully.")
 	}

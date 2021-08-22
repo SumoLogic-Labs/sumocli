@@ -34,7 +34,7 @@ func getUpgradableCollectors(toVersion string, offset int32, limit int32, client
 		ToVersion: optional.NewString(toVersion),
 	})
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

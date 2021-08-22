@@ -28,7 +28,7 @@ func NewCmdRoleAssign(client *cip.APIClient) *cobra.Command {
 func assignRoleToUser(client *cip.APIClient, roleId string, userId string) {
 	apiResponse, httpResponse, errorResponse := client.AssignRoleToUser(roleId, userId)
 	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse)
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
