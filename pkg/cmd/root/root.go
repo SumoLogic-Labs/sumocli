@@ -8,6 +8,7 @@ import (
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	archiveIngestion "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
+	ConfigureCmd "github.com/wizedkyle/sumocli/pkg/cmd/configure"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
 	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing"
@@ -15,10 +16,9 @@ import (
 	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field_management"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
 	healthEventsCmd "github.com/wizedkyle/sumocli/pkg/cmd/health_events"
-	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
-	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
+	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets"
+	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
-	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
 	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
 	monitorsCmd "github.com/wizedkyle/sumocli/pkg/cmd/monitors"
 	partitionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/partitions"
@@ -56,13 +56,13 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(fieldManagement.NewCmdFieldManagement(client))
 	cmd.AddCommand(foldersCmd.NewCmdFolders(client))
 	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents(client))
-	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
-	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
+	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets(client))
+	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2(client))
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
-	cmd.AddCommand(loginCmd.NewCmdLogin())
-	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(ConfigureCmd.NewCmdConfigure())
+	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables(client))
 	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
-	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
+	cmd.AddCommand(partitionsCmd.NewCmdPartitions(client))
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
 	cmd.AddCommand(roleCmd.NewCmdRole(client))

@@ -317,6 +317,8 @@ github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210822112059-ca56ee
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210822112059-ca56ee2c932e/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210822112416-b26e743d6382 h1:sgVPwbMSRBcy/7QLlhv4CPBVCsSWz9/qJfBF+YkMv6M=
 github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210822112416-b26e743d6382/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210825094727-8109f4536350 h1:NU8c26arg1JL4m3j2dzDIWG2x5I4tHnN25CY3q331IU=
+github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210825094727-8109f4536350/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=

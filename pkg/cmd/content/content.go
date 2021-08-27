@@ -9,10 +9,10 @@ import (
 	cmdContentExportStatus "github.com/wizedkyle/sumocli/pkg/cmd/content/get_export_status"
 	cmdContentImportStatus "github.com/wizedkyle/sumocli/pkg/cmd/content/get_import_status"
 	cmdContentMove "github.com/wizedkyle/sumocli/pkg/cmd/content/move"
-	cmdContentStartImport "github.com/wizedkyle/sumocli/pkg/cmd/content/start-import"
 	cmdContentStartCopy "github.com/wizedkyle/sumocli/pkg/cmd/content/start_copy"
 	cmdContentStartDeletion "github.com/wizedkyle/sumocli/pkg/cmd/content/start_deletion"
 	cmdContentStartExport "github.com/wizedkyle/sumocli/pkg/cmd/content/start_export"
+	cmdContentStartImport "github.com/wizedkyle/sumocli/pkg/cmd/content/start_import"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 

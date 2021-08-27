@@ -1,69 +1,56 @@
 package list
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
-	"strconv"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdPartitionsList() *cobra.Command {
+func NewCmdPartitionsList(client *cip.APIClient) *cobra.Command {
 	var (
-		limit     int
-		viewTypes string
+		limit     int32
+		viewTypes []string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all partitions in the organization.",
 		Run: func(cmd *cobra.Command, args []string) {
-			listPartitions(limit, viewTypes)
+			listPartitions(limit, viewTypes, client)
 		},
 	}
-	cmd.Flags().IntVar(&limit, "limit", 100, "Specify the number of results to return maximum is 1000")
-	cmd.Flags().StringVar(&viewTypes, "viewTypes", "", "Specify the type of partitions to retrieve. "+
+	cmd.Flags().Int32Var(&limit, "limit", 100, "Specify the number of results to return maximum is 1000")
+	cmd.Flags().StringSliceVar(&viewTypes, "viewTypes", []string{}, "Specify the type of partitions to retrieve. "+
 		"Valid values are: DefaultView, Partition, and AuditIndex. You can add multiple types for example DefaultView,Partition.")
 	return cmd
 }
 
-func listPartitions(limit int, viewTypes string) {
-	var partitionsResponse api.GetPartitions
-	log := logging.GetConsoleLogger()
-	requestUrl := "/v1/partitions"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	query.Add("limit", strconv.Itoa(limit))
-	query.Add("viewTypes", viewTypes)
-	request.URL.RawQuery = query.Encode()
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &partitionsResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	partitionsResponseJson, err := json.MarshalIndent(partitionsResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+func listPartitions(limit int32, viewTypes []string, client *cip.APIClient) {
+	var options types.PartitionOpts
+	var paginationToken string
+	options.Limit = optional.NewInt32(limit)
+	options.ViewTypes = optional.NewInterface(viewTypes)
+	apiResponse, httpResponse, errorResponse := client.ListPartitions(&options)
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
-		fmt.Println(string(partitionsResponseJson))
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
+	paginationToken = apiResponse.Next
+	for paginationToken != "" {
+		apiResponse = listPartitionsPagination(client, options, paginationToken)
+		paginationToken = apiResponse.Next
+	}
+}
+
+func listPartitionsPagination(client *cip.APIClient, options types.PartitionOpts, token string) types.ListPartitionsResponse {
+	options.Token = optional.NewString(token)
+	apiResponse, httpResponse, errorResponse := client.ListPartitions(&options)
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse, errorResponse)
+	} else {
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+	}
+	return apiResponse
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/cobra"
 	cmdAccessKeysCreate "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/create"
 	cmdAccessKeysDelete "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/delete"
-	cmdAccessKeysListAll "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/list-all"
-	cmdAccessKeysListPersonal "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/list-personal"
+	cmdAccessKeysListAll "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/list_all"
+	cmdAccessKeysListPersonal "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/list_personal"
 	cmdAccessKeysUpdate "github.com/wizedkyle/sumocli/pkg/cmd/access-keys/update"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
