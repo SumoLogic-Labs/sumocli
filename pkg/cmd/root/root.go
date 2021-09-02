@@ -19,7 +19,7 @@ import (
 	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets"
 	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
-	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables"
 	monitorsCmd "github.com/wizedkyle/sumocli/pkg/cmd/monitors"
 	partitionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/partitions"
 	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
@@ -27,7 +27,7 @@ import (
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	samlCmd "github.com/wizedkyle/sumocli/pkg/cmd/saml"
 	scheduledViewsCmd "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views"
-	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
+	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service_allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
@@ -68,7 +68,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
-	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
+	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist(client))
 	cmd.AddCommand(sourcesCmd.NewCmdSources(client))
 	cmd.AddCommand(tokensCmd.NewCmdTokens(client))
 	cmd.AddCommand(usersCmd.NewCmdUser(client))
