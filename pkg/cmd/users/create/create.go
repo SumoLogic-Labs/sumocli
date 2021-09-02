@@ -1,14 +1,13 @@
 package create
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdUserCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdUserCreate(client *cip.APIClient) *cobra.Command {
 	var (
 		firstName    string
 		lastName     string
@@ -19,7 +18,7 @@ func NewCmdUserCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
-			user(firstName, lastName, emailAddress, roleIds, client, log)
+			user(firstName, lastName, emailAddress, roleIds, client)
 		},
 	}
 	cmd.Flags().StringVar(&firstName, "firstName", "", "First name of the user")
@@ -33,7 +32,7 @@ func NewCmdUserCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command
 	return cmd
 }
 
-func user(firstName string, lastName string, emailAddress string, roleIds []string, client *cip.APIClient, log *zerolog.Logger) {
+func user(firstName string, lastName string, emailAddress string, roleIds []string, client *cip.APIClient) {
 	apiResponse, httpResponse, errorResponse := client.CreateUser(types.CreateUserDefinition{
 		FirstName: firstName,
 		LastName:  lastName,
@@ -41,7 +40,7 @@ func user(firstName string, lastName string, emailAddress string, roleIds []stri
 		RoleIds:   roleIds,
 	})
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to create user")
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

@@ -12,6 +12,7 @@ You can find further information about the Sumo Logic APIs in their [documentati
 | Account | :white_check_mark: | |
 | Apps (Beta) | :white_check_mark: | |
 | Archive Ingestion | :white_check_mark: | |
+| Connections (Beta) | | Functionality is still in development. |
 | Content | :white_check_mark: | |
 | Collectors | :white_check_mark: | |
 | Dashboards | :white_check_mark: | |
@@ -22,17 +23,22 @@ You can find further information about the Sumo Logic APIs in their [documentati
 | Health Events | :white_check_mark: | |
 | Ingest Budgets | :white_check_mark: | |
 | Ingest Budgets v2 | :white_check_mark: | |
-| Lookup Tables | :white_check_mark: | Upload CSV file functionality is not currently supported however, it will be added in a future release. | 
+| Log Search Estimated Usage | | Functionality is still in development. |
+| Lookup Tables | :white_check_mark: | | 
+| Metrics Searches (Beta) | | Functionality is still in development. |
 | Monitors | | Functionality is still in development. |
+| Organizations | | Functionality is still in development. |
 | Partitions | :white_check_mark: | |
 | Password Policy | :white_check_mark: | |
 | Permissions | :white_check_mark: | |
+| Policies | | Functionality is still in development. |
 | Roles | :white_check_mark: | |
 | SAML Configuration | :white_check_mark: | |
 | Scheduled Views | :white_check_mark: | |
 | Service Allowlist | :white_check_mark: | |
 | Sources | :white_check_mark: | Simple commands like get, list, delete are supported. Support for creating different sources are listed under Sumo Logic Sources Support. |
 | Tokens | :white_check_mark: | |
+| Transformation Rules (Beta) | | Functionality is still in development. |
 | Users | :white_check_mark: | |
 
 ## Sumo Logic Sources Support

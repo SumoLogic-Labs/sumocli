@@ -1,7 +1,6 @@
 package roles
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	cmdRoleAssign "github.com/wizedkyle/sumocli/pkg/cmd/roles/assign"
 	cmdRoleCreate "github.com/wizedkyle/sumocli/pkg/cmd/roles/create"
@@ -13,19 +12,19 @@ import (
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdRole(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdRole(client *cip.APIClient) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "roles <command>",
 		Short: "Manage roles",
 		Long:  "Commands that allow you to manage roles in your Sumo Logic tenant",
 	}
 
-	cmd.AddCommand(cmdRoleAssign.NewCmdRoleAssign(client, log))
-	cmd.AddCommand(cmdRoleCreate.NewCmdRoleCreate(client, log))
-	cmd.AddCommand(cmdRoleDelete.NewCmdRoleDelete(client, log))
-	cmd.AddCommand(cmdRoleGet.NewCmdRoleGet(client, log))
-	cmd.AddCommand(cmdRoleList.NewCmdRoleList(client, log))
-	cmd.AddCommand(cmdRoleRemove.NewCmdRoleRemoveUser(client, log))
-	cmd.AddCommand(cmdRoleUpdate.NewCmdRoleUpdate(client, log))
+	cmd.AddCommand(cmdRoleAssign.NewCmdRoleAssign(client))
+	cmd.AddCommand(cmdRoleCreate.NewCmdRoleCreate(client))
+	cmd.AddCommand(cmdRoleDelete.NewCmdRoleDelete(client))
+	cmd.AddCommand(cmdRoleGet.NewCmdRoleGet(client))
+	cmd.AddCommand(cmdRoleList.NewCmdRoleList(client))
+	cmd.AddCommand(cmdRoleRemove.NewCmdRoleRemoveUser(client))
+	cmd.AddCommand(cmdRoleUpdate.NewCmdRoleUpdate(client))
 	return cmd
 }

@@ -31,22 +31,3 @@ func GetConsoleLogger() zerolog.Logger {
 	log := zerolog.New(output).With().Timestamp().Logger()
 	return log
 }
-
-// GetLogger
-// Used to create an instance of zerlog.logger that can be used with commands using the new Sumo Logic Go SDK
-func GetLogger() *zerolog.Logger {
-	useColour := true
-	if runtime.GOOS == "windows" {
-		useColour = false
-	}
-	output := zerolog.ConsoleWriter{
-		Out:        os.Stdout,
-		TimeFormat: time.RFC3339,
-		NoColor:    useColour,
-	}
-	output.FormatLevel = func(i interface{}) string {
-		return strings.ToUpper(fmt.Sprintf("|  %-6s|", i))
-	}
-	log := zerolog.New(output).With().Timestamp().Logger()
-	return &log
-}

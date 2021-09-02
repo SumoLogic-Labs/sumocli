@@ -1,7 +1,6 @@
 package users
 
 import (
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	cmdUserChange "github.com/wizedkyle/sumocli/pkg/cmd/users/change_email"
 	cmdUserCreate "github.com/wizedkyle/sumocli/pkg/cmd/users/create"
@@ -15,21 +14,21 @@ import (
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdUser(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdUser(client *cip.APIClient) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "users <command>",
 		Short: "Manage users",
 		Long:  "Work with Sumo Logic users",
 	}
 
-	cmd.AddCommand(cmdUserChange.NewCmdUserChangeEmail(client, log))
-	cmd.AddCommand(cmdUserCreate.NewCmdUserCreate(client, log))
-	cmd.AddCommand(cmdUserDelete.NewCmdUserDelete(client, log))
-	cmd.AddCommand(cmdUserDisable.NewCmdUserDisableMFA(client, log))
-	cmd.AddCommand(cmdUserGet.NewCmdGetUser(client, log))
-	cmd.AddCommand(cmdUserList.NewCmdUserList(client, log))
-	cmd.AddCommand(cmduserReset.NewCmdUserResetPassword(client, log))
-	cmd.AddCommand(cmdUserUnlock.NewCmdUnlockUser(client, log))
-	cmd.AddCommand(cmdUserUpdate.NewCmdUserUpdate(client, log))
+	cmd.AddCommand(cmdUserChange.NewCmdUserChangeEmail(client))
+	cmd.AddCommand(cmdUserCreate.NewCmdUserCreate(client))
+	cmd.AddCommand(cmdUserDelete.NewCmdUserDelete(client))
+	cmd.AddCommand(cmdUserDisable.NewCmdUserDisableMFA(client))
+	cmd.AddCommand(cmdUserGet.NewCmdGetUser(client))
+	cmd.AddCommand(cmdUserList.NewCmdUserList(client))
+	cmd.AddCommand(cmduserReset.NewCmdUserResetPassword(client))
+	cmd.AddCommand(cmdUserUnlock.NewCmdUnlockUser(client))
+	cmd.AddCommand(cmdUserUpdate.NewCmdUserUpdate(client))
 	return cmd
 }

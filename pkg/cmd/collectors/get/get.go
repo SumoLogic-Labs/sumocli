@@ -1,73 +1,46 @@
 package get
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"strconv"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
-func NewCmdCollectorGet() *cobra.Command {
+func NewCmdCollectorGet(client *cip.APIClient) *cobra.Command {
 	var (
-		id   int
+		id   string
 		name string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Gets a Sumo Logic collector information",
 		Long:  "You can use either the id or the name of the collector to specify the collector to return",
 		Run: func(cmd *cobra.Command, args []string) {
-			getCollector(id, name)
+			getCollector(id, name, client)
 		},
 	}
-
-	cmd.Flags().IntVar(&id, "id", 0, "Specify the id of the collector")
+	cmd.Flags().StringVar(&id, "id", "", "Specify the id of the collector")
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
 	return cmd
 }
 
-func getCollector(id int, name string) {
-	log := logging.GetConsoleLogger()
-	var collectorInfo api.CollectorResponse
-	requestUrl := "/v1/collectors/"
-	if id != 0 {
-		requestUrl = requestUrl + strconv.Itoa(id)
+func getCollector(id string, name string, client *cip.APIClient) {
+	if id != "" && name != "" {
+		fmt.Println("Please specify and id or name, not both.")
+	} else if id != "" {
+		apiResponse, httpResponse, errorResponse := client.GetCollectorById(id)
+		if errorResponse != nil {
+			cmdutils.OutputError(httpResponse, errorResponse)
+		} else {
+			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		}
 	} else if name != "" {
-		requestUrl = requestUrl + "name/" + name
-	} else {
-		log.Fatal().Msg("please specify either a id or name of a collector")
-	}
-
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error reading response body from request")
-	}
-
-	err = json.Unmarshal(responseBody, &collectorInfo)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error unmarshalling response body")
-	}
-
-	collectorInfoJson, err := json.MarshalIndent(collectorInfo, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal collectorInfo")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
-	} else {
-		fmt.Println(string(collectorInfoJson))
+		apiResponse, httpResponse, errorResponse := client.GetCollectorByName(name)
+		if errorResponse != nil {
+			cmdutils.OutputError(httpResponse, errorResponse)
+		} else {
+			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		}
 	}
 }

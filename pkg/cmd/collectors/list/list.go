@@ -1,98 +1,58 @@
 package list
 
 import (
-	"encoding/json"
-	"fmt"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"net/url"
-	"strconv"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdCollectorList() *cobra.Command {
+func NewCmdCollectorList(client *cip.APIClient) *cobra.Command {
 	var (
-		filter     string
-		limit      int
-		offset     string
-		offline    bool
-		jsonFormat bool
+		aliveBeforeDays int32
+		filter          string
+		limit           int32
+		offset          int32
+		offline         bool
 	)
-
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Lists Sumo Logic collectors",
 		Run: func(cmd *cobra.Command, args []string) {
-			listCollectors(filter, limit, offset, offline, jsonFormat)
+			listCollectors(aliveBeforeDays, filter, limit, offset, offline, client)
 		},
 	}
-
+	cmd.Flags().Int32Var(&aliveBeforeDays, "aliveBeforeDays", 100, "Minimum number of days the collectors have been offline (only used when offline is set to true)")
 	cmd.Flags().StringVar(&filter, "filter", "", "Filters the collectors returned using either installed, hosted, dead or alive")
-	cmd.Flags().IntVar(&limit, "limit", 1000, "Maximum number of collectors returned")
-	cmd.Flags().StringVar(&offset, "offset", "", "Offset into the list of collectors")
+	cmd.Flags().Int32Var(&limit, "limit", 1000, "Maximum number of collectors returned")
+	cmd.Flags().Int32Var(&offset, "offset", 0, "Offset into the list of collectors")
 	cmd.Flags().BoolVar(&offline, "offline", false, "Lists offline collectors")
-	cmd.Flags().BoolVar(&jsonFormat, "jsonFormat", false, "Set to true if you want the output to be formatted JSON")
 	return cmd
 }
 
-func listCollectors(filter string, limit int, offset string, offline bool, jsonFormat bool) {
-	log := logging.GetConsoleLogger()
-	var collectorInfo api.Collectors
-	var requestUrl string
+func listCollectors(aliveBeforeDays int32, filter string, limit int32, offset int32, offline bool, client *cip.APIClient) {
 	if offline == true {
-		requestUrl = "/v1/collectors/offline"
-	} else {
-		requestUrl = "/v1/collectors"
-	}
-
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	if filter != "" && offline == false {
-		if factory.ValidateCollectorFilter(filter) == false {
-			log.Fatal().Msg(filter + "is an invalid field to filter by. Available fields are installed, hosted, dead or alive.")
+		apiResponse, httpResponse, errorResponse := client.ListOfflineCollectors(&types.ListCollectorsOfflineOpts{
+			AliveBeforeDays: optional.NewInt32(aliveBeforeDays),
+			Limit:           optional.NewInt32(limit),
+			Offset:          optional.NewInt32(offset),
+		})
+		if errorResponse != nil {
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
-			query.Add("filter", filter)
+			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
-	}
-	if offset != "" && offline == false {
-		query.Add("offset", offset)
-	}
-	query.Add("limit", strconv.Itoa(limit))
-	request.URL.RawQuery = query.Encode()
-
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("error reading response body from request")
-	}
-
-	jsonErr := json.Unmarshal(responseBody, &collectorInfo)
-	if jsonErr != nil {
-		log.Error().Err(jsonErr).Msg("error unmarshalling response body")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
-	} else {
-		if jsonFormat == true {
-			collectorInfoJson, err := json.MarshalIndent(collectorInfo.Data, "", "    ")
-			if err != nil {
-				log.Error().Err(err).Msg("failed to marshal response")
-			}
-			fmt.Print(string(collectorInfoJson))
+	} else if offline == false {
+		apiResponse, httpResponse, errorResponse := client.ListCollectors(&types.ListCollectorsOpts{
+			Filter: optional.NewString(filter),
+			Limit:  optional.NewInt32(limit),
+			Offset: optional.NewInt32(offset),
+		})
+		if errorResponse != nil {
+			cmdutils.OutputError(httpResponse, errorResponse)
 		} else {
-			collectorInfoJson, err := json.Marshal(collectorInfo.Data)
-			if err != nil {
-				log.Error().Err(err).Msg("failed to marshal response")
-			}
-			fmt.Println(string(collectorInfoJson))
+			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 		}
 	}
 }

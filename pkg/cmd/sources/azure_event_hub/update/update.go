@@ -1,7 +1,7 @@
 package update
 
 import (
-	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func NewCmdAzureEventHubSourceUpdate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdAzureEventHubSourceUpdate(client *cip.APIClient) *cobra.Command {
 	var (
 		authorizationRuleName string
 		category              string
@@ -29,7 +29,7 @@ func NewCmdAzureEventHubSourceUpdate(client *cip.APIClient, log *zerolog.Logger)
 		Short: "Updates an Azure Event Hub source",
 		Run: func(cmd *cobra.Command, args []string) {
 			updateEventHubSource(authorizationRuleName, category, collectorId, consumerGroup, description, eventHubKey,
-				eventHubName, fieldNames, fieldValues, name, namespace, sourceId, client, log)
+				eventHubName, fieldNames, fieldValues, name, namespace, sourceId, client)
 		},
 	}
 	cmd.Flags().StringVar(&authorizationRuleName, "authorizationRuleName", "", "Specify the name of the Event Hub Authorization Rule")
@@ -59,7 +59,7 @@ func NewCmdAzureEventHubSourceUpdate(client *cip.APIClient, log *zerolog.Logger)
 
 func updateEventHubSource(authorizationRuleName string, category string, collectorId string, consumerGroup string, description string,
 	eventHubKey string, eventHubName string, fieldNames []string, fieldValues []string, name string, namespace string, sourceId string,
-	client *cip.APIClient, log *zerolog.Logger) {
+	client *cip.APIClient) {
 	sourceIdInt, err := strconv.Atoi(sourceId)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to convert string to int")
@@ -88,7 +88,7 @@ func updateEventHubSource(authorizationRuleName string, category string, collect
 	}
 	apiResponse, httpResponse, errorResponse := client.UpdateEventHubSource(body, collectorId, sourceId)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to update event hub source")
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

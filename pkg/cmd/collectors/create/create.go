@@ -1,77 +1,53 @@
 package create
 
 import (
-	"encoding/json"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
-	"io"
-	"strings"
+	"github.com/wizedkyle/sumocli/pkg/cmdutils"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdCollectorCreate() *cobra.Command {
+func NewCmdCollectorCreate(client *cip.APIClient) *cobra.Command {
 	var (
 		name        string
 		description string
 		category    string
-		fields      string
+		fieldNames  []string
+		fieldValues []string
 	)
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Creates a Sumo Logic Hosted Collector",
 		Run: func(cmd *cobra.Command, args []string) {
-			Collector(name, description, category, fields)
+			Collector(name, description, category, fieldNames, fieldValues, client)
 		},
 	}
-
 	cmd.Flags().StringVar(&name, "name", "", "Specify the name of the collector")
 	cmd.Flags().StringVar(&description, "description", "", "Specify a description for the collector")
 	cmd.Flags().StringVar(&category, "category", "", "sourceCategory for the collector, this will overwrite the categories on configured sources")
+	cmd.Flags().StringSliceVar(&fieldNames, "fieldNames", []string{}, "Specify the names of fields to add to the collector "+
+		"{names need to be comma separated e.g. field1,field2")
+	cmd.Flags().StringSliceVar(&fieldValues, "fieldValues", []string{}, "Specify the values of fields to add to the collector "+
+		"(values need to be comma separated e.g. value1,value2")
+
 	cmd.MarkFlagRequired("name")
 	return cmd
 }
 
-func Collector(name string, description string, category string, fields string) api.CollectorResponse {
-	log := logging.GetConsoleLogger()
-	var createCollectorResponse api.CollectorResponse
-	requestBodySchema := &api.CreateCollectorRequest{
-		Collector: api.CreateCollector{
+func Collector(name string, description string, category string, fieldNames []string, fieldValues []string, client *cip.APIClient) {
+	fields := cmdutils.GenerateFieldsMap(fieldNames, fieldValues)
+	apiResponse, httpResponse, errorResponse := client.CreateCollector(types.CreateCollectorRequest{
+		Collector: types.CreateCollectorRequestDefinition{
 			CollectorType: "Hosted",
 			Name:          name,
 			Description:   description,
 			Category:      category,
-			Fields:        nil,
+			Fields:        fields,
 		},
+	})
+	if errorResponse != nil {
+		cmdutils.OutputError(httpResponse, errorResponse)
+	} else {
+		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
-
-	if fields != "" {
-		fieldsMap := make(map[string]string)
-		splitStrings := strings.Split(fields, ",")
-		for i, splitString := range splitStrings {
-			components := strings.Split(splitString, ":")
-			fieldsMap[components[0]] = components[1]
-			i++
-		}
-		requestBodySchema.Collector.Fields = fieldsMap
-	}
-
-	requestBody, _ := json.Marshal(requestBodySchema)
-	client, request := factory.NewHttpRequestWithBody("POST", "/v1/collectors", requestBody)
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request")
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("error reading response body from request")
-	}
-
-	err = json.Unmarshal(responseBody, &createCollectorResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("error unmarshalling response body")
-	}
-	return createCollectorResponse
 }

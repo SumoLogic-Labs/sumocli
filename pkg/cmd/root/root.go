@@ -8,18 +8,18 @@ import (
 	appsCmd "github.com/wizedkyle/sumocli/pkg/cmd/apps"
 	archiveIngestion "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion"
 	collectorCmd "github.com/wizedkyle/sumocli/pkg/cmd/collectors"
+	ConfigureCmd "github.com/wizedkyle/sumocli/pkg/cmd/configure"
 	contentCmd "github.com/wizedkyle/sumocli/pkg/cmd/content"
 	dashboardsCmd "github.com/wizedkyle/sumocli/pkg/cmd/dashboards"
-	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic-parsing"
-	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field-extraction-rules"
-	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field-management"
+	dynamicParsingCmd "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing"
+	fieldExtractionRulesCmd "github.com/wizedkyle/sumocli/pkg/cmd/field_extraction_rules"
+	fieldManagement "github.com/wizedkyle/sumocli/pkg/cmd/field_management"
 	foldersCmd "github.com/wizedkyle/sumocli/pkg/cmd/folders"
-	healthEventsCmd "github.com/wizedkyle/sumocli/pkg/cmd/health-events"
-	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets"
-	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest-budgets-v2"
+	healthEventsCmd "github.com/wizedkyle/sumocli/pkg/cmd/health_events"
+	ingestBudgetsCmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets"
+	ingestBudgetsV2Cmd "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2"
 	liveTailCmd "github.com/wizedkyle/sumocli/pkg/cmd/live-tail"
-	loginCmd "github.com/wizedkyle/sumocli/pkg/cmd/login"
-	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup-tables"
+	lookupTablesCmd "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables"
 	monitorsCmd "github.com/wizedkyle/sumocli/pkg/cmd/monitors"
 	partitionsCmd "github.com/wizedkyle/sumocli/pkg/cmd/partitions"
 	passwordPolicyCmd "github.com/wizedkyle/sumocli/pkg/cmd/password-policy"
@@ -27,12 +27,11 @@ import (
 	roleCmd "github.com/wizedkyle/sumocli/pkg/cmd/roles"
 	samlCmd "github.com/wizedkyle/sumocli/pkg/cmd/saml"
 	scheduledViewsCmd "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views"
-	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service-allowlist"
+	serviceAllowlistCmd "github.com/wizedkyle/sumocli/pkg/cmd/service_allowlist"
 	sourcesCmd "github.com/wizedkyle/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/wizedkyle/sumocli/pkg/cmd/tokens"
 	usersCmd "github.com/wizedkyle/sumocli/pkg/cmd/users"
 	"github.com/wizedkyle/sumocli/pkg/cmd/version"
-	"github.com/wizedkyle/sumocli/pkg/logging"
 )
 
 func NewCmdRoot() *cobra.Command {
@@ -44,36 +43,35 @@ func NewCmdRoot() *cobra.Command {
 		TraverseChildren: true,
 	}
 	client := config.GetSumoLogicSDKConfig()
-	log := logging.GetLogger()
 	// Add subcommands
-	cmd.AddCommand(accountCmd.NewCmdAccount(client, log))
-	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client, log))
-	cmd.AddCommand(appsCmd.NewCmdApps(client, log))
-	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client, log))
-	cmd.AddCommand(collectorCmd.NewCmdCollectors())
-	cmd.AddCommand(contentCmd.NewCmdContent())
-	cmd.AddCommand(dashboardsCmd.NewCmdDashboards())
-	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing())
-	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules())
-	cmd.AddCommand(fieldManagement.NewCmdFieldManagement())
-	cmd.AddCommand(foldersCmd.NewCmdFolders(client, log))
-	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents())
-	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets())
-	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2())
+	cmd.AddCommand(accountCmd.NewCmdAccount(client))
+	cmd.AddCommand(accessKeysCmd.NewCmdAccessKeys(client))
+	cmd.AddCommand(appsCmd.NewCmdApps(client))
+	cmd.AddCommand(archiveIngestion.NewCmdArchiveIngestion(client))
+	cmd.AddCommand(collectorCmd.NewCmdCollectors(client))
+	cmd.AddCommand(contentCmd.NewCmdContent(client))
+	cmd.AddCommand(dashboardsCmd.NewCmdDashboards(client))
+	cmd.AddCommand(dynamicParsingCmd.NewCmdDynamicParsing(client))
+	cmd.AddCommand(fieldExtractionRulesCmd.NewCmdFieldExtractionRules(client))
+	cmd.AddCommand(fieldManagement.NewCmdFieldManagement(client))
+	cmd.AddCommand(foldersCmd.NewCmdFolders(client))
+	cmd.AddCommand(healthEventsCmd.NewCmdHealthEvents(client))
+	cmd.AddCommand(ingestBudgetsCmd.NewCmdIngestBudgets(client))
+	cmd.AddCommand(ingestBudgetsV2Cmd.NewCmdIngestBudgetsV2(client))
 	cmd.AddCommand(liveTailCmd.NewCmdLiveTail())
-	cmd.AddCommand(loginCmd.NewCmdLogin())
-	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables())
+	cmd.AddCommand(ConfigureCmd.NewCmdConfigure())
+	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables(client))
 	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
-	cmd.AddCommand(partitionsCmd.NewCmdPartitions())
+	cmd.AddCommand(partitionsCmd.NewCmdPartitions(client))
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
-	cmd.AddCommand(roleCmd.NewCmdRole(client, log))
+	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
-	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist())
-	cmd.AddCommand(sourcesCmd.NewCmdSources(client, log))
-	cmd.AddCommand(tokensCmd.NewCmdTokens(client, log))
-	cmd.AddCommand(usersCmd.NewCmdUser(client, log))
+	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist(client))
+	cmd.AddCommand(sourcesCmd.NewCmdSources(client))
+	cmd.AddCommand(tokensCmd.NewCmdTokens(client))
+	cmd.AddCommand(usersCmd.NewCmdUser(client))
 	cmd.AddCommand(version.NewCmdVersion())
 
 	// Add global, persistent flags - these apply for all commands and their subcommands

@@ -8,6 +8,18 @@ GA will be v1.0.0 which I am expecting to be ready for release towards the end o
 ### Recommended
 Download the binary for your platform from the Releases page. 
 
+### Docker
+
+Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/wizedkyle/sumocli).
+
+Pull the latest image:
+
+`docker pull wizedkyle/sumocli:latest`
+
+Pull a specific version image:
+
+`docker pull wizedkyle/sumocli:v0.11.0`
+
 ### Build Yourself
 You can build the sumocli application for your platform by performing the following steps:
 

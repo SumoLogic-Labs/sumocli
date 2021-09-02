@@ -1,7 +1,7 @@
 package create
 
 import (
-	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func NewCmdArchiveIngestionCreate(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdArchiveIngestionCreate(client *cip.APIClient) *cobra.Command {
 	var (
 		endTime   string
 		name      string
@@ -20,7 +20,7 @@ func NewCmdArchiveIngestionCreate(client *cip.APIClient, log *zerolog.Logger) *c
 		Use:   "create",
 		Short: "Create an ingestion job to pull data from your S3 bucket.",
 		Run: func(cmd *cobra.Command, args []string) {
-			createArchiveIngestion(endTime, name, sourceId, startTime, client, log)
+			createArchiveIngestion(endTime, name, sourceId, startTime, client)
 		},
 	}
 	cmd.Flags().StringVar(&endTime, "endTime", "", "Specify the ending timestamp of the ingestion job. "+
@@ -37,7 +37,7 @@ func NewCmdArchiveIngestionCreate(client *cip.APIClient, log *zerolog.Logger) *c
 	return cmd
 }
 
-func createArchiveIngestion(endTime string, name string, sourceId string, startTime string, client *cip.APIClient, log *zerolog.Logger) {
+func createArchiveIngestion(endTime string, name string, sourceId string, startTime string, client *cip.APIClient) {
 	format := "2006-01-02T15:04:05Z"
 	endTimeParsed, err := time.Parse(format, endTime)
 	if err != nil {
@@ -54,7 +54,7 @@ func createArchiveIngestion(endTime string, name string, sourceId string, startT
 	},
 		sourceId)
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to create archive job")
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}

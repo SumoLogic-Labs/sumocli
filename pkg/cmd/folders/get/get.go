@@ -2,14 +2,13 @@ package get
 
 import (
 	"github.com/antihax/optional"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/wizedkyle/sumocli/pkg/cmdutils"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
-func NewCmdGet(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
+func NewCmdGet(client *cip.APIClient) *cobra.Command {
 	var (
 		id          string
 		isAdminMode bool
@@ -18,7 +17,7 @@ func NewCmdGet(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 		Use:   "get",
 		Short: "Get a folder with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			get(id, isAdminMode, client, log)
+			get(id, isAdminMode, client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the identifier of the folder")
@@ -27,13 +26,13 @@ func NewCmdGet(client *cip.APIClient, log *zerolog.Logger) *cobra.Command {
 	return cmd
 }
 
-func get(id string, isAdminMode bool, client *cip.APIClient, log *zerolog.Logger) {
+func get(id string, isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.GetFolder(id, &types.FolderManagementApiGetFolderOpts{
+	apiResponse, httpResponse, errorResponse := client.GetFolder(id, &types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
 	if errorResponse != nil {
-		log.Error().Err(errorResponse).Msg("failed to get folder")
+		cmdutils.OutputError(httpResponse, errorResponse)
 	} else {
 		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
 	}
