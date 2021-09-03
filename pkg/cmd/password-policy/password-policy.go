@@ -1,9 +1,9 @@
 package password_policy
 
 import (
+	NewCmdPasswordPolicyGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password-policy/get"
+	NewCmdPasswordPolicyUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password-policy/update"
 	"github.com/spf13/cobra"
-	NewCmdPasswordPolicyGet "github.com/wizedkyle/sumocli/pkg/cmd/password-policy/get"
-	NewCmdPasswordPolicyUpdate "github.com/wizedkyle/sumocli/pkg/cmd/password-policy/update"
 )
 
 func NewCmdPasswordPolicy() *cobra.Command {

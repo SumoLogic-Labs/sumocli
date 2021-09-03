@@ -2,11 +2,11 @@ package create
 
 import (
 	"encoding/json"
+	"github.com/SumoLogic-Incubator/sumocli/api"
+	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/factory"
+	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/cmd/factory"
-	"github.com/wizedkyle/sumocli/pkg/logging"
 	"io"
 	"strconv"
 	"strings"

@@ -1,14 +1,14 @@
 package account
 
 import (
+	NewCmdAccountCreateSubdomain "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/create-subdomain"
+	NewCmdAccountDeleteSubdomain "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/delete-subdomain"
+	NewCmdAccountGetOwner "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/get-owner"
+	NewCmdAccountGetSubdomain "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/get-subdomain"
+	NewCmdAccountRecoverSubdomain "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/recover-subdomain"
+	NewCmdAccountUpdateSubdomain "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account/update-subdomain"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdAccountCreateSubdomain "github.com/wizedkyle/sumocli/pkg/cmd/account/create-subdomain"
-	NewCmdAccountDeleteSubdomain "github.com/wizedkyle/sumocli/pkg/cmd/account/delete-subdomain"
-	NewCmdAccountGetOwner "github.com/wizedkyle/sumocli/pkg/cmd/account/get-owner"
-	NewCmdAccountGetSubdomain "github.com/wizedkyle/sumocli/pkg/cmd/account/get-subdomain"
-	NewCmdAccountRecoverSubdomain "github.com/wizedkyle/sumocli/pkg/cmd/account/recover-subdomain"
-	NewCmdAccountUpdateSubdomain "github.com/wizedkyle/sumocli/pkg/cmd/account/update-subdomain"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdAccount(client *cip.APIClient) *cobra.Command {

@@ -1,4 +1,4 @@
-module github.com/wizedkyle/sumocli
+module github.com/SumoLogic-Incubator/sumocli
 
 go 1.15
 
@@ -9,6 +9,7 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.5
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/Azure/go-autorest/autorest/validation v0.3.0 // indirect
+	github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip v0.10.0
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go-v2/config v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.3.1
@@ -24,7 +25,6 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1 // indirect
-	github.com/wizedkyle/sumologic-go-sdk/service/cip v0.8.1-0.20210902095618-f1717b030ad5
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c
 	golang.org/x/text v0.3.5 // indirect

@@ -1,18 +1,18 @@
 package folders
 
 import (
+	cmdFoldersCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/create"
+	cmdFoldersGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get"
+	cmdFoldersAdminRecommendedFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder"
+	cmdFoldersAdminRecommendedFolderResult "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder_result"
+	cmdFoldersAdminRecommendedFolderStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder_status"
+	cmdFoldersGlobalFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder"
+	cmdFoldersGlobalFolderResult "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder_result"
+	cmdFoldersGlobalFolderStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder_status"
+	cmdFoldersPersonalFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_personal_folder"
+	cmdFoldersUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	cmdFoldersCreate "github.com/wizedkyle/sumocli/pkg/cmd/folders/create"
-	cmdFoldersGet "github.com/wizedkyle/sumocli/pkg/cmd/folders/get"
-	cmdFoldersAdminRecommendedFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_admin_recommended_folder"
-	cmdFoldersAdminRecommendedFolderResult "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_admin_recommended_folder_result"
-	cmdFoldersAdminRecommendedFolderStatus "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_admin_recommended_folder_status"
-	cmdFoldersGlobalFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_global_folder"
-	cmdFoldersGlobalFolderResult "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_global_folder_result"
-	cmdFoldersGlobalFolderStatus "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_global_folder_status"
-	cmdFoldersPersonalFolder "github.com/wizedkyle/sumocli/pkg/cmd/folders/get_personal_folder"
-	cmdFoldersUpdate "github.com/wizedkyle/sumocli/pkg/cmd/folders/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdFolders(client *cip.APIClient) *cobra.Command {

@@ -1,10 +1,10 @@
 package create
 
 import (
+	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmdutils"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
 func NewCmdAzureEventHubSourceCreate(client *cip.APIClient) *cobra.Command {

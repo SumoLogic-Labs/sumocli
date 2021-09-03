@@ -1,12 +1,12 @@
 package archive_ingestion
 
 import (
+	NewCmdArchiveIngestionCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion/create"
+	NewCmdArchiveIngestionDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion/delete"
+	NewCmdArchiveIngestionGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion/get"
+	NewCmdArchiveIngestionList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion/list"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdArchiveIngestionCreate "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion/create"
-	NewCmdArchiveIngestionDelete "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion/delete"
-	NewCmdArchiveIngestionGet "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion/get"
-	NewCmdArchiveIngestionList "github.com/wizedkyle/sumocli/pkg/cmd/archive-ingestion/list"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdArchiveIngestion(client *cip.APIClient) *cobra.Command {

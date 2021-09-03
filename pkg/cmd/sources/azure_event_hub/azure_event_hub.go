@@ -1,11 +1,11 @@
 package azure_event_hub
 
 import (
+	NewCmdAzureEventHubCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/azure_event_hub/create"
+	NewCmdAzureEventHubGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/azure_event_hub/get"
+	NewCmdAzureEventHubUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/azure_event_hub/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdAzureEventHubCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/azure_event_hub/create"
-	NewCmdAzureEventHubGet "github.com/wizedkyle/sumocli/pkg/cmd/sources/azure_event_hub/get"
-	NewCmdAzureEventHubUpdate "github.com/wizedkyle/sumocli/pkg/cmd/sources/azure_event_hub/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdAzureEventHubSource(client *cip.APIClient) *cobra.Command {

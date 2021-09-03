@@ -1,11 +1,11 @@
 package get_upgradable_collectors
 
 import (
+	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmdutils"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip/types"
 )
 
 func NewCmdGetUpgradableCollectors(client *cip.APIClient) *cobra.Command {

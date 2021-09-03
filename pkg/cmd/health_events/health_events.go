@@ -1,10 +1,10 @@
 package health_events
 
 import (
+	NewCmdHealthEventsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/health_events/get"
+	NewCmdHealthEventsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/health_events/list"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdHealthEventsGet "github.com/wizedkyle/sumocli/pkg/cmd/health_events/get"
-	NewCmdHealthEventsList "github.com/wizedkyle/sumocli/pkg/cmd/health_events/list"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdHealthEvents(client *cip.APIClient) *cobra.Command {

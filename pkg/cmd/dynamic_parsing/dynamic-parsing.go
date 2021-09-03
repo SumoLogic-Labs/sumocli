@@ -1,13 +1,13 @@
 package dynamic_parsing
 
 import (
+	NewCmdDynamicParsingCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing/create"
+	NewCmdDynamicParsingDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing/delete"
+	NewCmdDynamicParsingGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing/get"
+	NewCmdDynamicParsingList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing/list"
+	NewCmdDynamicParsingUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdDynamicParsingCreate "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing/create"
-	NewCmdDynamicParsingDelete "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing/delete"
-	NewCmdDynamicParsingGet "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing/get"
-	NewCmdDynamicParsingList "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing/list"
-	NewCmdDynamicParsingUpdate "github.com/wizedkyle/sumocli/pkg/cmd/dynamic_parsing/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdDynamicParsing(client *cip.APIClient) *cobra.Command {

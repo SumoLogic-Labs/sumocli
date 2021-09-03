@@ -1,14 +1,14 @@
 package ingest_budgets_v2
 
 import (
+	NewCmdIngestBudgetsV2Create "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/create"
+	NewCmdIngestBudgetsV2Delete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/delete"
+	NewCmdIngestBudgetsV2Get "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/get"
+	NewCmdIngestBudgetsV2List "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/list"
+	NewCmdIngestBudgetsV2Reset "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/reset"
+	NewCmdIngestBudgetsV2Update "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdIngestBudgetsV2Create "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/create"
-	NewCmdIngestBudgetsV2Delete "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/delete"
-	NewCmdIngestBudgetsV2Get "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/get"
-	NewCmdIngestBudgetsV2List "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/list"
-	NewCmdIngestBudgetsV2Reset "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/reset"
-	NewCmdIngestBudgetsV2Update "github.com/wizedkyle/sumocli/pkg/cmd/ingest_budgets_v2/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdIngestBudgetsV2(client *cip.APIClient) *cobra.Command {

@@ -1,9 +1,9 @@
 package http
 
 import (
+	NewCmdCreateHttpSource "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/http/create"
+	NewCmdUpdateHttpSource "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/http/update"
 	"github.com/spf13/cobra"
-	NewCmdCreateHttpSource "github.com/wizedkyle/sumocli/pkg/cmd/sources/http/create"
-	NewCmdUpdateHttpSource "github.com/wizedkyle/sumocli/pkg/cmd/sources/http/update"
 )
 
 func NewCmdHttpSources() *cobra.Command {

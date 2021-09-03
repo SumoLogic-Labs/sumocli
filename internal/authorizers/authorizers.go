@@ -5,7 +5,7 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
-	"github.com/wizedkyle/sumocli/internal/config"
+	"github.com/SumoLogic-Incubator/sumocli/internal/config"
 )
 
 type OAuthGrantType int

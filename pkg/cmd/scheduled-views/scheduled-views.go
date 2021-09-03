@@ -1,14 +1,14 @@
 package scheduled_views
 
 import (
+	NewCmdScheduledViewsCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/create"
+	NewCmdScheduledViewsDisable "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/disable"
+	NewCmdScheduledViewsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/get"
+	NewCmdScheduledViewsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/list"
+	NewCmdScheduledViewsPause "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/pause"
+	NewCmdScheduledViewsStart "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/start"
+	NewCmdScheduledViewsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/update"
 	"github.com/spf13/cobra"
-	NewCmdScheduledViewsCreate "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/create"
-	NewCmdScheduledViewsDisable "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/disable"
-	NewCmdScheduledViewsGet "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/get"
-	NewCmdScheduledViewsList "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/list"
-	NewCmdScheduledViewsPause "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/pause"
-	NewCmdScheduledViewsStart "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/start"
-	NewCmdScheduledViewsUpdate "github.com/wizedkyle/sumocli/pkg/cmd/scheduled-views/update"
 )
 
 func NewCmdScheduledViews() *cobra.Command {

@@ -3,9 +3,9 @@ package config
 import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/to"
+	"github.com/SumoLogic-Incubator/sumocli/internal/build"
+	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/internal/build"
-	"github.com/wizedkyle/sumocli/pkg/logging"
 )
 
 var (

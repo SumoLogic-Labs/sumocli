@@ -1,8 +1,8 @@
 package aws_s3_archive
 
 import (
+	NewCmdAWSS3ArchiveSourceCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/aws_s3_archive/create"
 	"github.com/spf13/cobra"
-	NewCmdAWSS3ArchiveSourceCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/aws_s3_archive/create"
 )
 
 func NewCmdAWSS3ArchiveSource() *cobra.Command {

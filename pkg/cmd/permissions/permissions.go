@@ -1,10 +1,10 @@
 package permissions
 
 import (
+	cmdPermissionsAdd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/add"
+	cmdPermissionsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/get"
+	cmdPermissionsRemove "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/remove"
 	"github.com/spf13/cobra"
-	cmdPermissionsAdd "github.com/wizedkyle/sumocli/pkg/cmd/permissions/add"
-	cmdPermissionsGet "github.com/wizedkyle/sumocli/pkg/cmd/permissions/get"
-	cmdPermissionsRemove "github.com/wizedkyle/sumocli/pkg/cmd/permissions/remove"
 )
 
 func NewCmdPermissions() *cobra.Command {

@@ -1,18 +1,18 @@
 package field_management
 
 import (
+	NewCmdFieldManagementCreateField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/create_field"
+	NewCmdFieldManagementDeleteField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/delete_field"
+	NewCmdFieldManagementDisableCustomField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/disable_custom_field"
+	NewCmdFieldManagementEnableCustomField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/enable_custom_field"
+	NewCmdFieldManagementGetBuiltinField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/get_builtin_field"
+	NewCmdFieldManagementGetCapacityInfo "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/get_capacity_info"
+	NewCmdFieldManagementGetCustomField "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/get_custom_field"
+	NewCmdFieldManagementListBuiltinFields "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/list_builtin_fields"
+	NewCmdFieldManagementListCustomFields "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/list_custom_fields"
+	NewCmdFieldManagementListDroppedFields "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management/list_dropped_fields"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdFieldManagementCreateField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/create_field"
-	NewCmdFieldManagementDeleteField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/delete_field"
-	NewCmdFieldManagementDisableCustomField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/disable_custom_field"
-	NewCmdFieldManagementEnableCustomField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/enable_custom_field"
-	NewCmdFieldManagementGetBuiltinField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/get_builtin_field"
-	NewCmdFieldManagementGetCapacityInfo "github.com/wizedkyle/sumocli/pkg/cmd/field_management/get_capacity_info"
-	NewCmdFieldManagementGetCustomField "github.com/wizedkyle/sumocli/pkg/cmd/field_management/get_custom_field"
-	NewCmdFieldManagementListBuiltinFields "github.com/wizedkyle/sumocli/pkg/cmd/field_management/list_builtin_fields"
-	NewCmdFieldManagementListCustomFields "github.com/wizedkyle/sumocli/pkg/cmd/field_management/list_custom_fields"
-	NewCmdFieldManagementListDroppedFields "github.com/wizedkyle/sumocli/pkg/cmd/field_management/list_dropped_fields"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdFieldManagement(client *cip.APIClient) *cobra.Command {

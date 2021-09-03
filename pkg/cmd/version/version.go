@@ -2,8 +2,8 @@ package version
 
 import (
 	"fmt"
+	"github.com/SumoLogic-Incubator/sumocli/internal/build"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/internal/build"
 )
 
 func NewCmdVersion() *cobra.Command {

@@ -1,12 +1,12 @@
 package apps
 
 import (
+	NewCmdAppsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps/get"
+	NewCmdAppsInstall "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps/install"
+	NewCmdAppsInstallStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps/install_status"
+	NewCmdAppsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps/list"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdAppsGet "github.com/wizedkyle/sumocli/pkg/cmd/apps/get"
-	NewCmdAppsInstall "github.com/wizedkyle/sumocli/pkg/cmd/apps/install"
-	NewCmdAppsInstallStatus "github.com/wizedkyle/sumocli/pkg/cmd/apps/install_status"
-	NewCmdAppsList "github.com/wizedkyle/sumocli/pkg/cmd/apps/list"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdApps(client *cip.APIClient) *cobra.Command {

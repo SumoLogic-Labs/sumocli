@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/wizedkyle/sumocli/internal/authentication"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Incubator/sumocli/internal/authentication"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"net/http"
 	"time"
 )

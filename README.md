@@ -10,22 +10,22 @@ Download the binary for your platform from the Releases page.
 
 ### Docker
 
-Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/wizedkyle/sumocli).
+Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/SumoLogic-Incubator/sumocli).
 
 Pull the latest image:
 
-`docker pull wizedkyle/sumocli:latest`
+`docker pull SumoLogic-Incubator/sumocli:latest`
 
 Pull a specific version image:
 
-`docker pull wizedkyle/sumocli:v0.11.0`
+`docker pull SumoLogic-Incubator/sumocli:v0.11.0`
 
 ### Build Yourself
 You can build the sumocli application for your platform by performing the following steps:
 
 Clone the sumocli repo
 
-`git clone https://github.com/wizedkyle/sumocli`
+`git clone https://github.com/SumoLogic-Incubator/sumocli`
 
 The repo is using Go modules so you can run go build:
 

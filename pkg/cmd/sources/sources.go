@@ -1,15 +1,15 @@
 package sources
 
 import (
+	cmdAwsCloudTrailSource "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/aws_cloudtrail"
+	cmdAWSS3ArchiveSource "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/aws_s3_archive"
+	cmdAzureEventHubSource "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/azure_event_hub"
+	cmdSourcesDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/delete"
+	cmdHttpSources "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/http"
+	cmdSourcesList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/list"
+	cmdLocalFileSources "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/local-file"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	cmdAwsCloudTrailSource "github.com/wizedkyle/sumocli/pkg/cmd/sources/aws_cloudtrail"
-	cmdAWSS3ArchiveSource "github.com/wizedkyle/sumocli/pkg/cmd/sources/aws_s3_archive"
-	cmdAzureEventHubSource "github.com/wizedkyle/sumocli/pkg/cmd/sources/azure_event_hub"
-	cmdSourcesDelete "github.com/wizedkyle/sumocli/pkg/cmd/sources/delete"
-	cmdHttpSources "github.com/wizedkyle/sumocli/pkg/cmd/sources/http"
-	cmdSourcesList "github.com/wizedkyle/sumocli/pkg/cmd/sources/list"
-	cmdLocalFileSources "github.com/wizedkyle/sumocli/pkg/cmd/sources/local-file"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdSources(client *cip.APIClient) *cobra.Command {

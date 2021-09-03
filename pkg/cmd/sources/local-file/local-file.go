@@ -1,8 +1,8 @@
 package local_file
 
 import (
+	NewCmdLocalFileSourceCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/local-file/create"
 	"github.com/spf13/cobra"
-	NewCmdLocalFileSourceCreate "github.com/wizedkyle/sumocli/pkg/cmd/sources/local-file/create"
 )
 
 func NewCmdLocalFileSources() *cobra.Command {

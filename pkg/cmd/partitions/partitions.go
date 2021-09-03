@@ -1,14 +1,14 @@
 package partitions
 
 import (
+	NewCmdPartitionsCancelRetentionUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/cancel_retention_update"
+	NewCmdPartitionsCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/create"
+	NewCmdPartitionsDecommission "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/decommission"
+	NewCmdPartitionsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/get"
+	NewCmdPartitionsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/list"
+	NewCmdPartitionsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdPartitionsCancelRetentionUpdate "github.com/wizedkyle/sumocli/pkg/cmd/partitions/cancel_retention_update"
-	NewCmdPartitionsCreate "github.com/wizedkyle/sumocli/pkg/cmd/partitions/create"
-	NewCmdPartitionsDecommission "github.com/wizedkyle/sumocli/pkg/cmd/partitions/decommission"
-	NewCmdPartitionsGet "github.com/wizedkyle/sumocli/pkg/cmd/partitions/get"
-	NewCmdPartitionsList "github.com/wizedkyle/sumocli/pkg/cmd/partitions/list"
-	NewCmdPartitionsUpdate "github.com/wizedkyle/sumocli/pkg/cmd/partitions/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdPartitions(client *cip.APIClient) *cobra.Command {

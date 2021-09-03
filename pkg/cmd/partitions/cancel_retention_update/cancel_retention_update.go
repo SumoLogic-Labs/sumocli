@@ -1,9 +1,9 @@
 package cancel_retention_update
 
 import (
+	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	"github.com/wizedkyle/sumocli/pkg/cmdutils"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdPartitionsCancelRetentionUpdate(client *cip.APIClient) *cobra.Command {

@@ -10,5 +10,5 @@ if [ "$DEV" = "true" ]; then
   echo "=> Building sumocli"
   gox -osarch="linux/amd64" ./cmd/sumocli
   ls -lah
-  mv "$GOPATH/src/github.com/wizedkyle/sumocli/sumocli_linux_amd64" "$GOPATH/bin/sumocli"
+  mv "$GOPATH/src/github.com/SumoLogic-Incubator/sumocli/sumocli_linux_amd64" "$GOPATH/bin/sumocli"
 fi

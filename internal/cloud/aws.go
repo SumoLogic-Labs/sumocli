@@ -1,8 +1,8 @@
 package cloud
 
 import (
-	"github.com/wizedkyle/sumocli/api"
-	"github.com/wizedkyle/sumocli/pkg/logging"
+	"github.com/SumoLogic-Incubator/sumocli/api"
+	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
 )
 
 func SetAWSAuthentication(awsId string, awsKey string, roleArn string) api.ThirdPartyReferenceResourcesAuthentication {

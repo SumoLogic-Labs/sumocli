@@ -3,8 +3,8 @@ package authentication
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/SumoLogic-Incubator/sumocli/internal/encryption"
 	"github.com/spf13/viper"
-	"github.com/wizedkyle/sumocli/internal/encryption"
 	"os"
 	"path/filepath"
 )

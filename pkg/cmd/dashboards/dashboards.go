@@ -1,12 +1,12 @@
 package dashboards
 
 import (
+	NewCmdDashboardCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dashboards/create"
+	NewCmdDashboardDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dashboards/delete"
+	NewCmdDashboardsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dashboards/get"
+	NewCmdDashboardsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dashboards/update"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	NewCmdDashboardCreate "github.com/wizedkyle/sumocli/pkg/cmd/dashboards/create"
-	NewCmdDashboardDelete "github.com/wizedkyle/sumocli/pkg/cmd/dashboards/delete"
-	NewCmdDashboardsGet "github.com/wizedkyle/sumocli/pkg/cmd/dashboards/get"
-	NewCmdDashboardsUpdate "github.com/wizedkyle/sumocli/pkg/cmd/dashboards/update"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdDashboards(client *cip.APIClient) *cobra.Command {

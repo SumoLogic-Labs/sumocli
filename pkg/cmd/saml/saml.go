@@ -1,16 +1,16 @@
 package saml
 
 import (
+	NewCmdSamlAddAllowListUser "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/add-allowlist-user"
+	NewCmdSamlCreateConfiguration "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/create-configuration"
+	NewCmdSamlDeleteConfiguration "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/delete-configuration"
+	NewCmdSamlDisableLockdown "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/disable-lockdown"
+	NewCmdSamlEnableLockdown "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/enable-lockdown"
+	NewCmdSamlGetAllowListUsers "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/get-allowlist-users"
+	NewCmdSamlGetConfigurations "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/get-configurations"
+	NewCmdSamlRemoveAllowListUser "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/remove-allowlist-user"
+	NewCmdSamlUpdateConfiguration "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml/update-configuration"
 	"github.com/spf13/cobra"
-	NewCmdSamlAddAllowListUser "github.com/wizedkyle/sumocli/pkg/cmd/saml/add-allowlist-user"
-	NewCmdSamlCreateConfiguration "github.com/wizedkyle/sumocli/pkg/cmd/saml/create-configuration"
-	NewCmdSamlDeleteConfiguration "github.com/wizedkyle/sumocli/pkg/cmd/saml/delete-configuration"
-	NewCmdSamlDisableLockdown "github.com/wizedkyle/sumocli/pkg/cmd/saml/disable-lockdown"
-	NewCmdSamlEnableLockdown "github.com/wizedkyle/sumocli/pkg/cmd/saml/enable-lockdown"
-	NewCmdSamlGetAllowListUsers "github.com/wizedkyle/sumocli/pkg/cmd/saml/get-allowlist-users"
-	NewCmdSamlGetConfigurations "github.com/wizedkyle/sumocli/pkg/cmd/saml/get-configurations"
-	NewCmdSamlRemoveAllowListUser "github.com/wizedkyle/sumocli/pkg/cmd/saml/remove-allowlist-user"
-	NewCmdSamlUpdateConfiguration "github.com/wizedkyle/sumocli/pkg/cmd/saml/update-configuration"
 )
 
 func NewCmdSaml() *cobra.Command {

@@ -1,17 +1,17 @@
 package lookup_tables
 
 import (
+	cmdLookupTablesCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/create"
+	cmdLookupTablesDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/delete"
+	cmdLookupTablesDeleteData "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/delete-data"
+	cmdLookupTablesDeleteRow "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/delete-row"
+	cmdLookupTablesGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/get"
+	cmdLookupTablesInsertRow "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/insert-row"
+	cmdLookupTablesJobStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/job-status"
+	cmdLookupTablesUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/update"
+	cmdLookupTablesUpload "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables/upload"
+	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
-	cmdLookupTablesCreate "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/create"
-	cmdLookupTablesDelete "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/delete"
-	cmdLookupTablesDeleteData "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/delete-data"
-	cmdLookupTablesDeleteRow "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/delete-row"
-	cmdLookupTablesGet "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/get"
-	cmdLookupTablesInsertRow "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/insert-row"
-	cmdLookupTablesJobStatus "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/job-status"
-	cmdLookupTablesUpdate "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/update"
-	cmdLookupTablesUpload "github.com/wizedkyle/sumocli/pkg/cmd/lookup_tables/upload"
-	"github.com/wizedkyle/sumologic-go-sdk/service/cip"
 )
 
 func NewCmdLookupTables(client *cip.APIClient) *cobra.Command {

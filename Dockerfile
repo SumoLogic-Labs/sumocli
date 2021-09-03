@@ -3,7 +3,7 @@ LABEL maintainer="Kyle Jackson <kyle@thepublicclouds.com>"
 
 ENV DEV=true
 
-WORKDIR $GOPATH/src/github.com/wizedkyle/sumocli
+WORKDIR $GOPATH/src/github.com/SumoLogic-Incubator/sumocli
 COPY . .
 RUN chmod +x ./scripts/build.sh
 RUN ./scripts/build.sh

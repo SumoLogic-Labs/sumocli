@@ -40,6 +40,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip v0.10.0 h1:mTDRnpNTWDpwR78bUA24iFS/MvFYdqyUN1sjYozP01g=
+github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip v0.10.0/go.mod h1:7pWkiApE2iO78lfxskkgc2Pl+1182LcFkbfvgdVgtrM=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/antihax/optional v1.0.0 h1:xK2lYat7ZLaVVcIuj82J8kIro4V6kDe0AUDFboUCwcg=
@@ -271,14 +273,6 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210825094727-8109f4536350 h1:NU8c26arg1JL4m3j2dzDIWG2x5I4tHnN25CY3q331IU=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210825094727-8109f4536350/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210829120411-11bcf861ac71 h1:BD0bQb6oYPTJ2RlsTbZI00r0yvGrIwYGTsrr/yCvu4s=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.6.1-0.20210829120411-11bcf861ac71/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.8.0 h1:ZYpZ/cH0U/IIm/5YHoostbYAw5Ua0NxwEdUrqzLmByM=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.8.0/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.8.1-0.20210902095618-f1717b030ad5 h1:r8xTM8ki9U3gOkkBYTRRoGb6GFwPZ8oJwIA8qAOxOTY=
-github.com/wizedkyle/sumologic-go-sdk/service/cip v0.8.1-0.20210902095618-f1717b030ad5/go.mod h1:vOQqk5F8YEKsMREZsbWKdHAYcrYJsPOkAdhIi4hV0a0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
