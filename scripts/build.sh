@@ -31,12 +31,12 @@ while getopts "b:dlmv:w" opt; do
           echo "=> Creating DEBIAN control file"
           mkdir -p ~/deb/sumocli_$version-1_amd64/DEBIAN
           cat > ~/deb/sumocli_$version-1_amd64/DEBIAN/control <<EOF
-          Package: sumocli
-          Version: $version
-          Maintainer: $maintainer
-          Architecture: amd64
-          Homepage: https://github.com/SumoLogic-Incubator/sumocli
-          Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line.
+Package: sumocli
+Version: $version
+Maintainer: $maintainer
+Architecture: amd64
+Homepage: https://github.com/SumoLogic-Incubator/sumocli
+Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line.
 EOF
           echo "=> Building Deb package"
           dpkg --build ~/deb/sumocli_$version-1_amd64
