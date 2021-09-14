@@ -27,13 +27,13 @@ func NewCmdUserChangeEmail(client *cip.APIClient) *cobra.Command {
 }
 
 func userChangeEmail(id string, email string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.RequestChangeEmail(types.ChangeEmailRequest{
+	response, err := client.RequestChangeEmail(types.ChangeEmailRequest{
 		Email: email,
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Email change request was submitted successfully.")
+		cmdutils.Output(nil, response, err, "Email change request was submitted successfully.")
 	}
 }

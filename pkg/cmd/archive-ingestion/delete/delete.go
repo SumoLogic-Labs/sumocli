@@ -27,10 +27,10 @@ func NewCmdArchiveIngestionDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteArchiveIngestion(id string, sourceId string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteArchiveJob(sourceId, id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteArchiveJob(sourceId, id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The ingestion job was deleted successfully.")
+		cmdutils.Output(nil, response, err, "The ingestion job was deleted successfully.")
 	}
 }

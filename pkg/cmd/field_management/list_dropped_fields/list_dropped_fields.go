@@ -19,10 +19,10 @@ func NewCmdFieldManagementListDroppedFields(client *cip.APIClient) *cobra.Comman
 }
 
 func listDroppedFields(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListDroppedFields()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListDroppedFields()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

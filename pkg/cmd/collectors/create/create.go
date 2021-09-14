@@ -36,7 +36,7 @@ func NewCmdCollectorCreate(client *cip.APIClient) *cobra.Command {
 
 func Collector(name string, description string, category string, fieldNames []string, fieldValues []string, client *cip.APIClient) {
 	fields := cmdutils.GenerateFieldsMap(fieldNames, fieldValues)
-	apiResponse, httpResponse, errorResponse := client.CreateCollector(types.CreateCollectorRequest{
+	data, response, err := client.CreateCollector(types.CreateCollectorRequest{
 		Collector: types.CreateCollectorRequestDefinition{
 			CollectorType: "Hosted",
 			Name:          name,
@@ -45,9 +45,9 @@ func Collector(name string, description string, category string, fieldNames []st
 			Fields:        fields,
 		},
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -18,10 +18,10 @@ func NewCmdServiceAllowlistStatus(client *cip.APIClient) *cobra.Command {
 }
 
 func getServiceAllowlistStatus(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetAllowlistingStatus()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetAllowlistingStatus()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

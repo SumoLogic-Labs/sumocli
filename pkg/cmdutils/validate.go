@@ -47,3 +47,31 @@ func ValidateCapabilities(capability string) bool {
 	}
 	return false
 }
+
+func ValidateDeploymentId(deploymentId string) bool {
+	switch deploymentId {
+	case
+		"mb",
+		"nite",
+		"stag",
+		"long",
+		"prod",
+		"us2",
+		"dub",
+		"syd",
+		"mum",
+		"fra",
+		"tky",
+		"mon",
+		"fed",
+		"au",
+		"ca",
+		"de",
+		"eu",
+		"in",
+		"jp",
+		"us1":
+		return true
+	}
+	return false
+}

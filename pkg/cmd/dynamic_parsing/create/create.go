@@ -30,14 +30,14 @@ func NewCmdDynamicParsingCreate(client *cip.APIClient) *cobra.Command {
 }
 
 func createDynamicParsingRule(name string, scope string, enabled bool, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateDynamicParsingRule(types.DynamicRuleDefinition{
+	data, response, err := client.CreateDynamicParsingRule(types.DynamicRuleDefinition{
 		Name:    name,
 		Scope:   scope,
 		Enabled: enabled,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -29,20 +29,20 @@ func NewCmdCollectorDelete(client *cip.APIClient) *cobra.Command {
 
 func deleteCollector(aliveBeforeDays int32, id string, offline bool, client *cip.APIClient) {
 	if id != "" {
-		httpResponse, errorResponse := client.DeleteCollectorById(id)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		response, err := client.DeleteCollectorById(id)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(nil, httpResponse, errorResponse, "Collector with id "+id+" has been deleted")
+			cmdutils.Output(nil, response, err, "Collector with id "+id+" has been deleted")
 		}
 	} else if offline == true {
-		httpResponse, errorResponse := client.DeleteOfflineCollectors(&types.DeleteOfflineCollectorsOpts{
+		response, err := client.DeleteOfflineCollectors(&types.DeleteOfflineCollectorsOpts{
 			AliveBeforeDays: optional.NewInt32(aliveBeforeDays),
 		})
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(nil, httpResponse, errorResponse, "Offline collectors have been deleted")
+			cmdutils.Output(nil, response, err, "Offline collectors have been deleted")
 		}
 	}
 }

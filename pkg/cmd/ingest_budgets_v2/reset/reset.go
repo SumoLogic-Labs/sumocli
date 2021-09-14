@@ -21,10 +21,10 @@ func NewCmdIngestBudgetsV2Reset(client *cip.APIClient) *cobra.Command {
 }
 
 func resetIngestBudgetV2(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.ResetUsageV2(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.ResetUsageV2(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Ingest budget's usage was reset successfully.")
+		cmdutils.Output(nil, response, err, "Ingest budget's usage was reset successfully.")
 	}
 }

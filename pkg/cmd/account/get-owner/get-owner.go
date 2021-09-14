@@ -18,15 +18,15 @@ func NewCmdAccountGetOwner(client *cip.APIClient) *cobra.Command {
 }
 
 func getOwner(client *cip.APIClient) {
-	userId, httpResponse, errorResponse := client.GetAccountOwner()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	userId, response, err := client.GetAccountOwner()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		userResponse, httpResponse, errorResponse := client.GetUser(userId)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		userResponse, response, err := client.GetUser(userId)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(userResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(userResponse, response, err, "")
 		}
 	}
 }

@@ -18,10 +18,10 @@ func NewCmdFieldManagementListCustomFields(client *cip.APIClient) *cobra.Command
 }
 
 func listCustomFields(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListCustomFields()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListCustomFields()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

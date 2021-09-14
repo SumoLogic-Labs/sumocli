@@ -18,7 +18,6 @@ func NewCmdRole(client *cip.APIClient) *cobra.Command {
 		Short: "Manage roles",
 		Long:  "Commands that allow you to manage roles in your Sumo Logic tenant",
 	}
-
 	cmd.AddCommand(cmdRoleAssign.NewCmdRoleAssign(client))
 	cmd.AddCommand(cmdRoleCreate.NewCmdRoleCreate(client))
 	cmd.AddCommand(cmdRoleDelete.NewCmdRoleDelete(client))

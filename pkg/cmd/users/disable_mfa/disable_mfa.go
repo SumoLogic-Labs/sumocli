@@ -52,14 +52,14 @@ func userDisableMFA(client *cip.APIClient) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to generate prompt")
 	}
-	httpResponse, errorResponse := client.DisableMfa(types.DisableMfaRequest{
+	response, err := client.DisableMfa(types.DisableMfaRequest{
 		Email:    emailResult,
 		Password: passwordResult,
 	},
 		idResult)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "User's MFA was disabled successfully.")
+		cmdutils.Output(nil, response, err, "User's MFA was disabled successfully.")
 	}
 }

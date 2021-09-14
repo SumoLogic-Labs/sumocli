@@ -50,7 +50,7 @@ func NewCmdLookupTablesCreate(client *cip.APIClient) *cobra.Command {
 
 func createLookupTable(description string, fieldNames []string, fieldTypes []string, primaryKeys []string,
 	ttl int32, sizeLimitAction string, name string, parentFolderId string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateTable(types.LookupTableDefinition{
+	data, response, err := client.CreateTable(types.LookupTableDefinition{
 		Description:     description,
 		Fields:          cmdutils.GenerateLookupTableFields(fieldNames, fieldTypes),
 		PrimaryKeys:     primaryKeys,
@@ -59,9 +59,9 @@ func createLookupTable(description string, fieldNames []string, fieldTypes []str
 		Name:            name,
 		ParentFolderId:  parentFolderId,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

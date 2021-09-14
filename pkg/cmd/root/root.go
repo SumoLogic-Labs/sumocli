@@ -20,9 +20,11 @@ import (
 	liveTailCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/live-tail"
 	lookupTablesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables"
 	monitorsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors"
+	organizationsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations"
 	partitionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions"
 	passwordPolicyCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password-policy"
 	permissionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions"
+	policiesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/policies"
 	roleCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/roles"
 	samlCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml"
 	scheduledViewsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views"
@@ -62,9 +64,11 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(ConfigureCmd.NewCmdConfigure())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables(client))
 	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
+	cmd.AddCommand(organizationsCmd.NewCmdOrganizations(client))
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions(client))
 	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
 	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
+	cmd.AddCommand(policiesCmd.NewCmdPolicies(client))
 	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())

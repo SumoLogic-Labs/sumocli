@@ -25,26 +25,26 @@ func listFieldExtractionRules(limit int32, client *cip.APIClient) {
 	var options types.ExtractionRuleOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
-	apiResponse, httpResponse, errorResponse := client.ListExtractionRules(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListExtractionRules(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listFieldExtractionRulesPagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listFieldExtractionRulesPagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listFieldExtractionRulesPagination(client *cip.APIClient, options types.ExtractionRuleOpts, token string) types.ListExtractionRulesResponse {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListExtractionRules(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListExtractionRules(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

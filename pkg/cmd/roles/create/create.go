@@ -50,10 +50,10 @@ func createRole(client *cip.APIClient, name string, description string, filter s
 		Capabilities:         capabilities,
 		AutofillDependencies: autofill,
 	}
-	apiResponse, httpResponse, errorResponse := client.CreateRole(body)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.CreateRole(body)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

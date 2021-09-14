@@ -36,16 +36,16 @@ func NewCmdFieldExtractionRulesUpdate(client *cip.APIClient) *cobra.Command {
 }
 
 func updateFieldExtractionRule(id string, name string, scope string, parseExpression string, enabled bool, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.UpdateExtractionRule(types.UpdateExtractionRuleDefinition{
+	data, response, err := client.UpdateExtractionRule(types.UpdateExtractionRuleDefinition{
 		Name:            name,
 		Scope:           scope,
 		ParseExpression: parseExpression,
 		Enabled:         enabled,
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

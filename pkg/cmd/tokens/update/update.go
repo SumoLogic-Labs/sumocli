@@ -44,10 +44,10 @@ func updateToken(description string, id string, inactive bool, name string, vers
 	options.Description = description
 	options.Type_ = "CollectorRegistration"
 	options.Version = version
-	apiResponse, httpResponse, errorResponse := client.UpdateToken(options, id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.UpdateToken(options, id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

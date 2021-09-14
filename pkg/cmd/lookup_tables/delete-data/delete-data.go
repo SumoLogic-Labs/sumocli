@@ -21,10 +21,10 @@ func NewCmdLookupTablesDeleteData(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteLookupTableData(id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.TruncateTable(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.TruncateTable(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

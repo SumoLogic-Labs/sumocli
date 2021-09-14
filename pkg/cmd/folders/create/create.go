@@ -33,7 +33,7 @@ func NewCmdCreate(client *cip.APIClient) *cobra.Command {
 
 func create(name string, description string, parentId string, isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.CreateFolder(types.FolderDefinition{
+	data, response, err := client.CreateFolder(types.FolderDefinition{
 		Name:        name,
 		Description: description,
 		ParentId:    parentId,
@@ -41,9 +41,9 @@ func create(name string, description string, parentId string, isAdminMode bool, 
 		&types.FolderOpts{
 			IsAdminMode: optional.NewString(adminMode),
 		})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

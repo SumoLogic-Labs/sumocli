@@ -32,13 +32,13 @@ func upgradeStart(id string, toVersion string, client *cip.APIClient) {
 	if err != nil {
 		fmt.Println("failed to convert string to int")
 	}
-	apiResponse, httpResponse, errorResponse := client.CreateUpgradeOrDowngradeTask(types.CreateUpgradeOrDowngradeRequest{
+	data, response, err := client.CreateUpgradeOrDowngradeTask(types.CreateUpgradeOrDowngradeRequest{
 		CollectorId: idInt,
 		ToVersion:   toVersion,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -25,26 +25,26 @@ func listAllAccessKeys(limit int32, client *cip.APIClient) {
 	var options types.AccessKeyOpts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
-	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListAccessKeys(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listAllAccessKeysPagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listAllAccessKeysPagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listAllAccessKeysPagination(client *cip.APIClient, options types.AccessKeyOpts, token string) types.PaginatedListAccessKeysResult {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListAccessKeys(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListAccessKeys(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

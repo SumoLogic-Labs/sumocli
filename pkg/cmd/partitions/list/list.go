@@ -31,26 +31,26 @@ func listPartitions(limit int32, viewTypes []string, client *cip.APIClient) {
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
 	options.ViewTypes = optional.NewInterface(viewTypes)
-	apiResponse, httpResponse, errorResponse := client.ListPartitions(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListPartitions(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listPartitionsPagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listPartitionsPagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listPartitionsPagination(client *cip.APIClient, options types.PartitionOpts, token string) types.ListPartitionsResponse {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListPartitions(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListPartitions(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

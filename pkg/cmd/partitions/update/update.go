@@ -36,16 +36,16 @@ func NewCmdPartitionUpdate(client *cip.APIClient) *cobra.Command {
 
 func updatePartition(id string, retentionPeriod int32, reduceRetentionPeriodImmediately bool, isCompliant bool,
 	routingExpression string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.UpdatePartition(types.UpdatePartitionDefinition{
+	data, response, err := client.UpdatePartition(types.UpdatePartitionDefinition{
 		RetentionPeriod:                  retentionPeriod,
 		ReduceRetentionPeriodImmediately: reduceRetentionPeriodImmediately,
 		IsCompliant:                      isCompliant,
 		RoutingExpression:                routingExpression,
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

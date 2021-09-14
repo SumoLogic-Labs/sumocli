@@ -37,26 +37,26 @@ func listRoles(client *cip.APIClient, limit int32, name string, sortBy bool) {
 	if name != "" {
 		options.Name = optional.NewString(name)
 	}
-	apiResponse, httpResponse, errorResponse := client.ListRoles(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListRoles(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listRolesPagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listRolesPagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listRolesPagination(client *cip.APIClient, options types.ListRolesOpts, token string) types.ListRoleModelsResponse {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListRoles(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListRoles(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

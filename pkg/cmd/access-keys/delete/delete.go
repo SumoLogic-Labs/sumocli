@@ -21,10 +21,10 @@ func NewCmdAccessKeysDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteAccessKey(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteAccessKey(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteAccessKey(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Access key was deleted successfully")
+		cmdutils.Output(nil, response, err, "Access key was deleted successfully")
 	}
 }

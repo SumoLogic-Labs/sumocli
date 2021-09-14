@@ -19,10 +19,10 @@ func NewCmdFieldManagementGetCapacityInfo(client *cip.APIClient) *cobra.Command 
 }
 
 func getCapacityInfo(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetFieldQuota()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetFieldQuota()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

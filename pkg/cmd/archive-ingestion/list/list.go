@@ -18,10 +18,10 @@ func NewCmdArchiveIngestionList(client *cip.APIClient) *cobra.Command {
 }
 
 func listArchiveIngestion(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListArchiveJobsCountPerSource()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListArchiveJobsCountPerSource()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

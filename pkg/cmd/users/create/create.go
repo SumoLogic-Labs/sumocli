@@ -33,15 +33,15 @@ func NewCmdUserCreate(client *cip.APIClient) *cobra.Command {
 }
 
 func user(firstName string, lastName string, emailAddress string, roleIds []string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateUser(types.CreateUserDefinition{
+	data, response, err := client.CreateUser(types.CreateUserDefinition{
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     emailAddress,
 		RoleIds:   roleIds,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

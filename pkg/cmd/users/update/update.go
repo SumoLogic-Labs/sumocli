@@ -36,16 +36,16 @@ func NewCmdUserUpdate(client *cip.APIClient) *cobra.Command {
 }
 
 func updateUser(id string, firstName string, lastName string, isActive bool, roleIds []string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.UpdateUser(types.UpdateUserDefinition{
+	data, response, err := client.UpdateUser(types.UpdateUserDefinition{
 		FirstName: firstName,
 		LastName:  lastName,
 		IsActive:  isActive,
 		RoleIds:   roleIds,
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

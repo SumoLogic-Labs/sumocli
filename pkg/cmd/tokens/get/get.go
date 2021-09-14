@@ -21,10 +21,10 @@ func NewCmdTokensGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getToken(id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetToken(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetToken(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

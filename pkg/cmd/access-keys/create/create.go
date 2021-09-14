@@ -26,13 +26,13 @@ func NewCmdAccessKeysCreate(client *cip.APIClient) *cobra.Command {
 }
 
 func createAccessKey(name string, corsHeaders []string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateAccessKey(types.AccessKeyCreateRequest{
+	data, response, err := client.CreateAccessKey(types.AccessKeyCreateRequest{
 		Label:       name,
 		CorsHeaders: corsHeaders,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

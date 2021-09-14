@@ -21,10 +21,10 @@ func NewCmdLookupTablesGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getLookupTable(id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.LookupTableById(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.LookupTableById(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

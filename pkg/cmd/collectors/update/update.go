@@ -57,7 +57,7 @@ func updateCollector(category string, id string, cutoffTimestamp int32, descript
 	timeZone string, targetCPU int32, client *cip.APIClient) {
 	fields := cmdutils.GenerateFieldsMap(fieldNames, fieldValues)
 	if installedCollector == true {
-		apiResponse, httpResponse, errorResponse := client.UpdateInstalledCollector(types.UpdateInstalledCollectorDefinition{
+		data, response, err := client.UpdateInstalledCollector(types.UpdateInstalledCollectorDefinition{
 			Collector: types.UpdateInstalledCollectorModel{
 				Id:              id,
 				Name:            name,
@@ -73,13 +73,13 @@ func updateCollector(category string, id string, cutoffTimestamp int32, descript
 			},
 		},
 			id)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else {
-		apiResponse, httpResponse, errorResponse := client.UpdateHostedCollector(types.UpdateHostedCollectorDefinition{
+		data, response, err := client.UpdateHostedCollector(types.UpdateHostedCollectorDefinition{
 			Collector: types.UpdateHostedCollectorModel{
 				Id:              id,
 				Name:            name,
@@ -91,10 +91,10 @@ func updateCollector(category string, id string, cutoffTimestamp int32, descript
 			},
 		},
 			id)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	}
 }

@@ -21,10 +21,10 @@ func NewCmdRoleGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getRole(client *cip.APIClient, id string) {
-	apiResponse, httpResponse, errorResponse := client.GetRole(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetRole(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

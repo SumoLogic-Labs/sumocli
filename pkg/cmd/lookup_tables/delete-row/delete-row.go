@@ -32,13 +32,13 @@ func NewCmdLookupTablesDeleteRow(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteLookupTableRow(id string, columnNames []string, columnValues []string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteTableRow(types.RowDeleteDefinition{
+	response, err := client.DeleteTableRow(types.RowDeleteDefinition{
 		PrimaryKey: cmdutils.GenerateLookupTableColumns(columnNames, columnValues),
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Row deleted successfully.")
+		cmdutils.Output(nil, response, err, "Row deleted successfully.")
 	}
 }

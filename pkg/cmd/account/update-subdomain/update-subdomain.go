@@ -22,12 +22,12 @@ func NewCmdAccountUpdateSubdomain(client *cip.APIClient) *cobra.Command {
 }
 
 func updateSubdomain(subdomain string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.UpdateSubdomain(types.ConfigureSubdomainRequest{
+	data, response, err := client.UpdateSubdomain(types.ConfigureSubdomainRequest{
 		Subdomain: subdomain,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -22,10 +22,10 @@ func NewCmdGetAdminRecommendedFolderResult(client *cip.APIClient) *cobra.Command
 }
 
 func getAdminRecommendedFolderResult(jobId string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetAdminRecommendedFolderAsyncResult(jobId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetAdminRecommendedFolderAsyncResult(jobId)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

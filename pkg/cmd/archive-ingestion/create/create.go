@@ -47,15 +47,15 @@ func createArchiveIngestion(endTime string, name string, sourceId string, startT
 	if err != nil {
 		log.Error().Err(err).Msg("failed to parse startTime, ensure time format is RFC3339 compliant")
 	}
-	apiResponse, httpResponse, errorResponse := client.CreateArchiveJob(types.CreateArchiveJobRequest{
+	data, response, err := client.CreateArchiveJob(types.CreateArchiveJobRequest{
 		Name:      name,
 		StartTime: startTimeParsed,
 		EndTime:   endTimeParsed,
 	},
 		sourceId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

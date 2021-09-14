@@ -53,10 +53,10 @@ func updateRole(client *cip.APIClient, id string, name string, description strin
 		Capabilities:         capabilities,
 		AutofillDependencies: autofill,
 	}
-	apiResponse, httpResponse, errorResponse := client.UpdateRole(body, id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.UpdateRole(body, id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

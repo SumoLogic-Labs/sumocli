@@ -21,10 +21,10 @@ func NewCmdPartitionsDecommission(client *cip.APIClient) *cobra.Command {
 }
 
 func decommissionPartition(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DecommissionPartition(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DecommissionPartition(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The partition was decommissioned successfully.")
+		cmdutils.Output(nil, response, err, "The partition was decommissioned successfully.")
 	}
 }

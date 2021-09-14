@@ -34,13 +34,13 @@ func NewCmdLookupTablesInsertRow(client *cip.APIClient) *cobra.Command {
 }
 
 func insertLookupTableRow(id string, columnNames []string, columnValues []string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.UpdateTableRow(types.RowUpdateDefinition{
+	response, err := client.UpdateTableRow(types.RowUpdateDefinition{
 		Row: cmdutils.GenerateLookupTableColumns(columnNames, columnValues),
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Row updated successfully.")
+		cmdutils.Output(nil, response, err, "Row updated successfully.")
 	}
 }

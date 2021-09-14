@@ -21,10 +21,10 @@ func NewCmdRoleDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteRole(client *cip.APIClient, id string) {
-	httpResponse, errorResponse := client.DeleteRole(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteRole(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Role was deleted successfully")
+		cmdutils.Output(nil, response, err, "Role was deleted successfully")
 	}
 }

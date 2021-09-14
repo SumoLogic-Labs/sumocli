@@ -21,10 +21,10 @@ func NewCmdFieldExtractionRulesDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteFieldExtractionRules(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteExtractionRule(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteExtractionRule(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Extraction rule was deleted successfully.")
+		cmdutils.Output(nil, response, err, "Extraction rule was deleted successfully.")
 	}
 }

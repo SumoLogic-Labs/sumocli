@@ -28,12 +28,12 @@ func NewCmdGet(client *cip.APIClient) *cobra.Command {
 
 func get(id string, isAdminMode bool, client *cip.APIClient) {
 	adminMode := cmdutils.AdminMode(isAdminMode)
-	apiResponse, httpResponse, errorResponse := client.GetFolder(id, &types.FolderOpts{
+	data, response, err := client.GetFolder(id, &types.FolderOpts{
 		IsAdminMode: optional.NewString(adminMode),
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

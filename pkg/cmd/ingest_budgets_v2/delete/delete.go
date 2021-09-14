@@ -21,10 +21,10 @@ func NewCmdIngestBudgetsV2Delete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteIngestBudgetV2(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteIngestBudgetV2(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteIngestBudgetV2(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The ingest budget was deleted successfully.")
+		cmdutils.Output(nil, response, err, "The ingest budget was deleted successfully.")
 	}
 }

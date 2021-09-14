@@ -21,10 +21,10 @@ func NewCmdPartitionsCancelRetentionUpdate(client *cip.APIClient) *cobra.Command
 }
 
 func cancelRetentionUpdate(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.CancelRetentionUpdate(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.CancelRetentionUpdate(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The retention update was cancelled successfully.")
+		cmdutils.Output(nil, response, err, "The retention update was cancelled successfully.")
 	}
 }

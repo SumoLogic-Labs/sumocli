@@ -25,26 +25,26 @@ func listIngestBudgetsV2(limit int32, client *cip.APIClient) {
 	var options types.ListIngestBudgetV2Opts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
-	apiResponse, httpResponse, errorResponse := client.ListIngestBudgetsV2(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListIngestBudgetsV2(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listIngestBudgetsV2Pagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listIngestBudgetsV2Pagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listIngestBudgetsV2Pagination(client *cip.APIClient, options types.ListIngestBudgetV2Opts, token string) types.ListIngestBudgetsResponseV2 {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListIngestBudgetsV2(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListIngestBudgetsV2(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

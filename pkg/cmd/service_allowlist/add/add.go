@@ -26,11 +26,11 @@ func NewCmdServiceAllowlistAdd(client *cip.APIClient) *cobra.Command {
 }
 
 func addServiceAllowlistCidr(ipAddresses []string, descriptions []string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.AddAllowlistedCidrs(cmdutils.GenerateCidrList(
+	data, response, err := client.AddAllowlistedCidrs(cmdutils.GenerateCidrList(
 		ipAddresses, descriptions))
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

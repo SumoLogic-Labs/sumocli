@@ -22,12 +22,12 @@ func NewCmdFieldManagementCreateField(client *cip.APIClient) *cobra.Command {
 }
 
 func createField(fieldName string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateField(types.FieldName{
+	data, response, err := client.CreateField(types.FieldName{
 		FieldName: fieldName,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

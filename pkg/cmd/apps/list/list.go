@@ -18,10 +18,10 @@ func NewCmdAppsList(client *cip.APIClient) *cobra.Command {
 }
 
 func listAvailableApps(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListApps()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListApps()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

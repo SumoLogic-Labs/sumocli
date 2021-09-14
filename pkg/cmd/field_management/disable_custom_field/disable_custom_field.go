@@ -22,10 +22,10 @@ func NewCmdFieldManagementDisableCustomField(client *cip.APIClient) *cobra.Comma
 }
 
 func disableCustomField(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DisableField(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DisableField(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Field has been disabled.")
+		cmdutils.Output(nil, response, err, "Field has been disabled.")
 	}
 }

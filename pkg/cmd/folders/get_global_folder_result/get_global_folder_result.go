@@ -22,10 +22,10 @@ func NewCmdGetGlobalFolderResult(client *cip.APIClient) *cobra.Command {
 }
 
 func getGlobalFolderResult(jobId string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetGlobalFolderAsyncResult(jobId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetGlobalFolderAsyncResult(jobId)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

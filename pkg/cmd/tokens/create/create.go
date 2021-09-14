@@ -37,10 +37,10 @@ func createToken(description string, inactive bool, name string, client *cip.API
 	options.Name = name
 	options.Description = description
 	options.Type_ = "CollectorRegistration"
-	apiResponse, httpResponse, errorResponse := client.CreateToken(options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.CreateToken(options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

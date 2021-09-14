@@ -84,26 +84,26 @@ func getCollectorEvents(collector bool, collectorId string, collectorName string
 		os.Exit(1)
 	}
 	body.Data = append(body.Data, bodyData)
-	apiResponse, httpResponse, errorResponse := client.ListAllHealthEventsForResources(body, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListAllHealthEventsForResources(body, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listAllHealthEventsForResourcesPagination(client, body, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listAllHealthEventsForResourcesPagination(client, body, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listAllHealthEventsForResourcesPagination(client *cip.APIClient, body types.ResourceIdentities, options types.HealthEventsOpts, token string) types.ListHealthEventResponse {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListAllHealthEventsForResources(body, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListAllHealthEventsForResources(body, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

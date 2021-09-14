@@ -51,7 +51,7 @@ func NewCmdIngestBudgetsV2Update(client *cip.APIClient) *cobra.Command {
 
 func updateIngestBudgetV2(action string, auditThreshold int32, capacityBytes int64, description string, id string, merge bool,
 	name string, resetTime string, scope string, timezone string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.UpdateIngestBudgetV2(types.IngestBudgetDefinitionV2{
+	data, response, err := client.UpdateIngestBudgetV2(types.IngestBudgetDefinitionV2{
 		Name:           name,
 		Scope:          scope,
 		CapacityBytes:  capacityBytes,
@@ -62,9 +62,9 @@ func updateIngestBudgetV2(action string, auditThreshold int32, capacityBytes int
 		AuditThreshold: auditThreshold,
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

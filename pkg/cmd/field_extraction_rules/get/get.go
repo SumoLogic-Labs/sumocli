@@ -21,10 +21,10 @@ func NewCmdFieldExtractionRulesGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getFieldExtractionRule(id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetExtractionRule(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetExtractionRule(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

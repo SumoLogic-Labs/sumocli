@@ -31,7 +31,7 @@ You can find further information about the Sumo Logic APIs in their [documentati
 | Partitions | :white_check_mark: | |
 | Password Policy | :white_check_mark: | |
 | Permissions | :white_check_mark: | |
-| Policies | | Functionality is still in development. |
+| Policies | :white_check_mark: | |
 | Roles | :white_check_mark: | |
 | SAML Configuration | :white_check_mark: | |
 | Scheduled Views | :white_check_mark: | |

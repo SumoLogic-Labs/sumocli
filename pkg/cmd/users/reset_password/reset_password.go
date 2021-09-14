@@ -21,10 +21,10 @@ func NewCmdUserResetPassword(client *cip.APIClient) *cobra.Command {
 }
 
 func userResetPassword(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.ResetPassword(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.ResetPassword(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "User's password was reset successfully.")
+		cmdutils.Output(nil, response, err, "User's password was reset successfully.")
 	}
 }

@@ -58,11 +58,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginFolderAsyncImport(folderContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginFolderAsyncImport(folderContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "DashboardSyncDefinition" {
 		var dashboardContent types.DashboardSyncDefinition
@@ -70,11 +70,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginDashboardAsyncImport(dashboardContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginDashboardAsyncImport(dashboardContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "MewboardSyncDefinition" {
 		var mewboardContent types.MewboardSyncDefinition
@@ -82,11 +82,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginMewboardAsyncImport(mewboardContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginMewboardAsyncImport(mewboardContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "SavedSearchWithScheduleSyncDefinition" {
 		var savedSearchContent types.SavedSearchWithScheduleSyncDefinition
@@ -94,11 +94,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginSavedSearchAsyncImport(savedSearchContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginSavedSearchAsyncImport(savedSearchContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "MetricsSavedSearchSyncDefinition" {
 		var metricsSavedSearchContent types.MetricsSavedSearchSyncDefinition
@@ -106,11 +106,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginMetricsSavedSearchAsyncImport(metricsSavedSearchContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginMetricsSavedSearchAsyncImport(metricsSavedSearchContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "MetricsSearchSyncDefinition" {
 		var metricsSearchContent types.MetricsSearchSyncDefinition
@@ -118,11 +118,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginMetricsSearchAsyncImport(metricsSearchContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginMetricsSearchAsyncImport(metricsSearchContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentType.Type_ == "LookupTableSyncDefinition" {
 		var lookupTableContent types.LookupTableSyncDefinition
@@ -130,11 +130,11 @@ func startImport(file string, folderId string, isAdminMode bool, overwrite bool,
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to unmarshal file data")
 		}
-		apiResponse, httpResponse, errorResponse := client.BeginLookupTableAsyncImport(lookupTableContent, folderId, &options)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.BeginLookupTableAsyncImport(lookupTableContent, folderId, &options)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	}
 }

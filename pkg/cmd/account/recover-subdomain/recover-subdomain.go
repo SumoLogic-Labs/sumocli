@@ -21,10 +21,10 @@ func NewCmdAccountRecoverSubdomain(client *cip.APIClient) *cobra.Command {
 }
 
 func recoverSubdomain(email string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.RecoverSubdomains(email)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.RecoverSubdomains(email)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "An email containing information about associated subdomains for the given email was sent.")
+		cmdutils.Output(nil, response, err, "An email containing information about associated subdomains for the given email was sent.")
 	}
 }

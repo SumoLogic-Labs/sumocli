@@ -18,10 +18,10 @@ func NewCmdGetBuilds(client *cip.APIClient) *cobra.Command {
 }
 
 func getBuilds(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetAvailableBuilds()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetAvailableBuilds()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }
