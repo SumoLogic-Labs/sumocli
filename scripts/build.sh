@@ -4,7 +4,7 @@ build="DEV"
 maintainer="kyle@thepublicclouds.com"
 version="DEV"
 
-while getopts "b:dlmvw:" opt; do
+while getopts "b:dlmv:w" opt; do
   case $opt in
     b)
       build=$OPTARG
