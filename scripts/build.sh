@@ -1,47 +1,71 @@
 #!/bin/sh
 
-architecture="arm64"
-build_number="DEV"
-version_number="DEV"
+build="DEV"
+maintainer="kyle@thepublicclouds.com"
+version="DEV"
 
-echo "=> Installing gox"
-
-while getopts "ab:lmwv:" opt; do
+while getopts "b:dlmvw:" opt; do
   case $opt in
-    a)
-      architecture=$OPTARG
-      ;;
     b)
-      build_number=$OPTARG
+      build=$OPTARG
+      ;;
+    d)
+      echo "=> Compiling linux AMD64 binary for Docker image" >&2
+      GOOS=linux GOARCH=amd64 go build -ldflags \
+      "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
+      -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+      ./cmd/sumocli
+      echo "=> Moving sumocli binary to $GOPATH/bin/"
+      mv "$GOPATH/src/github.com/SumoLogic-Incubator/sumocli/sumocli" "$GOPATH/bin/sumocli"
       ;;
     l)
-      echo "$build_number"
-      echo "$version_number"
-      echo "linux" >&2
+      echo "=> Compiling linux AMD64 binary" >&2
+      GOOS=linux GOARCH=amd64 go build -ldflags \
+      "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
+      -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+      ./cmd/sumocli
+      if [ "$version" != "DEV" ] && [ "$build" != "DEV" ]; then
+        echo "=> Creating Deb package"
+          mkdir -p "~/deb/sumocli_$version-1_amd64/usr/bin"
+          cp sumocli "~/deb/sumocli_$version-1_amd64/usr/bin"
+          echo "=> Creating DEBIAN control file"
+          mkdir -p "~/deb/sumocli_$version-1_amd64/DEBIAN"
+          echo "Package: sumocli
+          Version: $version
+          Maintainer: $maintainer
+          Architecture: amd64
+          Homepage: https://github.com/SumoLogic-Incubator/sumocli
+          Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line." \
+          > ~/deb/sumocli_$version-1_amd64/DEBIAN/control
+          echo "=> Building Deb package"
+          dpkg --build ~/deb/sumocli_$version-1_amd64
+      fi
       ;;
     m)
-      echo "macos" >&2
+      echo "=> Compiling macOS AMD64 binary" >&2
+      GOOS=darwin GOARCH=amd64 go build -ldflags \
+        "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
+        -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+        ./cmd/sumocli
+
+      echo "=> Compiling macOS ARM64 binary" >&2
+      GOOS=darwin GOARCH=arm64 go build -ldflags \
+        "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
+        -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+        ./cmd/sumocli
       ;;
     w)
-      echo "windows" >&2
-      pwd
-      GOOS=windows go build --ldflags "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version_number' -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build_number'" ./cmd/sumocli
+      echo "=> Compiling Windows AMD64 binary" >&2
+      GOOS=windows GOARCH=amd64 go build -ldflags \
+      "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
+      -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+      ./cmd/sumocli
       ;;
     v)
-      version_number=$OPTARG
+      version=$OPTARG
       ;;
     \?)
       echo "Invalid option!" >&2
       ;;
   esac
 done
-
-#echo "=> Downloading go dependencies"
-#go mod download
-
-#if [ "$DEV" = "true" ]; then
-  #echo "=> Building sumocli"
-  #gox -osarch="linux/amd64" ./cmd/sumocli
-  #ls -lah
-  #mv "$GOPATH/src/github.com/SumoLogic-Incubator/sumocli/sumocli_linux_amd64" "$GOPATH/bin/sumocli"
-#fi
