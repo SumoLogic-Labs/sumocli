@@ -26,10 +26,10 @@ while getopts "b:dlmv:w" opt; do
       ./cmd/sumocli
       if [ "$version" != "DEV" ] && [ "$build" != "DEV" ]; then
         echo "=> Creating Deb package"
-          mkdir -p "~/deb/sumocli_$version-1_amd64/usr/bin"
-          cp sumocli "~/deb/sumocli_$version-1_amd64/usr/bin"
+          mkdir -p ~/deb/sumocli_$version-1_amd64/usr/bin
+          cp sumocli ~/deb/sumocli_$version-1_amd64/usr/bin
           echo "=> Creating DEBIAN control file"
-          mkdir -p "~/deb/sumocli_$version-1_amd64/DEBIAN"
+          mkdir -p ~/deb/sumocli_$version-1_amd64/DEBIAN
           echo "Package: sumocli
           Version: $version
           Maintainer: $maintainer
