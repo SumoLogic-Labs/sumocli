@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 build="DEV"
 keyvaulturl=""
@@ -9,6 +9,7 @@ maintainer="kyle@thepublicclouds.com"
 version="DEV"
 
 args=(
+  "macos"
   "version"
 )
 opts=$(getopt --long "$(printf "%s:," "${args[@]}")" -- "$@")
