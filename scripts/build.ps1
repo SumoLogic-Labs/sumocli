@@ -11,6 +11,7 @@ param (
     [switch]$linux = $false,
     [switch]$macos = $false,
     [string]$maintainer = "kyle@thepublicclouds.com",
+    [switch]$release = $false,
     [string]$version = "DEV",
     [switch]$windows = $false
 )
@@ -46,6 +47,14 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
         Set-Content -Path ~/deb/sumocli_$version-1_amd64/DEBIAN/control -Value $controlFile
         Write-Host "=> Building deb package"
         dpkg --build ~/deb/sumocli_$version-1_$goarchitecture
+        if ($release -eq $true) {
+            aws s3 sync s3://aptsumocli ~/aptsumocli/
+            # Sync the contents of the apt s3 bucket locally
+            # Copy the deb file into /pool/main
+            # Generate a new packages file
+            # Generate a new releases file
+            # Sync contents of repo back to the S3 bucket
+        }
     }
 }
 
