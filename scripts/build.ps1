@@ -24,7 +24,7 @@ Write-Host $build
 
 if ($windows -eq $true) {
     Write-Host "=> Compiling Windows " + $goarchitecture + " binary"
-    GOOS=windows GOARCH=$goarchitecture go build -ldflags `
+    $env:GOOS="windows"; $env:GOARCH=$goarchitecture; go build -ldflags `
     "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
       -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" `
     ./cmd/sumocli
