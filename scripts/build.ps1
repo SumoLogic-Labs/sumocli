@@ -65,7 +65,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Compressing packages file"
             cat ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages | gzip -9 > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
             Write-Host "=> Creating release file"
-            . ./Create-DebianReleaseFile -algorithm MD5 -releaseFileHashBlock MD5Sum
+            . ./create-debianrelease.ps1 -algorithm MD5 -releaseFileHashBlock MD5Sum
 
             # Generate a new releases file
             # Sync contents of repo back to the S3 bucket
