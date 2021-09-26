@@ -54,12 +54,16 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Creating packages directory"
             mkdir -p ~/aptsumocli/dists/stable/main/binary-$goarchitecture
             Write-Host "=> Removing old packages file"
-            rm dists/stable/main/binary-$goarchitecture/Packages
-            rm dists/stable/main/binary-$goarchitecture/Packages.gz
+            rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
+            rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
             Write-Host "=> Generating new packages file"
             dpkg-scanpackages --arch $goarchitecture ~/aptsumocli/pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Compressing packages file"
             cat ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages | gzip -9 > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
+            Write-Host "=> Removing old release files"
+            rm ~/aptsumocli/dists/stable/Release
+            rm ~/aptsumocli/dists/stable/Release.gpg
+            rm ~/aptsumocli/dists/stable/InRelease
             Write-Host "=> Creating release file"
             $releaseFile = @"
 Origin: apt.sumocli.app
@@ -78,9 +82,14 @@ $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA1 | Out-String)
 SHA256:
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA256 | Out-String)
 "@
-            Write-Host $releaseFile
-
-
+            echo $releaseFile > ~/aptsumocli/dists/stable/Release
+            cat ~/aptsumocli/dists/stable/Release
+            Write-Host "=> Signing release file"
+            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
+            cat ~/aptsumocli/dists/stable/Release.gpg
+            Write-Host "=> Creating InRelease file"
+            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs --clearsign > ~/aptsumocli/dists/stable/InRelease
+            cat ~/aptsumocli/dists/stable/InRelease
             # Generate a new releases file
             # Sync contents of repo back to the S3 bucket
         }
