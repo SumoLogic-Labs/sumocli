@@ -1,5 +1,4 @@
 
-
 param (
     [switch]$arm = $false,
     [string]$build = "DEV",
@@ -48,11 +47,27 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
         Write-Host "=> Building deb package"
         dpkg --build ~/deb/sumocli_$version-1_$goarchitecture
         if ($release -eq $true) {
+            Write-Host "=> Creating apt repo folder"
             mkdir ~/aptsumocli/
+            Write-Host "=> Syncing aptsumocli S3 bucket locally"
             aws s3 sync s3://aptsumocli ~/aptsumocli/
-            # Sync the contents of the apt s3 bucket locally
-            # Copy the deb file into /pool/main
-            # Generate a new packages file
+            Write-Host "=> Moving deb package to local apt repo"
+            mv ~/deb/sumocli_$version-1_$goarchitecture.deb ~/aptsumocli/pool/main/sumocli_$version-1_$goarchitecture.deb
+            Write-Host "=> Creating packages directory"
+            mkdir -p ~/aptsumocli/dists/stable/main/binary-$goarchitecture
+            Write-Host "=> Removing old packages file"
+            rm dists/stable/main/binary-$goarchitecture/Packages
+            rm dists/stable/main/binary-$goarchitecture/Packages.gz
+            Write-Host "=> Generating new packages file"
+            dpkg-scanpackages --arch $goarchitecture ~/aptsumocli/pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
+            Write-Host "=> Compressing packages file"
+            cat ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages | gzip -9 > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
+            Write-Host "=> Creating release file"
+            $releaseFile = @"
+./create-debianrelease.ps1 -algorithm MD5 -releaseFileHashBlock MD5Sum
+"@
+            Write-Host $releaseFile
+
             # Generate a new releases file
             # Sync contents of repo back to the S3 bucket
         }
