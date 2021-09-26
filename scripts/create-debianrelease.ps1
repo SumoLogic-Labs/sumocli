@@ -5,5 +5,7 @@ param (
 
 Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | Foreach-Object {
     $hash = Get-FileHash $_.FullName -Algorithm $algorithm
-    Write-Host $hash.Hash $_.Length $_.FullName
+    $relativePath = Resolve-Path -Path ~/aptsumocli/dists/stable
+    $fileName = = $_.FullName.TrimStart(" ", "$relativePath/")
+    Write-Host $hash.Hash $_.Length $fileName
 }
