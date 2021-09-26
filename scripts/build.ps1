@@ -67,7 +67,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Creating release file"
             Write-Host "InvocationName:" $MyInvocation.InvocationName
             Write-Host "Path:" $MyInvocation.MyCommand.Path
-            ~/create-debianrelease.ps1 -algorithm MD5 -releaseFileHashBlock MD5Sum
+            & "$PSScriptRoot/create-debianrelease.ps1 -algorithm MD5 -releaseFileHashBlock MD5Sum"
 
             # Generate a new releases file
             # Sync contents of repo back to the S3 bucket
