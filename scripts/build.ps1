@@ -72,7 +72,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
 Date: $(Get-Date)
 
 MD5Sum:
-$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5)
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5 | Out-String)
 SHA1:
 
 SHA256:
