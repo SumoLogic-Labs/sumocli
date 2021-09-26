@@ -17,10 +17,6 @@ param (
 
 $goarchitecture="amd64"
 
-Write-Host $arm
-Write-Host $version
-Write-Host $build
-
 # Add goarchitecture if statement
 
 if ($linux -eq $true) {
