@@ -74,8 +74,9 @@ Date: $(Get-Date)
 MD5Sum:
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5 | Out-String)
 SHA1:
-
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA1 | Out-String)
 SHA256:
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA256 | Out-String)
 "@
             Write-Host $releaseFile
 
