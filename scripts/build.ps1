@@ -51,6 +51,8 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             mkdir ~/aptsumocli/
             Write-Host "=> Syncing aptsumocli S3 bucket locally"
             aws s3 sync s3://aptsumocli ~/aptsumocli/
+            Write-Host "=> Creating pools directory"
+            mkdir -p ~/aptsumocli/pool/main
             Write-Host "=> Moving deb package to local apt repo"
             mv ~/deb/sumocli_$version-1_$goarchitecture.deb ~/aptsumocli/pool/main/sumocli_$version-1_$goarchitecture.deb
             Write-Host "=> Creating packages directory"
@@ -63,10 +65,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Compressing packages file"
             cat ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages | gzip -9 > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
             Write-Host "=> Creating release file"
-            $releaseFile = @"
-./create-debianrelease.ps1 -algorithm MD5 -releaseFileHashBlock MD5Sum
-"@
-            Write-Host $releaseFile
+
 
             # Generate a new releases file
             # Sync contents of repo back to the S3 bucket
