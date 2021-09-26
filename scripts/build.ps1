@@ -75,7 +75,11 @@ Components: main
 Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line.
 Date: $(Get-Date)
 
-$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5 -releaseFileHashBlock MD5Sum)
+MD5Sum:
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5)
+SHA1:
+
+SHA256:
 "@
             Write-Host $releaseFile
 
