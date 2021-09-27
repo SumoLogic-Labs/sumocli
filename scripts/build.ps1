@@ -84,9 +84,9 @@ $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA256 | Out-String)
 "@
             echo $releaseFile > ~/aptsumocli/dists/stable/Release
             Write-Host "=> Signing release file"
-            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
+            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Garrick Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
             Write-Host "=> Creating InRelease file"
-            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs --clearsign > ~/aptsumocli/dists/stable/InRelease
+            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Garrick Jackson" -abs --clearsign > ~/aptsumocli/dists/stable/InRelease
             Write-Host "Syncing local aptsumocli repo to S3"
             aws s3 sync ~/aptsumocli/ s3://aptsumocli
             # Sync contents of repo back to the S3 bucket
