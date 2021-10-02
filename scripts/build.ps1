@@ -82,6 +82,8 @@ SHA1:
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA1 | Out-String)
 SHA256:
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA256 | Out-String)
+SHA512:
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA512 | Out-String)
 "@
             echo $releaseFile > ~/aptsumocli/dists/stable/Release
             Write-Host "=> Signing release file"
