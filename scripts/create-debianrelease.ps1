@@ -7,7 +7,5 @@ Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | Foreach-Obje
     $hash = Get-FileHash $_.FullName -Algorithm $algorithm
     $relativePath = Resolve-Path -Path ~/aptsumocli/dists/stable/ | Select-Object -ExpandProperty Path
     $fileName = $_.FullName.Replace($relativePath, "")
-    if ($hash.Hash) {
-        Write-Host $hash.Hash $_.Length $fileName
-    }
+    Write-Output $hash.Hash $_.Length $fileName
 }
