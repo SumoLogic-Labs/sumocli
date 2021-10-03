@@ -15,6 +15,9 @@ foreach ($i in $algorithms) {
 }
 
 Write-Host $hashContent
+foreach ($i in $hashContent) {
+    Write-Host $i
+}
 
 #Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | Foreach-Object {
 #    $hash = Get-FileHash $_.FullName -Algorithm $algorithm
