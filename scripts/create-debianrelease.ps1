@@ -6,11 +6,11 @@ $algorithms = @(
 $hashContent = @()
 
 foreach ($i in $algorithms) {
-    Write-Host $i
     if ($i -eq "MD5") {
         $hashContent = $hashContent + "MD5Sum:"
     } else {
-        $hashContent = $hashContent
+        algorithm = $i + ":"
+        $hashContent = $hashContent + $algorithm
     }
 }
 
