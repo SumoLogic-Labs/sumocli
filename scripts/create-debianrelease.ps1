@@ -1,7 +1,17 @@
-
-param (
-    [string]$algorithm
+$algorithms = @(
+    "MD5",
+    "SHA1",
+    "SHA256"
 )
+$hashContent = @()
+
+foreach ($i in $algorithms) {
+    if ($i -eq "MD5") {
+        $hashContent = $hashContent + "MD5Sum:"
+    } else {
+        $hashContent = $hashContent + $1 + ":"
+    }
+}
 
 Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | Foreach-Object {
     $hash = Get-FileHash $_.FullName -Algorithm $algorithm
