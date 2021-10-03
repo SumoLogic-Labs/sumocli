@@ -16,7 +16,7 @@ foreach ($i in $algorithms) {
         $hash = Get-FileHash $_.FullName -Algorithm $i
         $relativePath = Resolve-Path -Path ~/aptsumocli/dists/stable/ | Select-Object -ExpandProperty Path
         $fileName = $_.FullName.Replace($relativePath, "")
-        $data = " " + $hash.Hash + $_.Length + $fileName
+        $data = " " + $hash.Hash + " " + $_.Length + " " + $fileName
         $hashContent = $hashContent + $data
     }
 }
