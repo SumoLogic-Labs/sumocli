@@ -9,7 +9,7 @@ foreach ($i in $algorithms) {
     if ($i -eq "MD5") {
         $hashContent = $hashContent + "MD5Sum:"
     } else {
-        algorithm = $i + ":"
+        $algorithm = $i + ":"
         $hashContent = $hashContent + $algorithm
     }
 }
