@@ -66,7 +66,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             rm ~/aptsumocli/dists/stable/Release.gpg
             rm ~/aptsumocli/dists/stable/InRelease
             Write-Host "=> Creating release file"
-            $date = Get-Date -UFormat "%a, %d %b %Y %T %Z"
+            $date = Get-Date -UFormat "%a, %d %b %Y %T %Z" -AsUTC
             $releaseFile = @"
 Origin: apt.sumocli.app
 Suite: stable
@@ -75,7 +75,7 @@ Version: $version
 Architectures: amd64
 Components: main
 Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line.
-Date: $date.toUniversalTime()
+Date: $date
 MD5Sum:
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5 | Out-String)
 SHA1:
