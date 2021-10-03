@@ -13,6 +13,8 @@ foreach ($i in $algorithms) {
     }
 }
 
+Write-Host $hashContent
+
 #Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | Foreach-Object {
 #    $hash = Get-FileHash $_.FullName -Algorithm $algorithm
 #    $relativePath = Resolve-Path -Path ~/aptsumocli/dists/stable/ | Select-Object -ExpandProperty Path
