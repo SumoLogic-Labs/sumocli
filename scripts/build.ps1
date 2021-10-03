@@ -76,14 +76,9 @@ Architectures: amd64
 Components: main
 Description: Sumocli is a CLI application written in Go that allows you to manage your Sumo Logic tenancy from the command line.
 Date: $date
-MD5Sum:
-$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm MD5 | Out-String)
-SHA1:
-$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA1 | Out-String)
-SHA256:
-$(pwsh "$PSScriptRoot/create-debianrelease.ps1" -algorithm SHA256 | Out-String)
+$(pwsh "$PSScriptRoot/create-debianrelease.ps1" | Out-String)
 "@
-            echo $releaseFile > ~/aptsumocli/dists/stable/Release
+            Write-Host $releaseFile > ~/aptsumocli/dists/stable/Release
             Write-Host "=> Signing release file"
             cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Garrick Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
             Write-Host "=> Creating InRelease file"
