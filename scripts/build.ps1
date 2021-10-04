@@ -44,6 +44,8 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
         Write-Host "=> Building deb package"
         dpkg --build ~/deb/sumocli_$version-1_$goarchitecture
         if ($release -eq $true) {
+            Write-Host "=> Deleteing local apt repo cache"
+            rm -r ~/aptsumocli
             Write-Host "=> Creating apt repo folder"
             mkdir ~/aptsumocli/
             Write-Host "=> Syncing aptsumocli S3 bucket locally"
