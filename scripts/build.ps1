@@ -62,7 +62,7 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Generating new packages file"
             dpkg-scanpackages --arch $goarchitecture ~/aptsumocli/pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Compressing packages file"
-            gzip ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
+            gzip -k ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Removing old release files"
             rm ~/aptsumocli/dists/stable/Release
             rm ~/aptsumocli/dists/stable/Release.gpg
