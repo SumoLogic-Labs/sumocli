@@ -78,7 +78,6 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
 Date: $date
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" | Out-String)
 "@
-            Write-Host @releaseFile
             $releaseFile | Out-File -FilePath ~/aptsumocli/dists/stable/Release
             Write-Host "=> Signing release file"
             Get-Content -Path ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
