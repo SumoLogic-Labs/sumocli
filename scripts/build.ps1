@@ -60,7 +60,8 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
             Write-Host "=> Generating new packages file"
-            dpkg-scanpackages --arch $goarchitecture --binary-dir pool/main ~/aptsumocli/pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
+            cd ~/aptsumocli
+            dpkg-scanpackages --arch $goarchitecture pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Compressing packages file"
             gzip -k ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Removing old release files"
