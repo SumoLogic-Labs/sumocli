@@ -51,22 +51,22 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
             Write-Host "=> Syncing aptsumocli S3 bucket locally"
             aws s3 sync s3://aptsumocli ~/aptsumocli/
             Write-Host "=> Creating pools directory"
-            mkdir -p ~/aptsumocli/pool/focal
+            mkdir -p ~/aptsumocli/pool/main
             Write-Host "=> Moving deb package to local apt repo"
-            mv ~/deb/sumocli_$version-1_$goarchitecture.deb ~/aptsumocli/pool/focal/sumocli_$version-1_$goarchitecture.deb
+            mv ~/deb/sumocli_$version-1_$goarchitecture.deb ~/aptsumocli/pool/main/sumocli_$version-1_$goarchitecture.deb
             Write-Host "=> Creating packages directory"
-            mkdir -p ~/aptsumocli/dists/focal/main/binary-$goarchitecture
+            mkdir -p ~/aptsumocli/dists/stable/main/binary-$goarchitecture
             Write-Host "=> Removing old packages file"
-            rm ~/aptsumocli/dists/focal/main/binary-$goarchitecture/Packages
-            rm ~/aptsumocli/dists/focal/main/binary-$goarchitecture/Packages.gz
+            rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
+            rm ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages.gz
             Write-Host "=> Generating new packages file"
-            dpkg-scanpackages --arch $goarchitecture ~/aptsumocli/pool/ > ~/aptsumocli/dists/focal/main/binary-$goarchitecture/Packages
+            dpkg-scanpackages --arch $goarchitecture ~/aptsumocli/pool/ > ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Compressing packages file"
-            cat ~/aptsumocli/dists/focal/main/binary-$goarchitecture/Packages | gzip > ~/aptsumocli/dists/focal/main/binary-$goarchitecture/Packages.gz
+            gzip ~/aptsumocli/dists/stable/main/binary-$goarchitecture/Packages
             Write-Host "=> Removing old release files"
-            rm ~/aptsumocli/dists/focal/Release
-            rm ~/aptsumocli/dists/focal/Release.gpg
-            rm ~/aptsumocli/dists/focal/InRelease
+            rm ~/aptsumocli/dists/stable/Release
+            rm ~/aptsumocli/dists/stable/Release.gpg
+            rm ~/aptsumocli/dists/stable/InRelease
             Write-Host "=> Creating release file"
             $date = Get-Date -UFormat "%a, %d %b %Y %T %Z" -AsUTC
             $releaseFile = @"
@@ -80,11 +80,11 @@ Description: Sumocli is a CLI application written in Go that allows you to manag
 Date: $date
 $(pwsh "$PSScriptRoot/create-debianrelease.ps1" | Out-String)
 "@
-            $releaseFile | Out-File -FilePath ~/aptsumocli/dists/focal/Release
+            $releaseFile | Out-File -FilePath ~/aptsumocli/dists/stable/Release
             Write-Host "=> Signing release file"
-            Get-Content -Path ~/aptsumocli/dists/focal/Release | gpg --default-key "Kyle Jackson" -abs > ~/aptsumocli/dists/focal/Release.gpg
+            Get-Content -Path ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs > ~/aptsumocli/dists/stable/Release.gpg
             Write-Host "=> Creating InRelease file"
-            cat ~/aptsumocli/dists/focal/Release | gpg --default-key "Kyle Jackson" -abs --clearsign > ~/aptsumocli/dists/focal/InRelease
+            cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs --clearsign > ~/aptsumocli/dists/stable/InRelease
             Write-Host "Syncing local aptsumocli repo to S3"
             aws s3 sync ~/aptsumocli/ s3://aptsumocli
             # Sync contents of repo back to the S3 bucket

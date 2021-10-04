@@ -13,9 +13,9 @@ foreach ($i in $algorithms) {
         $algorithm = $i + ":"
         $hashContent = $hashContent + $algorithm
     }
-    Get-ChildItem -Path ~/aptsumocli/dists/focal/main -recurse -File | ForEach-Object {
+    Get-ChildItem -Path ~/aptsumocli/dists/stable/main -recurse -File | ForEach-Object {
         $hash = Get-FileHash $_.FullName -Algorithm $i
-        $relativePath = Resolve-Path -Path ~/aptsumocli/dists/focal/ | Select-Object -ExpandProperty Path
+        $relativePath = Resolve-Path -Path ~/aptsumocli/dists/stable/ | Select-Object -ExpandProperty Path
         $fileName = $_.FullName.Replace($relativePath, "")
         $data = " " + $hash.Hash.ToLower() + " " + $_.Length + " " + $fileName
         $hashContent = $hashContent + $data
