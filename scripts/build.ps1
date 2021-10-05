@@ -16,7 +16,6 @@ param (
 )
 
 $goarchitecture="amd64"
-$env:GPG_TTY=$(tty)
 
 # Add goarchitecture if statement
 
