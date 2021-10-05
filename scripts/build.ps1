@@ -112,6 +112,8 @@ if ($windows -eq $true) {
         --timestamp-digest sha256 `
         sumocli.exe
         if ($release -eq $true) {
+            mkdir tools
+            mv sumocli.exe tools/sumocli.exe
             Write-Host "=> Generating choco nuspec file"
             $nuspecFile = @"
 <?xml version="1.0" encoding="utf-8?>
@@ -127,11 +129,13 @@ if ($windows -eq $true) {
         <description></description>
     </metadata>
     <files>
-        <file src="" target="" />
+        <file src="tools\**" target="tools" />
     </files>
 </package>
 "@
-            ls
+            $nuspecFile | Out-File -FilePath sumocli.nuspec
+            choco pack
+
         }
     }
 }
