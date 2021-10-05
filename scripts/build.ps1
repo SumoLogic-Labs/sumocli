@@ -88,7 +88,6 @@ $(pwsh "$PSScriptRoot/create-debianrelease.ps1" | Out-String)
             cat ~/aptsumocli/dists/stable/Release | gpg --default-key "Kyle Jackson" -abs --clearsign > ~/aptsumocli/dists/stable/InRelease
             Write-Host "Syncing local aptsumocli repo to S3"
             aws s3 sync ~/aptsumocli/ s3://aptsumocli
-            # Sync contents of repo back to the S3 bucket
         }
     }
 }
@@ -113,5 +112,27 @@ if ($windows -eq $true) {
         --timestamp-rfc3161 http://timestamp.sectigo.com `
         --timestamp-digest sha256 `
         sumocli.exe
+        if ($release -eq $true) {
+            Write-Host "=> Generating choco nuspec file"
+            $nuspecFile = @"
+<?xml version="1.0" encoding="utf-8?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+    <metadata>
+        <id>sumocli</id>
+        <version>$version</version>
+        <title></title>
+        <authors>Kyle Jackson</authors>
+        <projectUrl>https://github.com/SumoLogic-Incubator/sumocli</projectUrl>
+        <tags></tags>
+        <summary></summary>
+        <description></description>
+    </metadata>
+    <files>
+        <file src="" target="" />
+    </files>
+</package>
+"@
+            ls
+        }
     }
 }
