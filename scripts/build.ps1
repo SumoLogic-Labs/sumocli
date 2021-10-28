@@ -116,16 +116,13 @@ if ($windows -eq $true) {
             mv sumocli.exe tools/sumocli.exe
             Write-Host "=> Generating choco nuspec file"
             $nuspecFile = @"
-<?xml version="1.0" encoding="utf-8?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
     <metadata>
         <id>sumocli</id>
         <version>$version</version>
-        <title></title>
         <authors>Kyle Jackson</authors>
         <projectUrl>https://github.com/SumoLogic-Incubator/sumocli</projectUrl>
-        <tags></tags>
-        <summary></summary>
         <description></description>
     </metadata>
     <files>

@@ -28,8 +28,10 @@ func NewCmdRoleList(client *cip.APIClient) *cobra.Command {
 }
 
 func listRoles(client *cip.APIClient, limit int32, name string, sortBy bool) {
-	var options types.ListRolesOpts
-	var paginationToken string
+	var (
+		options         types.ListRolesOpts
+		paginationToken string
+	)
 	options.Limit = optional.NewInt32(limit)
 	if sortBy == true {
 		options.SortBy = optional.NewString("name")

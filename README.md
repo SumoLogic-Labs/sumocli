@@ -5,20 +5,32 @@ Sumocli is currently in development so there could be bugs/incomplete functional
 GA will be v1.0.0 which I am expecting to be ready for release towards the end of 2021.
 ## Installation
 
-### Recommended
-Download the binary for your platform from the Releases page. 
+### Linux
+You can install sumocli via apt on debian based linux distributions by running the following commands:
+
+```
+
+apt-get update
+```
+
+### macOS
+
+
+### Windows
+
+
 
 ### Docker
 
-Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/SumoLogic-Incubator/sumocli).
+Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/wizedkyle/sumocli).
 
 Pull the latest image:
 
-`docker pull SumoLogic-Incubator/sumocli:latest`
+`docker pull wiedkyle/sumocli:latest`
 
 Pull a specific version image:
 
-`docker pull SumoLogic-Incubator/sumocli:v0.11.0`
+`docker pull wizedkyle/sumocli:v0.11.0`
 
 ### Build Yourself
 You can build the sumocli application for your platform by performing the following steps:

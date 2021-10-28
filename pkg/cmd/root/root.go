@@ -2,7 +2,7 @@ package root
 
 import (
 	"github.com/SumoLogic-Incubator/sumocli/config"
-	accessKeysCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access-keys"
+	accessKeysCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys"
 	accountCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account"
 	appsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps"
 	archiveIngestion "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion"
@@ -22,7 +22,7 @@ import (
 	monitorsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors"
 	organizationsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations"
 	partitionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions"
-	passwordPolicyCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password-policy"
+	passwordPolicyCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password_policy"
 	permissionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions"
 	policiesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/policies"
 	roleCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/roles"
@@ -31,6 +31,7 @@ import (
 	serviceAllowlistCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/service_allowlist"
 	sourcesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources"
 	tokensCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens"
+	transformationRulesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/transformation_rules"
 	usersCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users"
 	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/version"
 	"github.com/spf13/cobra"
@@ -66,8 +67,8 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
 	cmd.AddCommand(organizationsCmd.NewCmdOrganizations(client))
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions(client))
-	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
-	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
+	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy(client))
+	cmd.AddCommand(permissionsCmd.NewCmdPermissions(client))
 	cmd.AddCommand(policiesCmd.NewCmdPolicies(client))
 	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
@@ -75,6 +76,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist(client))
 	cmd.AddCommand(sourcesCmd.NewCmdSources(client))
 	cmd.AddCommand(tokensCmd.NewCmdTokens(client))
+	cmd.AddCommand(transformationRulesCmd.NewCmdTransformationRules(client))
 	cmd.AddCommand(usersCmd.NewCmdUser(client))
 	cmd.AddCommand(version.NewCmdVersion())
 

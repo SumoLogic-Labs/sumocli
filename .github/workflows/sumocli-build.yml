@@ -26,6 +26,14 @@ jobs:
     outputs:
       releaseurl: ${{ steps.create_release.outputs.upload_url }}
 
+  build_docker_image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Docker Build
+        run: |
+          docker build --build-arg buildnumber=00001 --build-arg version=0.0.1 --tag sumocli-test .
+
   build_windows:
     name: Build Windows Binary
     needs: create_github_release
@@ -42,40 +50,14 @@ jobs:
       - name: Set Version Variable
         run: |
           echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
-      - name: Install AzureSignTool
-        shell: pwsh
-        run: dotnet tool install --global AzureSignTool --version 2.0.17
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Download Dependencies
         run: go mod download
       - name: Run Tests
         run: go test ./...
-      - name: Build Sumocli
-        shell: pwsh
-        run: |
-          $build = $Env:GITHUB_RUN_NUMBER
-          $time = Get-Date
-          go build -ldflags `
-            "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=${{ env.TAG }}' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Date=$time'" `
-            ./cmd/sumocli
-      - name: Signing Executable
-        shell: pwsh
-        run: |
-          azuresigntool sign --description-url "https://github.com/SumoLogic-Incubator/sumocli" --file-digest sha256 `
-            --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
-            --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
-            --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
-            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }} `
-            --timestamp-rfc3161 http://timestamp.sectigo.com `
-            --timestamp-digest sha256 `
-            sumocli.exe
-      - name: Zip Release
-        shell: pwsh
-        run: |
-          Compress-Archive -Path sumocli.exe -DestinationPath sumocli-windows-amd64.zip
+      - name: Build Binary
+        run: ./scripts/build.sh -b "" -v "" -w
       - name: Upload Windows Release Asset
         uses: actions/upload-release-asset@v1
         env:
