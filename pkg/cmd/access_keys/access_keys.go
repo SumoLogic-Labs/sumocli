@@ -1,12 +1,12 @@
 package access_keys
 
 import (
-	cmdAccessKeysCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys/create"
-	cmdAccessKeysDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys/delete"
-	cmdAccessKeysListAll "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys/list_all"
-	cmdAccessKeysListPersonal "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys/list_personal"
-	cmdAccessKeysUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access_keys/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdAccessKeysCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys/create"
+	cmdAccessKeysDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys/delete"
+	cmdAccessKeysListAll "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys/list_all"
+	cmdAccessKeysListPersonal "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys/list_personal"
+	cmdAccessKeysUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

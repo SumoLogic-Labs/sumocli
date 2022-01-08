@@ -7,7 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/pkg/logging"
 	"io"
 )
 

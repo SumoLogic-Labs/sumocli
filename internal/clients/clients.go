@@ -9,8 +9,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/eventhub/mgmt/2017-04-01/eventhub"
 	"github.com/Azure/azure-sdk-for-go/services/servicebus/mgmt/2017-04-01/servicebus"
 	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-06-01/web"
-	"github.com/SumoLogic-Incubator/sumocli/internal/authorizers"
-	"github.com/SumoLogic-Incubator/sumocli/internal/config"
+	"github.com/SumoLogic-Labs/sumocli/internal/authorizers"
+	"github.com/SumoLogic-Labs/sumocli/internal/config"
 )
 
 func GetAppServiceClient() web.AppsClient {

@@ -1,12 +1,12 @@
 package tokens
 
 import (
-	cmdTokensCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens/create"
-	cmdTokensDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens/delete"
-	cmdTokensGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens/get"
-	cmdTokensList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens/list"
-	cmdTokensUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdTokensCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens/create"
+	cmdTokensDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens/delete"
+	cmdTokensGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens/get"
+	cmdTokensList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens/list"
+	cmdTokensUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

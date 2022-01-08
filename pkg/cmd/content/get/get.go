@@ -2,8 +2,8 @@ package get
 
 import (
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

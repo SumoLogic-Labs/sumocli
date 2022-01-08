@@ -1,7 +1,7 @@
 package aws_s3_archive
 
 import (
-	NewCmdAWSS3ArchiveSourceCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources/aws_s3_archive/create"
+	NewCmdAWSS3ArchiveSourceCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/sources/aws_s3_archive/create"
 	"github.com/spf13/cobra"
 )
 

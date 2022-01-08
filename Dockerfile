@@ -3,7 +3,7 @@ ARG buildnumber=DEV
 ARG version=DEV
 LABEL maintainer="Kyle Jackson <kyle@thepublicclouds.com>"
 
-WORKDIR $GOPATH/src/github.com/SumoLogic-Incubator/sumocli
+WORKDIR $GOPATH/src/github.com/SumoLogic-Labs/sumocli
 COPY . .
 RUN chmod +x ./scripts/docker-build.sh
 RUN ./scripts/docker-build.sh -b $buildnumber -v $version -d

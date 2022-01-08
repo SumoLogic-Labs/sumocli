@@ -13,11 +13,11 @@ while getopts "bdv" opt; do
       echo "$version"
       echo "=> Compiling linux AMD64 binary for Docker image" >&2
       GOOS=linux GOARCH=amd64 go build -ldflags \
-     "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=$version'
-      -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build'" \
+     "-X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version=$version'
+      -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build=$build'" \
       ./cmd/sumocli
       echo "=> Moving sumocli binary to $GOPATH/bin/"
-      mv "$GOPATH/src/github.com/SumoLogic-Incubator/sumocli/sumocli" "$GOPATH/bin/sumocli"
+      mv "$GOPATH/src/github.com/SumoLogic-Labs/sumocli/sumocli" "$GOPATH/bin/sumocli"
       ;;
     v)
       version=$OPTARG

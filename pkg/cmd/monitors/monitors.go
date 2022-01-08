@@ -1,9 +1,9 @@
 package monitors
 
 import (
-	NewCmdMonitorsCreateFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors/create-folder"
-	NewCmdMonitorsGetRootFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors/get-root-folder"
-	NewCmdMonitorsGetUsageInfo "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors/get-usage-info"
+	NewCmdMonitorsCreateFolder "github.com/SumoLogic-Labs/sumocli/pkg/cmd/monitors/create-folder"
+	NewCmdMonitorsGetRootFolder "github.com/SumoLogic-Labs/sumocli/pkg/cmd/monitors/get-root-folder"
+	NewCmdMonitorsGetUsageInfo "github.com/SumoLogic-Labs/sumocli/pkg/cmd/monitors/get-usage-info"
 	"github.com/spf13/cobra"
 )
 

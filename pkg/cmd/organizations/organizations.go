@@ -1,19 +1,19 @@
 package organizations
 
 import (
-	cmdOrganizationsCreateOrganization "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/create_organization"
-	cmdOrganizationsCreateOrganizationAccessKey "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/create_organization_access_key"
-	cmdOrganizationsDeactivate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/deactivate"
-	cmdOrganizationsGetDeployments "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_deployments"
-	cmdOrganizationsGetOrganization "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_organization"
-	cmdOrganizationsGetOrganizationUsage "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_organization_usage"
-	cmdOrganizationsGetParentOrganizationDetails "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_parent_organization_details"
-	cmdOrganizationsGetParentOrganizationInfo "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_parent_organization_info"
-	cmdOrganizationsGetSubdomainLoginUrl "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/get_subdomain_login_url"
-	cmdOrganizationsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/list"
-	cmdOrganizationsListOrganizationUsages "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/list_organization_usages"
-	cmdOrganizationsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/organizations/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdOrganizationsCreateOrganization "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/create_organization"
+	cmdOrganizationsCreateOrganizationAccessKey "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/create_organization_access_key"
+	cmdOrganizationsDeactivate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/deactivate"
+	cmdOrganizationsGetDeployments "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_deployments"
+	cmdOrganizationsGetOrganization "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_organization"
+	cmdOrganizationsGetOrganizationUsage "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_organization_usage"
+	cmdOrganizationsGetParentOrganizationDetails "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_parent_organization_details"
+	cmdOrganizationsGetParentOrganizationInfo "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_parent_organization_info"
+	cmdOrganizationsGetSubdomainLoginUrl "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/get_subdomain_login_url"
+	cmdOrganizationsList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/list"
+	cmdOrganizationsListOrganizationUsages "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/list_organization_usages"
+	cmdOrganizationsUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

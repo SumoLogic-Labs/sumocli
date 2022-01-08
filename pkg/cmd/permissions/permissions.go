@@ -1,10 +1,10 @@
 package permissions
 
 import (
-	cmdPermissionsAdd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/add"
-	cmdPermissionsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/get"
-	cmdPermissionsRemove "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions/remove"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdPermissionsAdd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/permissions/add"
+	cmdPermissionsGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/permissions/get"
+	cmdPermissionsRemove "github.com/SumoLogic-Labs/sumocli/pkg/cmd/permissions/remove"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

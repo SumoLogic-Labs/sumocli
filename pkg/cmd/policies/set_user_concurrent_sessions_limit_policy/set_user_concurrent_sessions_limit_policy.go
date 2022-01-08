@@ -1,9 +1,9 @@
 package set_user_concurrent_sessions_limit_policy
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/spf13/cobra"
 )
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/root"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmd/root"
 )
 
 func main() {

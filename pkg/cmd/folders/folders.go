@@ -1,17 +1,17 @@
 package folders
 
 import (
-	cmdFoldersCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/create"
-	cmdFoldersGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get"
-	cmdFoldersAdminRecommendedFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder"
-	cmdFoldersAdminRecommendedFolderResult "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder_result"
-	cmdFoldersAdminRecommendedFolderStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_admin_recommended_folder_status"
-	cmdFoldersGlobalFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder"
-	cmdFoldersGlobalFolderResult "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder_result"
-	cmdFoldersGlobalFolderStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_global_folder_status"
-	cmdFoldersPersonalFolder "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/get_personal_folder"
-	cmdFoldersUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdFoldersCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/create"
+	cmdFoldersGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get"
+	cmdFoldersAdminRecommendedFolder "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_admin_recommended_folder"
+	cmdFoldersAdminRecommendedFolderResult "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_admin_recommended_folder_result"
+	cmdFoldersAdminRecommendedFolderStatus "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_admin_recommended_folder_status"
+	cmdFoldersGlobalFolder "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_global_folder"
+	cmdFoldersGlobalFolderResult "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_global_folder_result"
+	cmdFoldersGlobalFolderStatus "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_global_folder_status"
+	cmdFoldersPersonalFolder "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/get_personal_folder"
+	cmdFoldersUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

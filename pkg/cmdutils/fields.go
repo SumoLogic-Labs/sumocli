@@ -1,6 +1,6 @@
 package cmdutils
 
-import "github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+import "github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 
 func GenerateFieldsMap(fieldNames []string, fieldValues []string) map[string]string {
 	if len(fieldNames) > 0 && len(fieldValues) > 0 {

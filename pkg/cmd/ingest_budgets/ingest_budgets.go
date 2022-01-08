@@ -1,16 +1,16 @@
 package ingest_budgets
 
 import (
-	NewCmdIngestBudgetsAssignCollector "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/assign_collector"
-	NewCmdIngestBudgetsCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/create"
-	NewCmdIngestBudgetsDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/delete"
-	NewCmdIngestBudgetsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/get"
-	NewCmdIngestBudgetsGetAssociatedCollectors "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/get_associated_collectors"
-	NewCmdIngestBudgetsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/list"
-	NewCmdIngestBudgetsRemoveCollector "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/remove_collector"
-	NewCmdIngestBudgetsReset "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/reset"
-	NewCmdIngestBudgetsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	NewCmdIngestBudgetsAssignCollector "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/assign_collector"
+	NewCmdIngestBudgetsCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/create"
+	NewCmdIngestBudgetsDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/delete"
+	NewCmdIngestBudgetsGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/get"
+	NewCmdIngestBudgetsGetAssociatedCollectors "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/get_associated_collectors"
+	NewCmdIngestBudgetsList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/list"
+	NewCmdIngestBudgetsRemoveCollector "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/remove_collector"
+	NewCmdIngestBudgetsReset "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/reset"
+	NewCmdIngestBudgetsUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

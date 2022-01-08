@@ -1,13 +1,13 @@
 package scheduled_views
 
 import (
-	NewCmdScheduledViewsCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/create"
-	NewCmdScheduledViewsDisable "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/disable"
-	NewCmdScheduledViewsGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/get"
-	NewCmdScheduledViewsList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/list"
-	NewCmdScheduledViewsPause "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/pause"
-	NewCmdScheduledViewsStart "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/start"
-	NewCmdScheduledViewsUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views/update"
+	NewCmdScheduledViewsCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/create"
+	NewCmdScheduledViewsDisable "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/disable"
+	NewCmdScheduledViewsGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/get"
+	NewCmdScheduledViewsList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/list"
+	NewCmdScheduledViewsPause "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/pause"
+	NewCmdScheduledViewsStart "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/start"
+	NewCmdScheduledViewsUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views/update"
 	"github.com/spf13/cobra"
 )
 

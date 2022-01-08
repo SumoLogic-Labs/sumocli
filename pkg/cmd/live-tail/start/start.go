@@ -3,9 +3,9 @@ package start
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/internal/authentication"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/factory"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmd/factory"
+	"github.com/SumoLogic-Labs/sumocli/pkg/logging"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"io"

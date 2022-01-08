@@ -97,9 +97,9 @@ jobs:
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
           go build -ldflags `
-            "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=${{ env.TAG }}' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Date=$time'" `
+            "-X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version=${{ env.TAG }}' `
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build=$build' `
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
       - name: Zip Releases
         run: |
@@ -143,9 +143,9 @@ jobs:
           $build = $Env:GITHUB_RUN_NUMBER
           $time = Get-Date
           go build -ldflags `
-            "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=${{ env.TAG }}' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$build' `
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Date=$time'" `
+            "-X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version=${{ env.TAG }}' `
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build=$build' `
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date=$time'" `
             ./cmd/sumocli
         env:
           GOOS: darwin
@@ -218,9 +218,9 @@ jobs:
         run: |
           time=$(date)
           go build -ldflags \
-            "-X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Version=${{ env.TAG }}' \
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Build=$GITHUB_RUN_NUMBER' \
-            -X 'github.com/SumoLogic-Incubator/sumocli/internal/build.Date=$time'" \
+            "-X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version=${{ env.TAG }}' \
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build=$GITHUB_RUN_NUMBER' \
+            -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date=$time'" \
             ./cmd/sumocli
         env:
           GOOS: darwin
