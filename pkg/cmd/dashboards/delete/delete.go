@@ -1,8 +1,8 @@
 package delete
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -21,10 +21,10 @@ func NewCmdDashboardsDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteDashboards(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteDashboard(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteDashboard(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Dashboard was deleted successfully.")
+		cmdutils.Output(nil, response, err, "Dashboard was deleted successfully.")
 	}
 }

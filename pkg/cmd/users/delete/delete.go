@@ -1,9 +1,9 @@
 package delete
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 )
@@ -31,10 +31,10 @@ func deleteUser(id string, transferTo string, client *cip.APIClient) {
 	if transferTo != "" {
 		options.TransferTo = optional.NewString(transferTo)
 	}
-	httpResponse, errorResponse := client.DeleteUser(id, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteUser(id, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "User was deleted successfully.")
+		cmdutils.Output(nil, response, err, "User was deleted successfully.")
 	}
 }

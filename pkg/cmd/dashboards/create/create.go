@@ -2,9 +2,9 @@ package create
 
 import (
 	"encoding/json"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"os"
@@ -38,10 +38,10 @@ func createDashboard(file string, client *cip.APIClient) {
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unmarshal file")
 	}
-	apiResponse, httpResponse, errorResponse := client.CreateDashboard(dashboardDefinition)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.CreateDashboard(dashboardDefinition)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

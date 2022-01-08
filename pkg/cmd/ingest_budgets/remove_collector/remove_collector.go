@@ -1,8 +1,8 @@
 package remove_collector
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -26,10 +26,10 @@ func NewCmIngestBudgetsRemoveAssociatedCollector(client *cip.APIClient) *cobra.C
 }
 
 func removeAssociatedCollector(collectorId string, id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.RemoveCollectorFromBudget(id, collectorId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.RemoveCollectorFromBudget(id, collectorId)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -1,4 +1,4 @@
-module github.com/SumoLogic-Incubator/sumocli
+module github.com/SumoLogic-Labs/sumocli
 
 go 1.15
 
@@ -9,7 +9,7 @@ require (
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.5
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/Azure/go-autorest/autorest/validation v0.3.0 // indirect
-	github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip v0.10.0
+	github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip v1.1.1-0.20220108082032-6f13f154ea32 // indirect
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go-v2/config v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.3.1

@@ -2,9 +2,9 @@ package disable_mfa
 
 import (
 	"errors"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -52,14 +52,14 @@ func userDisableMFA(client *cip.APIClient) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to generate prompt")
 	}
-	httpResponse, errorResponse := client.DisableMfa(types.DisableMfaRequest{
+	response, err := client.DisableMfa(types.DisableMfaRequest{
 		Email:    emailResult,
 		Password: passwordResult,
 	},
 		idResult)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "User's MFA was disabled successfully.")
+		cmdutils.Output(nil, response, err, "User's MFA was disabled successfully.")
 	}
 }

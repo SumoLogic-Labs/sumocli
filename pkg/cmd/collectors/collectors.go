@@ -1,13 +1,13 @@
 package collectors
 
 import (
-	cmdCollectorCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/create"
-	cmdCollectorDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/delete"
-	cmdCollectorGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/get"
-	cmdCollectorList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/list"
-	cmdCollectorUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/update"
-	cmdCollectorUpgrade "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/upgrade"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdCollectorCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/create"
+	cmdCollectorDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/delete"
+	cmdCollectorGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/get"
+	cmdCollectorList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/list"
+	cmdCollectorUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/update"
+	cmdCollectorUpgrade "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/upgrade"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

@@ -1,9 +1,9 @@
 package created
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/spf13/cobra"
 )
 
@@ -36,16 +36,16 @@ func NewCmdPartitionCreate(client *cip.APIClient) *cobra.Command {
 
 func createPartition(name string, routingExpression string, analyticsTier string, retentionPeriod int32, isCompliant bool,
 	client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreatePartition(types.CreatePartitionDefinition{
+	data, response, err := client.CreatePartition(types.CreatePartitionDefinition{
 		Name:              name,
 		RoutingExpression: routingExpression,
 		AnalyticsTier:     analyticsTier,
 		RetentionPeriod:   retentionPeriod,
 		IsCompliant:       isCompliant,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

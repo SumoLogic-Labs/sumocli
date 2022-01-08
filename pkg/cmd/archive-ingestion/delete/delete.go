@@ -1,8 +1,8 @@
 package delete
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -27,10 +27,10 @@ func NewCmdArchiveIngestionDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteArchiveIngestion(id string, sourceId string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteArchiveJob(sourceId, id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteArchiveJob(sourceId, id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The ingestion job was deleted successfully.")
+		cmdutils.Output(nil, response, err, "The ingestion job was deleted successfully.")
 	}
 }

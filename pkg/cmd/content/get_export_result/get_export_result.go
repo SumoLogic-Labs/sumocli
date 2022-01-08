@@ -3,9 +3,9 @@ package get_export_result
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -49,69 +49,69 @@ func exportResult(contentId string, jobId string, isAdminMode bool, saveToFile b
 	} else {
 		options.IsAdminMode = optional.NewString("false")
 	}
-	apiResponse, httpResponse, errorResponse := client.GetAsyncExportResult(contentId, jobId, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetAsyncExportResult(contentId, jobId, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		if apiResponse.Type_ == "FolderSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetFolderAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		if data.Type_ == "FolderSyncDefinition" {
+			results, response, err := client.GetFolderAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "DashboardSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetDashboardAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "DashboardSyncDefinition" {
+			results, response, err := client.GetDashboardAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "MewboardSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetMewboardAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "MewboardSyncDefinition" {
+			results, response, err := client.GetMewboardAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "SavedSearchWithScheduleSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetSavedSearchAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "SavedSearchWithScheduleSyncDefinition" {
+			results, response, err := client.GetSavedSearchAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "MetricsSavedSearchSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "MetricsSavedSearchSyncDefinition" {
+			results, response, err := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "MetricsSearchSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "MetricsSearchSyncDefinition" {
+			results, response, err := client.GetMetricsSearchAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
-		} else if apiResponse.Type_ == "LookupTableSyncDefinition" {
-			results, httpResponse, errorResponse := client.GetLookupTableAsyncExportResult(contentId, jobId, &options)
-			if errorResponse != nil {
-				cmdutils.OutputError(httpResponse, errorResponse)
+		} else if data.Type_ == "LookupTableSyncDefinition" {
+			results, response, err := client.GetLookupTableAsyncExportResult(contentId, jobId, &options)
+			if err != nil {
+				cmdutils.OutputError(response, err)
 			} else {
-				outputResults(saveToFile, filePath, fileName, results, httpResponse, errorResponse)
+				outputResults(saveToFile, filePath, fileName, results, response, err)
 			}
 		}
 	}
 }
 
-func outputResults(saveToFile bool, filePath string, fileName string, apiResponse interface{},
-	httpResponse *http.Response, errorResponse error) {
+func outputResults(saveToFile bool, filePath string, fileName string, data interface{},
+	response *http.Response, err error) {
 	if saveToFile == true {
-		apiResponseBytes, err := json.Marshal(apiResponse)
+		dataBytes, err := json.Marshal(data)
 		if err != nil {
-			log.Fatal().Err(err).Msg("failed to convert apiResponse to byte array")
+			log.Fatal().Err(err).Msg("failed to convert data to byte array")
 		}
 		if filePath != "" {
 			if _, err := os.Stat(filePath); os.IsNotExist(err) {
@@ -121,7 +121,7 @@ func outputResults(saveToFile bool, filePath string, fileName string, apiRespons
 				}
 			}
 			resultFile := filepath.Join(filePath, fileName)
-			err := os.WriteFile(resultFile, apiResponseBytes, 0644)
+			err := os.WriteFile(resultFile, dataBytes, 0644)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to write results file " + filePath)
 			}
@@ -132,13 +132,13 @@ func outputResults(saveToFile bool, filePath string, fileName string, apiRespons
 				log.Error().Err(err).Msg("failed to get user home directory")
 			}
 			resultFile := filepath.Join(homeDirectory, "results.json")
-			err = os.WriteFile(resultFile, apiResponseBytes, 0644)
+			err = os.WriteFile(resultFile, dataBytes, 0644)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to write results file " + resultFile)
 			}
 			fmt.Println("Results written to " + resultFile)
 		}
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -1,16 +1,16 @@
 package users
 
 import (
-	cmdUserChange "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/change_email"
-	cmdUserCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/create"
-	cmdUserDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/delete"
-	cmdUserDisable "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/disable_mfa"
-	cmdUserGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/get"
-	cmdUserList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/list"
-	cmduserReset "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/reset_password"
-	cmdUserUnlock "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/unlock"
-	cmdUserUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdUserChange "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/change_email"
+	cmdUserCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/create"
+	cmdUserDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/delete"
+	cmdUserDisable "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/disable_mfa"
+	cmdUserGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/get"
+	cmdUserList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/list"
+	cmduserReset "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/reset_password"
+	cmdUserUnlock "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/unlock"
+	cmdUserUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

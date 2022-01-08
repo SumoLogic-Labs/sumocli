@@ -1,28 +1,24 @@
 package get
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/api"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/factory"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"io"
-	"net/url"
 )
 
-func NewCmdPermissionsGet() *cobra.Command {
+func NewCmdPermissionsGet(client *cip.APIClient) *cobra.Command {
 	var (
 		id           string
 		explicitOnly bool
 		isAdminMode  bool
 	)
-
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Returns content permissions of a content item with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			getPermissions(id, explicitOnly, isAdminMode)
+			getPermissions(id, explicitOnly, isAdminMode, client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of a content item")
@@ -34,45 +30,14 @@ func NewCmdPermissionsGet() *cobra.Command {
 	return cmd
 }
 
-func getPermissions(id string, explicitOnly bool, isAdminMode bool) {
-	var permissionsResponse api.GetPermissions
-	log := logging.GetConsoleLogger()
-	requestUrl := "/v2/content/" + id + "/permissions"
-	client, request := factory.NewHttpRequest("GET", requestUrl)
-	query := url.Values{}
-	if explicitOnly == false {
-		query.Add("explicitOnly", "false")
+func getPermissions(id string, explicitOnly bool, isAdminMode bool, client *cip.APIClient) {
+	var options *types.GetContentPermissionsOpts
+	options.ExplicitOnly = optional.NewBool(explicitOnly)
+	options.IsAdminMode = optional.NewString(cmdutils.AdminMode(isAdminMode))
+	data, response, err := client.GetContentPermissions(id, options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		query.Add("explicitOnly", "true")
-	}
-	request.URL.RawQuery = query.Encode()
-	if isAdminMode == true {
-		request.Header.Add("isAdminMode", "true")
-	}
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &permissionsResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	permissionsResponseJson, err := json.MarshalIndent(permissionsResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal foldersResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
-	} else {
-		fmt.Println(string(permissionsResponseJson))
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -2,8 +2,8 @@ package enable
 
 import (
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -41,10 +41,10 @@ func enableServiceAllowlist(login bool, content bool, both bool, client *cip.API
 		fmt.Println("Please select either login, content, or both.")
 		os.Exit(1)
 	}
-	httpResponse, errorResponse := client.EnableAllowlisting(allowlistType)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.EnableAllowlisting(allowlistType)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Service allowlisting was enabled successfully.")
+		cmdutils.Output(nil, response, err, "Service allowlisting was enabled successfully.")
 	}
 }

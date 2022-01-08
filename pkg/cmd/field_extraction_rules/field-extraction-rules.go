@@ -1,12 +1,12 @@
 package field_extraction_rules
 
 import (
-	NewCmdFieldExtractionRulesCreate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules/create"
-	NewCmdFieldExtractionRulesDelete "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules/delete"
-	NewCmdFieldExtractionRulesGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules/get"
-	NewCmdFieldExtractionRulesList "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules/list"
-	NewCmdFieldExtractionRulesUpdate "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules/update"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	NewCmdFieldExtractionRulesCreate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules/create"
+	NewCmdFieldExtractionRulesDelete "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules/delete"
+	NewCmdFieldExtractionRulesGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules/get"
+	NewCmdFieldExtractionRulesList "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules/list"
+	NewCmdFieldExtractionRulesUpdate "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules/update"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

@@ -1,9 +1,9 @@
 package get_upgradable_collectors
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 )
@@ -28,14 +28,14 @@ func NewCmdGetUpgradableCollectors(client *cip.APIClient) *cobra.Command {
 }
 
 func getUpgradableCollectors(toVersion string, offset int32, limit int32, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetUpgradableCollectors(&types.GetUpgradableCollectorsOpts{
+	data, response, err := client.GetUpgradableCollectors(&types.GetUpgradableCollectorsOpts{
 		Limit:     optional.NewInt32(limit),
 		Offset:    optional.NewInt32(offset),
 		ToVersion: optional.NewString(toVersion),
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -3,8 +3,8 @@ package config
 import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/to"
-	"github.com/SumoLogic-Incubator/sumocli/internal/build"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/internal/build"
+	"github.com/SumoLogic-Labs/sumocli/pkg/logging"
 	"github.com/spf13/cobra"
 )
 

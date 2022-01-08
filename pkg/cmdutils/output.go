@@ -6,22 +6,22 @@ import (
 	"net/http"
 )
 
-func Output(apiResponse interface{}, httpResponse *http.Response, errorResponse error, message string) {
-	apiResponseJsonFormatted, err := json.MarshalIndent(apiResponse, "", "    ")
+func Output(data interface{}, response *http.Response, err error, message string) {
+	dataJsonFormatted, err := json.MarshalIndent(data, "", "    ")
 	if err != nil {
 		fmt.Println("failed to marshal api response")
 	}
-	if apiResponse == nil {
-		if httpResponse.StatusCode != 204 && httpResponse.StatusCode != 200 {
-			fmt.Println(errorResponse)
+	if data == nil {
+		if response.StatusCode != 204 && response.StatusCode != 200 {
+			fmt.Println(err)
 		} else {
 			fmt.Println(message)
 		}
 	} else {
-		if httpResponse.StatusCode != 200 && httpResponse.StatusCode != 201 {
-			fmt.Println(errorResponse)
+		if response.StatusCode != 200 && response.StatusCode != 201 {
+			fmt.Println(err)
 		} else {
-			fmt.Println(string(apiResponseJsonFormatted))
+			fmt.Println(string(dataJsonFormatted))
 		}
 	}
 }

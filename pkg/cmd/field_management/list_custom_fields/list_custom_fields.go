@@ -1,8 +1,8 @@
 package list_custom_fields
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -18,10 +18,10 @@ func NewCmdFieldManagementListCustomFields(client *cip.APIClient) *cobra.Command
 }
 
 func listCustomFields(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListCustomFields()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListCustomFields()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

@@ -1,9 +1,9 @@
 package move
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 )
@@ -36,10 +36,10 @@ func move(id string, destinationFolderId string, isAdminMode bool, client *cip.A
 	} else {
 		options.IsAdminMode = optional.NewString("false")
 	}
-	httpResponse, errorResponse := client.MoveItem(destinationFolderId, id, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.MoveItem(destinationFolderId, id, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Content was moved successfully.")
+		cmdutils.Output(nil, response, err, "Content was moved successfully.")
 	}
 }

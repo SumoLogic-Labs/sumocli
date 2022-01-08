@@ -1,8 +1,8 @@
 package enable_custom_field
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -23,10 +23,10 @@ func NewCmdFieldManagementEnableCustomField(client *cip.APIClient) *cobra.Comman
 }
 
 func enableCustomField(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.EnableField(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.EnableField(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Field has been enabled.")
+		cmdutils.Output(nil, response, err, "Field has been enabled.")
 	}
 }

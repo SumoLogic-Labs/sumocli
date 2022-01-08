@@ -1,9 +1,9 @@
 package create
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +46,7 @@ func NewCmdIngestBudgetsCreate(client *cip.APIClient) *cobra.Command {
 
 func createIngestBudget(action string, auditThreshold int32, capacityBytes int64, description string,
 	fieldValue string, name string, resetTime string, timezone string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.CreateIngestBudget(types.IngestBudgetDefinition{
+	data, response, err := client.CreateIngestBudget(types.IngestBudgetDefinition{
 		Name:           name,
 		FieldValue:     fieldValue,
 		CapacityBytes:  capacityBytes,
@@ -56,9 +56,9 @@ func createIngestBudget(action string, auditThreshold int32, capacityBytes int64
 		Action:         action,
 		AuditThreshold: auditThreshold,
 	})
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

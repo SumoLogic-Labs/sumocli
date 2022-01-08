@@ -3,9 +3,9 @@ package update_configuration
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/api"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/factory"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/api"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmd/factory"
+	"github.com/SumoLogic-Labs/sumocli/pkg/logging"
 	"github.com/spf13/cobra"
 	"io"
 	"reflect"

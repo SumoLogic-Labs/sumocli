@@ -1,16 +1,14 @@
 package remove
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/api"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/factory"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/logging"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
+	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
-	"io"
 )
 
-func NewCmdPermissionsRemove() *cobra.Command {
+func NewCmdPermissionsRemove(client *cip.APIClient) *cobra.Command {
 	var (
 		id                  string
 		isAdminMode         bool
@@ -20,12 +18,12 @@ func NewCmdPermissionsRemove() *cobra.Command {
 		sourceId            string
 		sourceType          string
 	)
-
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove permissions from a content item with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
-			removePermissions(id, isAdminMode, notifyRecipients, notificationMessage, permissionName, sourceId, sourceType)
+			removePermissions(id, isAdminMode, notifyRecipients, notificationMessage, permissionName, sourceId, sourceType,
+				client)
 		},
 	}
 	cmd.Flags().StringVar(&id, "id", "", "Specify the id of a content item")
@@ -46,53 +44,26 @@ func NewCmdPermissionsRemove() *cobra.Command {
 }
 
 func removePermissions(id string, isAdminMode bool, notifyRecipients bool, notificationMessage string,
-	permissionName string, sourceId string, sourceType string) {
-	var permissionsResponse api.GetPermissions
-	log := logging.GetConsoleLogger()
-	requestBodySchema := api.ModifyPermissionsRequest{
-		NotifyRecipients:    notifyRecipients,
-		NotificationMessage: notificationMessage,
-	}
-	permissions := api.PermissionsDetail{
-		PermissionName: permissionName,
-		SourceType:     sourceType,
-		SourceId:       sourceId,
-		ContentId:      id,
-	}
-	requestBodySchema.ContentPermissionAssignments = append(requestBodySchema.ContentPermissionAssignments, permissions)
-	requestBody, err := json.Marshal(requestBodySchema)
+	permissionName string, sourceId string, sourceType string, client *cip.APIClient) {
+	var (
+		contentPermission types.ContentPermissionAssignment
+		options           *types.ContentPermissionsOpts
+		updateRequest     types.ContentPermissionUpdateRequest
+	)
+	contentPermission.ContentId = id
+	contentPermission.PermissionName = permissionName
+	contentPermission.SourceId = sourceId
+	contentPermission.SourceType = sourceType
+	updateRequest.ContentPermissionAssignments = append(updateRequest.ContentPermissionAssignments, contentPermission)
+	updateRequest.NotifyRecipients = notifyRecipients
+	updateRequest.NotificationMessage = notificationMessage
+	options.IsAdminMode = optional.NewString(cmdutils.AdminMode(isAdminMode))
+	data, response, err := client.RemoveContentPermissions(updateRequest,
+		id,
+		options)
 	if err != nil {
-		log.Error().Err(err).Msg("error marshalling request body")
-	}
-	requestUrl := "/v2/content/" + id + "/permissions/remove"
-	client, request := factory.NewHttpRequestWithBody("PUT", requestUrl, requestBody)
-	if isAdminMode == true {
-		request.Header.Add("isAdminMode", "true")
-	}
-	response, err := client.Do(request)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to make http request to " + requestUrl)
-	}
-
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to read response body")
-	}
-
-	err = json.Unmarshal(responseBody, &permissionsResponse)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to unmarshal response body")
-	}
-
-	permissionsResponseJson, err := json.MarshalIndent(permissionsResponse, "", "    ")
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal foldersResponse")
-	}
-
-	if response.StatusCode != 200 {
-		factory.HttpError(response.StatusCode, responseBody, log)
+		cmdutils.OutputError(response, err)
 	} else {
-		fmt.Println(string(permissionsResponseJson))
+		cmdutils.Output(data, response, err, "")
 	}
 }

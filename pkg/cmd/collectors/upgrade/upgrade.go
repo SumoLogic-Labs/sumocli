@@ -1,11 +1,11 @@
 package upgrade
 
 import (
-	cmdCollectorUpgradeBuilds "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/upgrade/get_available_builds"
-	cmdCollectorUpgradeGet "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/upgrade/get_upgradable_collectors"
-	cmdCollectorUpgradeStart "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/upgrade/start"
-	cmdCollectorStatus "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors/upgrade/status"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	cmdCollectorUpgradeBuilds "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/upgrade/get_available_builds"
+	cmdCollectorUpgradeGet "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/upgrade/get_upgradable_collectors"
+	cmdCollectorUpgradeStart "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/upgrade/start"
+	cmdCollectorStatus "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors/upgrade/status"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 

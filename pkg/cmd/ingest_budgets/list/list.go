@@ -1,9 +1,9 @@
 package list
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 )
@@ -25,26 +25,26 @@ func listIngestBudgets(limit int32, client *cip.APIClient) {
 	var options types.ListIngestBudgetV1Opts
 	var paginationToken string
 	options.Limit = optional.NewInt32(limit)
-	apiResponse, httpResponse, errorResponse := client.ListIngestBudgets(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListIngestBudgets(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	paginationToken = apiResponse.Next
+	paginationToken = data.Next
 	for paginationToken != "" {
-		apiResponse = listIngestBudgetsPagination(client, options, paginationToken)
-		paginationToken = apiResponse.Next
+		data = listIngestBudgetsPagination(client, options, paginationToken)
+		paginationToken = data.Next
 	}
 }
 
 func listIngestBudgetsPagination(client *cip.APIClient, options types.ListIngestBudgetV1Opts, token string) types.ListIngestBudgetsResponse {
 	options.Token = optional.NewString(token)
-	apiResponse, httpResponse, errorResponse := client.ListIngestBudgets(&options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListIngestBudgets(&options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
-	return apiResponse
+	return data
 }

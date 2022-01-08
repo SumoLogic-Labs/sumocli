@@ -1,36 +1,39 @@
 package root
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/config"
-	accessKeysCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/access-keys"
-	accountCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/account"
-	appsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/apps"
-	archiveIngestion "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/archive-ingestion"
-	collectorCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/collectors"
-	ConfigureCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/configure"
-	contentCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/content"
-	dashboardsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dashboards"
-	dynamicParsingCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/dynamic_parsing"
-	fieldExtractionRulesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_extraction_rules"
-	fieldManagement "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/field_management"
-	foldersCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/folders"
-	healthEventsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/health_events"
-	ingestBudgetsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets"
-	ingestBudgetsV2Cmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/ingest_budgets_v2"
-	liveTailCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/live-tail"
-	lookupTablesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/lookup_tables"
-	monitorsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/monitors"
-	partitionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/partitions"
-	passwordPolicyCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/password-policy"
-	permissionsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/permissions"
-	roleCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/roles"
-	samlCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/saml"
-	scheduledViewsCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/scheduled-views"
-	serviceAllowlistCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/service_allowlist"
-	sourcesCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/sources"
-	tokensCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/tokens"
-	usersCmd "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/users"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmd/version"
+	"github.com/SumoLogic-Labs/sumocli/config"
+	accessKeysCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/access_keys"
+	accountCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/account"
+	appsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/apps"
+	archiveIngestion "github.com/SumoLogic-Labs/sumocli/pkg/cmd/archive-ingestion"
+	collectorCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/collectors"
+	ConfigureCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/configure"
+	contentCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/content"
+	dashboardsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/dashboards"
+	dynamicParsingCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/dynamic_parsing"
+	fieldExtractionRulesCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_extraction_rules"
+	fieldManagement "github.com/SumoLogic-Labs/sumocli/pkg/cmd/field_management"
+	foldersCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/folders"
+	healthEventsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/health_events"
+	ingestBudgetsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets"
+	ingestBudgetsV2Cmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/ingest_budgets_v2"
+	liveTailCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/live-tail"
+	lookupTablesCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/lookup_tables"
+	monitorsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/monitors"
+	organizationsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/organizations"
+	partitionsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/partitions"
+	passwordPolicyCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/password_policy"
+	permissionsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/permissions"
+	policiesCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/policies"
+	roleCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/roles"
+	samlCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/saml"
+	scheduledViewsCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/scheduled-views"
+	serviceAllowlistCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/service_allowlist"
+	sourcesCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/sources"
+	tokensCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/tokens"
+	transformationRulesCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/transformation_rules"
+	usersCmd "github.com/SumoLogic-Labs/sumocli/pkg/cmd/users"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmd/version"
 	"github.com/spf13/cobra"
 )
 
@@ -62,15 +65,18 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(ConfigureCmd.NewCmdConfigure())
 	cmd.AddCommand(lookupTablesCmd.NewCmdLookupTables(client))
 	cmd.AddCommand(monitorsCmd.NewCmdMonitors())
+	cmd.AddCommand(organizationsCmd.NewCmdOrganizations(client))
 	cmd.AddCommand(partitionsCmd.NewCmdPartitions(client))
-	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy())
-	cmd.AddCommand(permissionsCmd.NewCmdPermissions())
+	cmd.AddCommand(passwordPolicyCmd.NewCmdPasswordPolicy(client))
+	cmd.AddCommand(permissionsCmd.NewCmdPermissions(client))
+	cmd.AddCommand(policiesCmd.NewCmdPolicies(client))
 	cmd.AddCommand(roleCmd.NewCmdRole(client))
 	cmd.AddCommand(samlCmd.NewCmdSaml())
 	cmd.AddCommand(scheduledViewsCmd.NewCmdScheduledViews())
 	cmd.AddCommand(serviceAllowlistCmd.NewCmdServiceAllowlist(client))
 	cmd.AddCommand(sourcesCmd.NewCmdSources(client))
 	cmd.AddCommand(tokensCmd.NewCmdTokens(client))
+	cmd.AddCommand(transformationRulesCmd.NewCmdTransformationRules(client))
 	cmd.AddCommand(usersCmd.NewCmdUser(client))
 	cmd.AddCommand(version.NewCmdVersion())
 

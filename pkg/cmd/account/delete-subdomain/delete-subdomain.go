@@ -1,8 +1,8 @@
 package delete_subdomain
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -18,10 +18,10 @@ func NewCmdAccountDeleteSubdomain(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteSubdomain(client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteSubdomain()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteSubdomain()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "The subdomain was successfully deleted.")
+		cmdutils.Output(nil, response, err, "The subdomain was successfully deleted.")
 	}
 }

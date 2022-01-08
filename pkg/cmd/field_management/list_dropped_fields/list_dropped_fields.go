@@ -1,8 +1,8 @@
 package list_dropped_fields
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -19,10 +19,10 @@ func NewCmdFieldManagementListDroppedFields(client *cip.APIClient) *cobra.Comman
 }
 
 func listDroppedFields(client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.ListDroppedFields()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.ListDroppedFields()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

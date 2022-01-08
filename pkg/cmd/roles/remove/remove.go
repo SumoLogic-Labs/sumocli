@@ -1,8 +1,8 @@
 package remove
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -26,10 +26,10 @@ func NewCmdRoleRemoveUser(client *cip.APIClient) *cobra.Command {
 }
 
 func removeRoleFromUser(client *cip.APIClient, roleId string, userId string) {
-	httpResponse, errorResponse := client.RemoveRoleFromUser(roleId, userId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.RemoveRoleFromUser(roleId, userId)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "User: "+userId+" was removed from role: "+roleId)
+		cmdutils.Output(nil, response, err, "User: "+userId+" was removed from role: "+roleId)
 	}
 }

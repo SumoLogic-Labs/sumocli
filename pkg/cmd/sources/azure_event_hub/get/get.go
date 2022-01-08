@@ -1,8 +1,8 @@
 package get
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -24,10 +24,10 @@ func NewCmdAzureEventHubSourceGet(client *cip.APIClient) *cobra.Command {
 }
 
 func getEventHubSource(collectorId string, sourceId string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetEventHubSource(collectorId, sourceId)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetEventHubSource(collectorId, sourceId)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

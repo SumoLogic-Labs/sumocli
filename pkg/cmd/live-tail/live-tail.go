@@ -1,7 +1,7 @@
 package live_tail
 
 import (
-	cmdLiveTailStart "github.com/SumoLogic-Incubator/sumocli/pkg/cmd/live-tail/start"
+	cmdLiveTailStart "github.com/SumoLogic-Labs/sumocli/pkg/cmd/live-tail/start"
 	"github.com/spf13/cobra"
 )
 

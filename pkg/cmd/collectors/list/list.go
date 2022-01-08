@@ -1,9 +1,9 @@
 package list
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 )
@@ -33,26 +33,26 @@ func NewCmdCollectorList(client *cip.APIClient) *cobra.Command {
 
 func listCollectors(aliveBeforeDays int32, filter string, limit int32, offset int32, offline bool, client *cip.APIClient) {
 	if offline == true {
-		apiResponse, httpResponse, errorResponse := client.ListOfflineCollectors(&types.ListCollectorsOfflineOpts{
+		data, response, err := client.ListOfflineCollectors(&types.ListCollectorsOfflineOpts{
 			AliveBeforeDays: optional.NewInt32(aliveBeforeDays),
 			Limit:           optional.NewInt32(limit),
 			Offset:          optional.NewInt32(offset),
 		})
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if offline == false {
-		apiResponse, httpResponse, errorResponse := client.ListCollectors(&types.ListCollectorsOpts{
+		data, response, err := client.ListCollectors(&types.ListCollectorsOpts{
 			Filter: optional.NewString(filter),
 			Limit:  optional.NewInt32(limit),
 			Offset: optional.NewInt32(offset),
 		})
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	}
 }

@@ -2,9 +2,9 @@ package upload
 
 import (
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
 	"os"
@@ -43,10 +43,10 @@ func uploadData(fileEncoding string, fileLocation string, id string, merge bool,
 		fmt.Println("File location (" + fileLocation + ") couldn't be opened, please the file exists.")
 		os.Exit(1)
 	}
-	apiResponse, httpResponse, errorResponse := client.UploadFile(file, id, &options)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.UploadFile(file, id, &options)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }

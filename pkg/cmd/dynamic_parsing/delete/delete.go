@@ -1,8 +1,8 @@
 package delete
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -21,10 +21,10 @@ func NewCmdDynamicParsingDelete(client *cip.APIClient) *cobra.Command {
 }
 
 func deleteDynamicParsingRules(id string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.DeleteDynamicParsingRule(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	response, err := client.DeleteDynamicParsingRule(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Dynamic Parsing rule was deleted successfully.")
+		cmdutils.Output(nil, response, err, "Dynamic Parsing rule was deleted successfully.")
 	}
 }

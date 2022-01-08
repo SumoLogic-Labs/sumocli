@@ -24,21 +24,22 @@ You can find further information about the Sumo Logic APIs in their [documentati
 | Ingest Budgets | :white_check_mark: | |
 | Ingest Budgets v2 | :white_check_mark: | |
 | Log Search Estimated Usage | | Functionality is still in development. |
-| Lookup Tables | :white_check_mark: | | 
+| Lookup Tables | :white_check_mark: | |
+| Metrics Query (Beta) | | |
 | Metrics Searches (Beta) | | Functionality is still in development. |
 | Monitors | | Functionality is still in development. |
-| Organizations | | Functionality is still in development. |
+| Organizations | :white_check_mark: | |
 | Partitions | :white_check_mark: | |
 | Password Policy | :white_check_mark: | |
 | Permissions | :white_check_mark: | |
-| Policies | | Functionality is still in development. |
+| Policies | :white_check_mark: | |
 | Roles | :white_check_mark: | |
 | SAML Configuration | :white_check_mark: | |
 | Scheduled Views | :white_check_mark: | |
 | Service Allowlist | :white_check_mark: | |
 | Sources | :white_check_mark: | Simple commands like get, list, delete are supported. Support for creating different sources are listed under Sumo Logic Sources Support. |
 | Tokens | :white_check_mark: | |
-| Transformation Rules (Beta) | | Functionality is still in development. |
+| Transformation Rules (Beta) | :white_check_mark: | |
 | Users | :white_check_mark: | |
 
 ## Sumo Logic Sources Support

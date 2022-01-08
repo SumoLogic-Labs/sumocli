@@ -2,8 +2,8 @@ package get
 
 import (
 	"fmt"
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -26,18 +26,18 @@ func NewCmdGet(client *cip.APIClient) *cobra.Command {
 
 func getContent(contentId string, path string, client *cip.APIClient) {
 	if contentId != "" {
-		apiResponse, httpResponse, errorResponse := client.GetPathById(contentId)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.GetPathById(contentId)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if path != "" {
-		apiResponse, httpResponse, errorResponse := client.GetItemByPath(path)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		data, response, err := client.GetItemByPath(path)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(data, response, err, "")
 		}
 	} else if contentId != "" && path != "" {
 		fmt.Println("Please specify only contentId or path.")

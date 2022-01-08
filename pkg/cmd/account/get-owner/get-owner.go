@@ -1,8 +1,8 @@
 package get_owner
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -18,15 +18,15 @@ func NewCmdAccountGetOwner(client *cip.APIClient) *cobra.Command {
 }
 
 func getOwner(client *cip.APIClient) {
-	userId, httpResponse, errorResponse := client.GetAccountOwner()
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	userId, response, err := client.GetAccountOwner()
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		userResponse, httpResponse, errorResponse := client.GetUser(userId)
-		if errorResponse != nil {
-			cmdutils.OutputError(httpResponse, errorResponse)
+		userResponse, response, err := client.GetUser(userId)
+		if err != nil {
+			cmdutils.OutputError(response, err)
 		} else {
-			cmdutils.Output(userResponse, httpResponse, errorResponse, "")
+			cmdutils.Output(userResponse, response, err, "")
 		}
 	}
 }

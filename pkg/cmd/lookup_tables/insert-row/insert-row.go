@@ -1,9 +1,9 @@
 package insert_row
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip/types"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
 	"github.com/spf13/cobra"
 )
 
@@ -34,13 +34,13 @@ func NewCmdLookupTablesInsertRow(client *cip.APIClient) *cobra.Command {
 }
 
 func insertLookupTableRow(id string, columnNames []string, columnValues []string, client *cip.APIClient) {
-	httpResponse, errorResponse := client.UpdateTableRow(types.RowUpdateDefinition{
+	response, err := client.UpdateTableRow(types.RowUpdateDefinition{
 		Row: cmdutils.GenerateLookupTableColumns(columnNames, columnValues),
 	},
 		id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(nil, httpResponse, errorResponse, "Row updated successfully.")
+		cmdutils.Output(nil, response, err, "Row updated successfully.")
 	}
 }

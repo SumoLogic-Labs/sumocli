@@ -1,8 +1,8 @@
 package get_builtin_field
 
 import (
-	"github.com/SumoLogic-Incubator/sumocli/pkg/cmdutils"
-	"github.com/SumoLogic-Incubator/sumologic-go-sdk/service/cip"
+	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
 )
 
@@ -21,10 +21,10 @@ func NewCmdFieldManagementGetBuiltinField(client *cip.APIClient) *cobra.Command 
 }
 
 func getBuiltinField(id string, client *cip.APIClient) {
-	apiResponse, httpResponse, errorResponse := client.GetBuiltInField(id)
-	if errorResponse != nil {
-		cmdutils.OutputError(httpResponse, errorResponse)
+	data, response, err := client.GetBuiltInField(id)
+	if err != nil {
+		cmdutils.OutputError(response, err)
 	} else {
-		cmdutils.Output(apiResponse, httpResponse, errorResponse, "")
+		cmdutils.Output(data, response, err, "")
 	}
 }
