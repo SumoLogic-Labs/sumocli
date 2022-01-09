@@ -65,11 +65,6 @@ jobs:
         with:
           name: sumocli_windows_amd64
           path: ./dist/sumocli_windows_amd64/sumocli.exe
-      - name: Upload Windows arm64
-        uses: actions/upload-artifact@v2
-        with:
-          name: sumocli_windows_arm64
-          path: ./dist/sumocli_windows_arm64/sumocli.exe
 
   create_debian_package:
     name: Create debian package
@@ -195,18 +190,11 @@ jobs:
         with:
           name: sumocli_windows_amd64
           path: ./dist/sumocli_windows_amd64/sumocli.exe
-      - name: Download Windows arm64 binary
-        uses: actions/download-artifact@v2
-        with:
-          name: sumocli_windows_arm64
-          path: ./dist/sumocli_windows_arm64/sumocli.exe
       - name: Sign Windows binaries
         shell: pwsh
         run: |
           $amd64 = Get-ChildItem ./dist/sumocli_windows_amd64/sumocli.exe | % { $_.FullName }
-          $arm64 = Get-ChildItem ./dist/sumocli_windows_arm64/sumocli.exe | % { $_.FullName }
           Add-Content -Path signing.txt -Value $amd64
-          Add-Content -Path signing.txt -Value $arm64
           azuresigntool sign --description-url "https://github.com/SumoLogic-Labs/sumocli" --file-digest sha256 `
             --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
             --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
@@ -221,11 +209,6 @@ jobs:
         with:
           name: sumocli_windows_amd64_signed
           path: ./dist/sumocli_windows_amd64/sumocli.exe
-      - name: Upload Signed Windows arm64 binary
-        uses: actions/upload-artifact@v2
-        with:
-          name: sumocli_windows_arm64_signed
-          path: ./dist/sumocli_windows_arm64/sumocli.exe
 
   upload_assets_to_release:
     name: Upload Assets to Release
@@ -260,11 +243,6 @@ jobs:
         with:
           name: sumocli_windows_amd64_signed
           path: sumocli_windows_amd64/sumocli.exe
-      - name: Download windows arm64 signed asset
-        uses: actions/download-artifact@v2
-        with:
-          name: sumocli_windows_arm64_signed
-          path: sumocli_windows_arm64/sumocli.exe
       - name: Create installer archives
         shell: bash
         run: |
@@ -278,7 +256,6 @@ jobs:
           tar -czf ./archives/sumocli_${{ env.TAG }}_linux_amd64.tar.gz -C sumocli_linux_amd64/sumocli .
           tar -czf ./archives/sumocli_${{ env.TAG }}_linux_arm64.tar.gz -C sumocli_linux_arm64/sumocli .
           zip ./archives/sumocli_${{ env.TAG }}_windows_amd64.zip sumocli_windows_amd64/sumocli.exe/sumocli.exe
-          zip ./archives/sumocli_${{ env.TAG }}_windows_arm64.zip sumocli_windows_arm64/sumocli.exe/sumocli.exe
           find ./archives -type f -exec sha256sum {} \; > checksums.txt
           cat checksums.txt
       - name: Create Release
@@ -290,7 +267,6 @@ jobs:
             ./archives/sumocli_${{ env.TAG }}_linux_amd64.tar.gz
             ./archives/sumocli_${{ env.TAG }}_linux_arm64.tar.gz
             ./archives/sumocli_${{ env.TAG }}_windows_amd64.zip
-            ./archives/sumocli_${{ env.TAG }}_windows_arm64.zip
             checksums.txt
 
   release_debian_packages:

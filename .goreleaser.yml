@@ -2,10 +2,18 @@ builds:
   - goos:
       - darwin
       - linux
-      - windows
     goarch:
       - amd64
       - arm64
+    main: ./cmd/sumocli
+    ldflags:
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date={{.Date}}'
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version={{.Version}}'
+  - goos:
+      - windows
+    goarch:
+      - amd64
     main: ./cmd/sumocli
     ldflags:
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
