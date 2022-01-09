@@ -1,5 +1,6 @@
 builds:
-  - goos:
+  - id: sumocli-nix
+    goos:
       - darwin
       - linux
     goarch:
@@ -10,7 +11,8 @@ builds:
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date={{.Date}}'
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version={{.Version}}'
-  - goos:
+  - id: sumocli-windows
+    goos:
       - windows
     goarch:
       - amd64
