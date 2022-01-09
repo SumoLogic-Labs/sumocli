@@ -6,7 +6,7 @@
     "password": "@env:AC_PASSWORD"
   },
   "sign": {
-    "application_identity": "BD7CB4E71B885802A80041006429E57709357B68"
+    "application_identity": "08C9A4B04024CDEF2C5D93593710C60591FB4614"
   },
   "dmg": {
     "output_path": "sumocli_darwin_arm64.dmg",

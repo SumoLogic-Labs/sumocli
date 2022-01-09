@@ -197,8 +197,6 @@ jobs:
       - name: Sign Windows binaries
         shell: pwsh
         run: |
-          $amd64 = Get-ChildItem ./dist/sumocli_windows_amd64/sumocli.exe | % { $_.FullName }
-          Add-Content -Path signing.txt -Value $amd64
           azuresigntool sign --description-url "https://github.com/SumoLogic-Labs/sumocli" --file-digest sha256 `
             --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
             --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
@@ -207,7 +205,7 @@ jobs:
             --azure-key-vault-tenant-id ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }} `
             --timestamp-rfc3161 http://timestamp.sectigo.com `
             --timestamp-digest sha256 `
-            --input-file-list signing.txt
+            ./dist/sumocli_windows_amd64/sumocli.exe
       - name: Upload Signed Windows amd64 binary
         uses: actions/upload-artifact@v2
         with:
