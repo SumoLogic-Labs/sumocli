@@ -30,12 +30,12 @@ jobs:
           podman machine init
           podman machine start
           podman info
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          distribution: goreleaser-pro
-          version: latest
-          args: release -f .goreleaser.yml --rm-dist
+      - name: Install GoReleaser Pro
+        run: |
+          brew install goreleaser/tap/goreleaser-pro
+      - name: Run GoReleaser Pro
+        run: |
+          goreleaser release -f .goreleaser.yml --rm-dist
         env:
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
