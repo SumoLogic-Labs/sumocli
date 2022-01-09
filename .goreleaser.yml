@@ -1,8 +1,8 @@
 builds:
-  - id: sumocli-nix
-    goos:
+  - goos:
       - darwin
       - linux
+      - windows
     goarch:
       - amd64
       - arm64
@@ -11,20 +11,13 @@ builds:
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date={{.Date}}'
       - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version={{.Version}}'
-  - id: sumocli-windows
-    goos:
-      - windows
-    goarch:
-      - amd64
-    main: ./cmd/sumocli
-    ldflags:
-      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
-      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date={{.Date}}'
-      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version={{.Version}}'
+    ignore:
+      - goos: windows
+        goarch: arm64
 dockers:
   - image_templates:
-      - "ghcr.io/SumoLogic-Labs/sumocli:{{.Version}}"
-      - "ghcr.io/SumoLogic-Labs/sumocli:latest"
+      - "ghcr.io/sumologic-labs/sumocli:{{.Version}}"
+      - "ghcr.io/sumologic-labs/sumocli:latest"
     goos: linux
     goarch: amd64
     build_flag_templates:
