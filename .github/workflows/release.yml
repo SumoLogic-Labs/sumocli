@@ -30,6 +30,12 @@ jobs:
           podman machine init
           podman machine start
           podman info
+      - name: Container Registry Login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Install GoReleaser Pro
         run: |
           brew install goreleaser/tap/goreleaser-pro
