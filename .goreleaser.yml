@@ -28,15 +28,15 @@ dockers:
     use: podman
   - image_templates:
       - "ghcr.io/sumologic-labs/sumocli:{{.Version}}-arm64"
-      goos: linux
-      goarch: arm64
-      build_flag_templates:
-        - --label=org.opencontainers.image.title={{.ProjectName}}
-        - --label=org.opencontainers.image.source=https://github.com/SumoLogic-Labs/sumocli
-        - --label=org.opencontainers.image.version={{.Version}}
-        - --label=org.opencontainers.image.revision={{.FullCommit}}
-      skip_push: false
-      use: podman
+    goos: linux
+    goarch: arm64
+    build_flag_templates:
+      - --label=org.opencontainers.image.title={{.ProjectName}}
+      - --label=org.opencontainers.image.source=https://github.com/SumoLogic-Labs/sumocli
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+    skip_push: false
+    use: podman
 archives:
   - replacements:
       darwin: Darwin
