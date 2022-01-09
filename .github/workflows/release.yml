@@ -1,0 +1,417 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  GOVERSION: '1.17.6'
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GOVERSION }}
+      - name: Setup Podman
+        run: |
+          brew install podman
+          podman machine init
+          podman machine start
+          podman info
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release -f .goreleaser.yml --rm-dist
+        env:
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+      - name: Upload Darwin amd64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_amd64
+          path: ./dist/sumocli_darwin_amd64/sumocli
+      - name: Upload Darwin arm64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_arm64
+          path: ./dist/sumocli_darwin_arm64/sumocli
+      - name: Upload linux amd64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_amd64
+          path: ./dist/sumocli_linux_amd64/sumocli
+      - name: Upload linux arm64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_arm64
+          path: ./dist/sumocli_linux_arm64/sumocli
+      - name: Upload Windows amd64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_windows_amd64
+          path: ./dist/sumocli_windows_amd64/sumocli.exe
+      - name: Upload Windows arm64
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_windows_arm64
+          path: ./dist/sumocli_windows_arm64/sumocli.exe
+
+  create_debian_package:
+    name: Create debian package
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Version Variable
+        run: |
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download linux amd64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_amd64
+          path: ./sumocli_linux_amd64/sumocli
+      - name: Download linux arm64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_arm64
+          path: ./sumocli_linux_arm64/sumocli
+      - name: Run debian package script
+        shell: bash
+        run: |
+          chmod +x ./scripts/build-debianpackage.sh
+          ./scripts/build-debianpackage.sh -a amd64 -v ${{ env.TAG }}
+          ./scripts/build-debianpackage.sh -a arm64 -v ${{ env.TAG }}
+      - name: Upload debian amd package asset
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_amd64_deb
+          path: ./deb/sumocli_${{ env.TAG }}-1_amd64.deb
+      - name: Upload debian arm64 package asset
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_linux_arm64_deb
+          path: ./deb/sumocli_${{ env.TAG }}-1_arm64.deb
+
+  sign_macos_binaries:
+    name: Signing macOS binaries
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download darwin amd64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_darwin_amd64
+          path: ./dist/sumocli_darwin_amd64
+      - name: Download darwin arm64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_darwin_arm64
+          path: ./dist/sumocli_darwin_arm64
+      - name: Install Gon
+        shell: bash
+        run: |
+          brew tap mitchellh/gon
+          brew install mitchellh/gon/gon
+      - name: Configuring signing certificate
+        shell: bash
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo -n "$APPLE_DEV_CERT" | base64 --decode --output $CERTIFICATE_PATH
+          security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P $APPLE_DEV_CERT_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+        env:
+          APPLE_DEV_CERT: ${{ secrets.APPLE_DEV_CERT }}
+          APPLE_DEV_CERT_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Sign macOS amd64 binary
+        shell: bash
+        run: |
+          gon --log-level=info --log-json .github/workflows/macos_amd64_config.json
+          gon --log-level=info --log-json .github/workflows/macos_arm64_config.json
+        env:
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      - name: Upload signed macOS amd64 dmg
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_amd64_signed_dmg
+          path: ./sumocli_darwin_amd64.dmg
+      - name: Upload signed macOS amd64 zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_amd64_signed_zip
+          path: ./sumocli_darwin_amd64.zip
+      - name: Upload signed macOS arm64 dmg
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_arm64_signed_dmg
+          path: ./sumocli_darwin_arm64.dmg
+      - name: Upload signed macOS arm64 zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_darwin_arm64_signed_zip
+          path: ./sumocli_darwin_arm64.zip
+
+  sign_windows_binaries:
+    name: Sign and Timestamp Windows Binary
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.x.x'
+      - name: Install AzureSignTool
+        shell: pwsh
+        run: |
+          dotnet tool install --global AzureSignTool --version 3.0.0
+      - name: Download Windows amd64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_windows_amd64
+          path: ./dist/sumocli_windows_amd64/sumocli.exe
+      - name: Download Windows arm64 binary
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_windows_arm64
+          path: ./dist/sumocli_windows_arm64/sumocli.exe
+      - name: Sign Windows binaries
+        shell: pwsh
+        run: |
+          $amd64 = Get-ChildItem ./dist/sumocli_windows_amd64/sumocli.exe | % { $_.FullName }
+          $arm64 = Get-ChildItem ./dist/sumocli_windows_arm64/sumocli.exe | % { $_.FullName }
+          Add-Content -Path signing.txt -Value $amd64
+          Add-Content -Path signing.txt -Value $arm64
+          azuresigntool sign --description-url "https://github.com/SumoLogic-Labs/sumocli" --file-digest sha256 `
+            --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
+            --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
+            --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
+            --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }} `
+            --azure-key-vault-tenant-id ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }} `
+            --timestamp-rfc3161 http://timestamp.sectigo.com `
+            --timestamp-digest sha256 `
+            --input-file-list signing.txt
+      - name: Upload Signed Windows amd64 binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_windows_amd64_signed
+          path: ./dist/sumocli_windows_amd64/sumocli.exe
+      - name: Upload Signed Windows arm64 binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sumocli_windows_arm64_signed
+          path: ./dist/sumocli_windows_arm64/sumocli.exe
+
+  upload_assets_to_release:
+    name: Upload Assets to Release
+    needs: [build, create_debian_package, sign_macos_binaries, sign_windows_binaries]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Version Variable
+        run: |
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
+      - name: Download darwin amd64 signed asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_darwin_amd64_signed_zip
+          path: sumocli_darwin_amd64/sumocli
+      - name: Download darwin arm64 signed asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_darwin_arm64_signed_zip
+          path: sumocli_darwin_arm64/sumocli
+      - name: Download linux amd64 asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_amd64
+          path: sumocli_linux_amd64/sumocli
+      - name: Download linux arm64 asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_arm64
+          path: sumocli_linux_arm64/sumocli
+      - name: Download windows amd64 signed asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_windows_amd64_signed
+          path: sumocli_windows_amd64/sumocli.exe
+      - name: Download windows arm64 signed asset
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_windows_arm64_signed
+          path: sumocli_windows_arm64/sumocli.exe
+      - name: Create installer archives
+        shell: bash
+        run: |
+          mkdir archives
+          unzip ./sumocli_darwin_amd64/sumocli/sumocli_darwin_amd64.zip -d ./sumocli_darwin_amd64/sumocli
+          unzip ./sumocli_darwin_arm64/sumocli/sumocli_darwin_arm64.zip -d ./sumocli_darwin_arm64/sumocli
+          rm ./sumocli_darwin_amd64/sumocli/sumocli_darwin_amd64.zip
+          rm ./sumocli_darwin_arm64/sumocli/sumocli_darwin_arm64.zip
+          tar -czf ./archives/sumocli_${{ env.TAG }}_darwin_amd64.tar.gz -C sumocli_darwin_amd64/sumocli .
+          tar -czf ./archives/sumocli_${{ env.TAG }}_darwin_arm64.tar.gz -C sumocli_darwin_arm64/sumocli .
+          tar -czf ./archives/sumocli_${{ env.TAG }}_linux_amd64.tar.gz -C sumocli_linux_amd64/sumocli .
+          tar -czf ./archives/sumocli_${{ env.TAG }}_linux_arm64.tar.gz -C sumocli_linux_arm64/sumocli .
+          zip ./archives/sumocli_${{ env.TAG }}_windows_amd64.zip sumocli_windows_amd64/sumocli.exe/sumocli.exe
+          zip ./archives/sumocli_${{ env.TAG }}_windows_arm64.zip sumocli_windows_arm64/sumocli.exe/sumocli.exe
+          find ./archives -type f -exec sha256sum {} \; > checksums.txt
+          cat checksums.txt
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./archives/sumocli_${{ env.TAG }}_darwin_amd64.tar.gz
+            ./archives/sumocli_${{ env.TAG }}_darwin_arm64.tar.gz
+            ./archives/sumocli_${{ env.TAG }}_linux_amd64.tar.gz
+            ./archives/sumocli_${{ env.TAG }}_linux_arm64.tar.gz
+            ./archives/sumocli_${{ env.TAG }}_windows_amd64.zip
+            ./archives/sumocli_${{ env.TAG }}_windows_arm64.zip
+            checksums.txt
+
+  release_debian_packages:
+    name: Release Debian Packages
+    needs: [build, create_debian_package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Version Variable
+        run: |
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download debian amd64 package
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_amd64_deb
+      - name: Download debian arm64 package
+        uses: actions/download-artifact@v2
+        with:
+          name: sumocli_linux_arm64_deb
+      - name: Installing release prerequsities
+        shell: bash
+        run: |
+          sudo apt-get install dpkg-dev
+      - name: Run debian release
+        shell: bash
+        run: |
+          chmod +x ./scripts/release-debianpackage.sh
+          ./scripts/release-debianpackage.sh -a amd64 -a arm64 -v ${{ env.TAG }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Invalidate Cloudfront Cache
+        shell: bash
+        run: |
+          chmod +x ./scripts/invalidate-cloudfront.sh
+          ./scripts/invalidate-cloudfront.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          DISTRIBUTIONID: ${{ secrets.DISTRIBUTIONID }}
+
+  update_homebrew_formula:
+    name: Update Hombrew Formula
+    needs: [build, upload_assets_to_release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Version Variable
+        run: |
+          echo "TAG=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
+      - name: Set SSH Key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download Darwin AMD asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file: sumocli_${{ env.TAG }}_darwin_amd64.tar.gz
+          version: tags/${{ env.TAG }}
+          target: sumocli_${{ env.TAG }}_darwin_amd64.tar.gz
+      - name: Download Darwin ARM asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file: sumocli_${{ env.TAG }}_darwin_arm64.tar.gz
+          version: tags/${{ env.TAG }}
+          target: sumocli_${{ env.TAG }}_darwin_arm64.tar.gz
+      - name: Download Linux AMD asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file: sumocli_${{ env.TAG }}_linux_amd64.tar.gz
+          version: tags/${{ env.TAG }}
+          target: sumocli_${{ env.TAG }}_linux_amd64.tar.gz
+      - name: Download Linux ARM asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          file: sumocli_${{ env.TAG }}_linux_arm64.tar.gz
+          version: tags/${{ env.TAG }}
+          target: sumocli_${{ env.TAG }}_linux_arm64.tar.gz
+      - name: Generate homebrew formula
+        shell: bash
+        run: |
+          chmod +x ./scripts/create-brewformula.sh
+          ./scripts/create-brewformula.sh -v ${{ env.TAG }}
+      - name: Check homebrew formula
+        shell: bash
+        run: |
+          ls -la
+          cat sumocli.rb
+      - name: Update homebrew formula
+        shell: bash
+        run: |
+          git clone git@github.com:SumoLogic-Labs/homebrew-tap.git
+          git config --global user.email ${{ secrets.EMAIL }}
+          git config --global user.name ${{ secrets.NAME }}
+          cd homebrew-tap
+          git checkout -b "${{ env.TAG }}-update"
+          cd ..
+          rm ./homebrew-tap/Formula/sumocli.rb
+          mv ./sumocli.rb ./homebrew-tap/Formula/sumocli.rb
+          cd homebrew-tap
+          git add ./Formula/sumocli.rb
+          git commit -m "Updating sumocli formula to ${{ env.TAG }}"
+          git push --set-upstream origin "${{ env.TAG }}-update"
+          URL=$(gh pr create --title "Update sumocli formula to ${{ env.TAG }}" --body "Updates sumocli homebrew formula to version ${{ env.TAG }}" --repo SumoLogic-Labs/homebrew-tap)
+          gh pr merge "$URL" --squash --delete-branch --repo SumoLogic-Labs/homebrew-tap
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_KEY }}

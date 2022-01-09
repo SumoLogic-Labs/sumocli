@@ -1,0 +1,18 @@
+{
+  "source": ["./dist/sumocli_darwin_arm64/sumocli"],
+  "bundle_id": "com.thepublicclouds.sumocli",
+  "apple_id": {
+    "username": "kyle.jackson733@gmail.com",
+    "password": "@env:AC_PASSWORD"
+  },
+  "sign": {
+    "application_identity": "BD7CB4E71B885802A80041006429E57709357B68"
+  },
+  "dmg": {
+    "output_path": "sumocli_darwin_arm64.dmg",
+    "volume_name": "sumocli"
+  },
+  "zip": {
+    "output_path": "sumocli_darwin_arm64.zip"
+  }
+}

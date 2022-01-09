@@ -1,0 +1,49 @@
+builds:
+  - goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/sumocli
+    ldflags:
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Build={{.Commit}}'
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Date={{.Date}}'
+      - -X 'github.com/SumoLogic-Labs/sumocli/internal/build.Version={{.Version}}'
+dockers:
+  - image_templates:
+      - "ghcr.io/SumoLogic-Labs/sumocli:{{.Version}}"
+      - "ghcr.io/SumoLogic-Labs/sumocli:latest"
+    goos: linux
+    goarch: amd64
+    build_flag_templates:
+      - --label=org.opencontainers.image.title={{.ProjectName}}
+      - --label=org.opencontainers.image.source=https://github.com/SumoLogic-Labs/sumocli
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+    skip_push: false
+    use: podman
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+    format_overrides:
+      - goos: windows
+        format: zip
+release:
+  disable: true
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
