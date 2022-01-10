@@ -197,7 +197,7 @@ jobs:
       - name: Sign Windows binaries
         shell: pwsh
         run: |
-          $amd64 = Get-ChildItem ./dist/cvecli_windows_amd64/cvecli.exe | % { $_.FullName }
+          $amd64 = Get-ChildItem ./dist/sumocli_windows_amd64/sumocli.exe | % { $_.FullName }
           azuresigntool sign --description-url "https://github.com/SumoLogic-Labs/sumocli" --file-digest sha256 `
             --azure-key-vault-url ${{ secrets.AZURE_KEY_VAULT_URL }} `
             --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
