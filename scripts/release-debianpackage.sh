@@ -99,7 +99,7 @@ fi
 echo "=> Moving directories to ./aptsumocli/dists/stable"
 cd ./aptsumocli/dists/stable || exit
 cat << EOF > Release
-Origin: apt.thepublicclouds.com
+Origin: apt.sumocli.com
 Suite: stable
 Codename: stable
 Version: $version
