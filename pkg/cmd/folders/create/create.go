@@ -1,6 +1,7 @@
 package create
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdCreate(client *cip.APIClient) *cobra.Command {
 		Use:   "create",
 		Short: "Creates a new folder under the given parent folder.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			create(name, description, parentId, isAdminMode, client)
 		},
 	}

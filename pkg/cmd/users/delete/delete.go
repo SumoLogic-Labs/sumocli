@@ -1,6 +1,7 @@
 package delete
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -17,6 +18,7 @@ func NewCmdUserDelete(client *cip.APIClient) *cobra.Command {
 		Use:   "delete",
 		Short: "Deletes a Sumo Logic user",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			deleteUser(id, transferTo, client)
 		},
 	}

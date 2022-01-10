@@ -2,6 +2,7 @@ package get
 
 import (
 	"fmt"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -17,6 +18,7 @@ func NewCmdCollectorGet(client *cip.APIClient) *cobra.Command {
 		Short: "Gets a Sumo Logic collector information",
 		Long:  "You can use either the id or the name of the collector to specify the collector to return",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getCollector(id, name, client)
 		},
 	}

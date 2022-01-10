@@ -1,6 +1,7 @@
 package status
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -18,6 +19,7 @@ The status of the upgrade can be one of the following
 3 - failed
 6 - progressing, the upgrade is running on the Collector`,
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			upgradableCollectorStatus(upgradeTaskId, client)
 		},
 	}

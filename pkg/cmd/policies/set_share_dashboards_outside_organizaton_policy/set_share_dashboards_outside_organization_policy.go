@@ -1,6 +1,7 @@
 package set_share_dashboards_outside_organizaton_policy
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -15,6 +16,7 @@ func NewCmdSetShareDashboardsOutsideOrganizationPolicy(client *cip.APIClient) *c
 		Long: "Set the Share Dashboards Outside Organization policy. This policy allows users to share the dashboard with view only privileges outside of the organization (capability must be enabled from the Roles page). " +
 			"Disabling this policy will disable all dashboards that have been shared outside of the organization.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			setShareDashboardsOutsideOrganizationPolicy(client, enabled)
 		},
 	}

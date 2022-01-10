@@ -1,6 +1,7 @@
 package get_upgradable_collectors
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdGetUpgradableCollectors(client *cip.APIClient) *cobra.Command {
 		Use:   "get-upgradable-collectors",
 		Short: "Gets collectors in Sumo Logic that are upgradable",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getUpgradableCollectors(toVersion, offset, limit, client)
 		},
 	}

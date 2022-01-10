@@ -1,6 +1,7 @@
 package install
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdAppsInstall(client *cip.APIClient) *cobra.Command {
 		Use:   "install",
 		Short: "Installs the app with given UUID in the folder specified.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			installApp(destinationFolderId, description, logSource, name, uuid, client)
 		},
 	}

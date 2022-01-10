@@ -5,32 +5,34 @@ Sumocli is currently in development so there could be bugs/incomplete functional
 GA will be v1.0.0 which I am expecting to be ready for release in Q1 2022.
 ## Installation
 
+### Container Image
+
+Container images for `sumocli` are hosted in GitHub Packages and can be pulled with the following command:
+
+```shell
+docker pull ghcr.io/sumologic-labs/sumocli:$VERSION-$ARCHITECTURE
+```
+
 ### Linux
-You can install sumocli via apt on debian based linux distributions by running the following commands:
+You can install `sumocli` via apt on debian based linux distributions by running the following commands:
 
-```
-
+```shell
+apt-key adv --fetch-keys https://apt.sumocli.app/public.key
+add-apt-repository "deb https://apt.sumocli.app/ stable main"
 apt-get update
+apt-get install sumocli
 ```
-
 ### macOS
 
+You can install `sumocli` via homebrew on macOS by running the following commands:
 
+```shell
+brew tap sumologic-labs/homebrew-tap
+brew install sumologic-labs/tap/sumocli
+```
 ### Windows
 
-
-
-### Docker
-
-Each version of Sumocli is published on [Docker Hub](https://hub.docker.com/r/wizedkyle/sumocli).
-
-Pull the latest image:
-
-`docker pull wiedkyle/sumocli:latest`
-
-Pull a specific version image:
-
-`docker pull wizedkyle/sumocli:v0.11.0`
+You can download a signed binary file from the specific release you want.
 
 ### Build Yourself
 You can build the sumocli application for your platform by performing the following steps:
@@ -54,7 +56,7 @@ The sections below explain the requirements for each authentication type.
 
 ### Environment Variables
 
-Environment variable authentication is useful when running sumocli in a CI/CD pipeline. The following environment variables need to be set to allow for proper authentication.
+Environment variable authentication is useful when running sumocli in a CI/CD pipeline or when using the Docker image. The following environment variables need to be set to allow for proper authentication.
 
 ```
 SUMO_ACCESS_ID: abcefghi

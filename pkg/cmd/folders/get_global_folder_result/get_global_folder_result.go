@@ -1,6 +1,7 @@
 package get_global_folder_result
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -13,6 +14,7 @@ func NewCmdGetGlobalFolderResult(client *cip.APIClient) *cobra.Command {
 		Use:   "get-global-folder-result",
 		Short: "Get results from global folder job for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getGlobalFolderResult(jobId, client)
 		},
 	}

@@ -1,6 +1,7 @@
 package get_user_concurrent_sessions_limit_policy
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -13,6 +14,7 @@ func NewCmdGetUserConcurrentSessionsLimitPolicy(client *cip.APIClient) *cobra.Co
 		Long: "Get the User Concurrent Sessions Limit policy. When enabled, the number of concurrent sessions a user may have is limited to the value entered. " +
 			"If a user exceeds the allowed number of sessions, the user's oldest session will be logged out to accommodate the new one. Disabling this policy means a user may have an unlimited number of concurrent sessions.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getUserConcurrentSessionsLimitPolicy(client)
 		},
 	}

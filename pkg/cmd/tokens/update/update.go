@@ -1,6 +1,7 @@
 package update
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdTokensUpdate(client *cip.APIClient) *cobra.Command {
 		Use:   "update",
 		Short: "Update a token with the given identifier in the token library.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			updateToken(description, id, inactive, name, version, client)
 		},
 	}

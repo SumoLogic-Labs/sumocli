@@ -2,6 +2,7 @@ package disable_mfa
 
 import (
 	"errors"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -15,6 +16,7 @@ func NewCmdUserDisableMFA(client *cip.APIClient) *cobra.Command {
 		Use:   "disable-mfa",
 		Short: "Disables MFA for a Sumo Logic user (this command only works interactively).",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			userDisableMFA(client)
 		},
 	}

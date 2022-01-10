@@ -1,6 +1,7 @@
 package update
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -28,6 +29,7 @@ func NewCmdAzureEventHubSourceUpdate(client *cip.APIClient) *cobra.Command {
 		Use:   "update",
 		Short: "Updates an Azure Event Hub source",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			updateEventHubSource(authorizationRuleName, category, collectorId, consumerGroup, description, eventHubKey,
 				eventHubName, fieldNames, fieldValues, name, namespace, sourceId, client)
 		},

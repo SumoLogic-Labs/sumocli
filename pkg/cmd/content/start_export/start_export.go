@@ -1,6 +1,7 @@
 package start_export
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdStartExport(client *cip.APIClient) *cobra.Command {
 			"which can be used with the sumocli content export-status command." +
 			"If the content is a folder everything under that folder is exported recursively.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			startExport(id, isAdminMode, client)
 		},
 	}

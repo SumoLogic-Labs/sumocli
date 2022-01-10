@@ -1,6 +1,7 @@
 package install_status
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ func NewCmdAppsInstallStatus(client *cip.APIClient) *cobra.Command {
 		Use:   "install-status",
 		Short: "Get the status of an asynchronous app install request for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getAppInstallStatus(jobId, client)
 		},
 	}

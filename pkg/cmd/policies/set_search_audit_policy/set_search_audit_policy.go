@@ -1,6 +1,7 @@
 package set_search_audit_policy
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -15,6 +16,7 @@ func NewCmdSetSearchAuditPolicy(client *cip.APIClient) *cobra.Command {
 		Long: "Set the Search Audit policy. This policy specifies whether search records for your account are enabled. " +
 			"You can access details about your account's search capacity, queries run by users from the Sumo Search Audit Index.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			setSearchAuditPolicy(client, enabled)
 		},
 	}

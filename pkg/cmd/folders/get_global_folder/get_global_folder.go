@@ -1,6 +1,7 @@
 package get_global_folder
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -16,6 +17,7 @@ func NewCmdGetGlobalFolder(client *cip.APIClient) *cobra.Command {
 		Short: "Schedule an asynchronous job to get global folder. " +
 			"Global folder contains all content items that a user has permissions to view in the organization.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getGlobalFolder(isAdminMode, client)
 		},
 	}

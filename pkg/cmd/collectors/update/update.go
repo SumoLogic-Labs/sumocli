@@ -1,6 +1,7 @@
 package update
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -27,6 +28,7 @@ func NewCmdCollectorUpdate(client *cip.APIClient) *cobra.Command {
 		Use:   "update",
 		Short: "updates a Sumo Logic collector settings",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			updateCollector(category, id, cutoffTimestamp, description, ephemeral, fieldNames, fieldValues, hostName,
 				installedCollector, name, sourceSyncMode, timeZone, targetCPU, client)
 		},
