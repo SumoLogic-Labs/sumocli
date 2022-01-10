@@ -3,6 +3,7 @@ package get_export_result
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -27,6 +28,7 @@ func NewCmdGetExportResult(client *cip.APIClient) *cobra.Command {
 		Use:   "get-export-result",
 		Short: "Gets results from content export job for the given job identifier",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			exportResult(contentId, jobId, isAdminMode, saveToFile, filePath, fileName, client)
 		},
 	}

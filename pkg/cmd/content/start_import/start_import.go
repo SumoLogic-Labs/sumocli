@@ -2,6 +2,7 @@ package start_import
 
 import (
 	"encoding/json"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -22,6 +23,7 @@ func NewCmdStartImport(client *cip.APIClient) *cobra.Command {
 		Use:   "start-import",
 		Short: "Schedule an asynchronous import of content inside an existing folder with the given identifier. The start-import command can be used to create or update content within a folder.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			startImport(file, folderId, isAdminMode, overwrite, client)
 		},
 	}

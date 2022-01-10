@@ -1,6 +1,7 @@
 package start_deletion
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -17,6 +18,7 @@ func NewCmdStartDeletion(client *cip.APIClient) *cobra.Command {
 		Use:   "start-deletion",
 		Short: "Start an asynchronous content deletion job with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			startDeletion(id, isAdminMode, client)
 		},
 	}

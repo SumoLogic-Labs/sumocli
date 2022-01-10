@@ -1,6 +1,8 @@
 package list
 
 import (
+	"fmt"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +20,7 @@ func NewCmdRoleList(client *cip.APIClient) *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic roles",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			listRoles(client, limit, name, sortBy)
 		},
 	}
@@ -40,6 +43,7 @@ func listRoles(client *cip.APIClient, limit int32, name string, sortBy bool) {
 		options.Name = optional.NewString(name)
 	}
 	data, response, err := client.ListRoles(&options)
+	fmt.Println(err)
 	if err != nil {
 		cmdutils.OutputError(response, err)
 	} else {

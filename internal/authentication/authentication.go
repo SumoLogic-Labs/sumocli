@@ -4,10 +4,18 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/SumoLogic-Labs/sumocli/internal/encryption"
+	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
 )
+
+func ConfirmCredentialsSet(client *cip.APIClient) {
+	if client.Cfg.Authentication.AccessId == "" || client.Cfg.Authentication.AccessKey == "" || client.Cfg.BasePath == "" {
+		fmt.Println("No authentication credentials set, please run sumocli configure or set environment variables.")
+		os.Exit(1)
+	}
+}
 
 func ConfigPath() string {
 	var filePath = ".sumocli/credentials/creds.json"
@@ -22,7 +30,7 @@ func ReadAccessId() string {
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Println("No authentication credentials, please run sumocli login")
+		fmt.Println("No authentication credentials, please run sumocli configure")
 		return ""
 	} else {
 		version := viper.GetString("version")

@@ -1,6 +1,7 @@
 package reset_password
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ func NewCmdUserResetPassword(client *cip.APIClient) *cobra.Command {
 		Use:   "reset-password",
 		Short: "Initiates a password reset for a Sumo Logic user.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			userResetPassword(id, client)
 		},
 	}

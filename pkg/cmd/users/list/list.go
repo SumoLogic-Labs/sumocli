@@ -1,6 +1,7 @@
 package list
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdUserList(client *cip.APIClient) *cobra.Command {
 		Use:   "list",
 		Short: "Lists Sumo Logic users",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			listUsers(email, limit, sortBy, client)
 		},
 	}

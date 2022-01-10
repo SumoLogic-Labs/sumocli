@@ -2,6 +2,7 @@ package get
 
 import (
 	"fmt"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -16,6 +17,7 @@ func NewCmdGet(client *cip.APIClient) *cobra.Command {
 		Use:   "get",
 		Short: "Gets a content item corresponding to the provided path or via the identifier of the content.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getContent(contentId, path, client)
 		},
 	}

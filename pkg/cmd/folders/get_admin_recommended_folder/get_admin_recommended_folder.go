@@ -1,6 +1,7 @@
 package get_admin_recommended_folder
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -15,6 +16,7 @@ func NewCmdGetAdminRecommendedFolder(client *cip.APIClient) *cobra.Command {
 		Use:   "get-admin-recommended-folder",
 		Short: "Schedule an asynchronous job to get the top-level Admin Recommended content items.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			getAdminRecommendedFolder(isAdminMode, client)
 		},
 	}

@@ -1,6 +1,7 @@
 package remove
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ func NewCmdRoleRemoveUser(client *cip.APIClient) *cobra.Command {
 		Use:   "remove user",
 		Short: "Removes the specified Sumo Logic user from the role.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			removeRoleFromUser(client, roleId, userId)
 		},
 	}

@@ -1,6 +1,7 @@
 package update_subdomain
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -13,6 +14,7 @@ func NewCmdAccountUpdateSubdomain(client *cip.APIClient) *cobra.Command {
 		Use:   "update-subdomain",
 		Short: "Update a subdomain. Only the Account Owner can update the subdomain.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			updateSubdomain(subdomain, client)
 		},
 	}

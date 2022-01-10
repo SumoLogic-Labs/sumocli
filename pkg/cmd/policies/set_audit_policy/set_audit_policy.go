@@ -1,6 +1,7 @@
 package set_audit_policy
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -15,6 +16,7 @@ func NewCmdSetAuditPolicy(client *cip.APIClient) *cobra.Command {
 		Long: "Set the Audit policy. This policy specifies whether audit records for your account are enabled. " +
 			"You can access details about reported account events in the Sumo Logic Audit Index.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			setAuditPolicy(client, enabled)
 		},
 	}

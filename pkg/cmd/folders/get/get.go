@@ -1,6 +1,7 @@
 package get
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -17,6 +18,7 @@ func NewCmdGet(client *cip.APIClient) *cobra.Command {
 		Use:   "get",
 		Short: "Get a folder with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			get(id, isAdminMode, client)
 		},
 	}

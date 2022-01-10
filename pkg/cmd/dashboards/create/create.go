@@ -2,6 +2,7 @@ package create
 
 import (
 	"encoding/json"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdDashboardsCreate(client *cip.APIClient) *cobra.Command {
 		Long: "Note: When exporting a dashboard spec from the Sumo Logic portal ensure that you have the timeRange.to object set as well as the " +
 			"timeRange.from set otherwise you will get errors when trying to create.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			createDashboard(file, client)
 		},
 	}

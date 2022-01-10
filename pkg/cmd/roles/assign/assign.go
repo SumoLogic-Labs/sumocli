@@ -1,6 +1,7 @@
 package assign
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ func NewCmdRoleAssign(client *cip.APIClient) *cobra.Command {
 		Use:   "assign",
 		Short: "Assigns the specified Sumo Logic user to the role.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			assignRoleToUser(client, roleId, userId)
 		},
 	}
@@ -26,6 +28,7 @@ func NewCmdRoleAssign(client *cip.APIClient) *cobra.Command {
 }
 
 func assignRoleToUser(client *cip.APIClient, roleId string, userId string) {
+	authentication.ConfirmCredentialsSet(client)
 	data, response, err := client.AssignRoleToUser(roleId, userId)
 	if err != nil {
 		cmdutils.OutputError(response, err)

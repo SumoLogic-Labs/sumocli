@@ -1,6 +1,7 @@
 package get_copy_status
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdGetCopyStatus(client *cip.APIClient) *cobra.Command {
 		Use:   "get-copy-status",
 		Short: "Get the status of the copy request with the given job identifier. On success, field statusMessage will contain identifier of the newly copied content.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			copyStatus(id, jobId, isAdminMode, client)
 		},
 	}

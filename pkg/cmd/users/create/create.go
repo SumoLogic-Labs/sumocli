@@ -1,6 +1,7 @@
 package create
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdUserCreate(client *cip.APIClient) *cobra.Command {
 		Use:   "create",
 		Short: "Creates a Sumo Logic user account",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			user(firstName, lastName, emailAddress, roleIds, client)
 		},
 	}

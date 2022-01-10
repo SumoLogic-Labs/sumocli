@@ -1,6 +1,7 @@
 package get_deletion_status
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdGetDeletionStatus(client *cip.APIClient) *cobra.Command {
 		Use:   "get-deletion-status",
 		Short: "Get the status of an asynchronous content deletion job request for the given job identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			deletionStatus(id, jobId, isAdminMode, client)
 		},
 	}

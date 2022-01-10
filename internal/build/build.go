@@ -1,5 +1,7 @@
 package build
 
-var Version = "Dev"
-
-var Build = "Dev"
+var (
+	Build   = "Dev"
+	Date    = "Dev"
+	Version = "Dev"
+)

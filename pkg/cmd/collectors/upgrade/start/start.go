@@ -2,6 +2,7 @@ package start
 
 import (
 	"fmt"
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdUpgradeStart(client *cip.APIClient) *cobra.Command {
 		Use:   "start",
 		Short: "Starts an upgrade or downgrade of an existing installed collector",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			upgradeStart(id, toVersion, client)
 		},
 	}

@@ -1,6 +1,7 @@
 package update
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -19,6 +20,7 @@ func NewCmdUpdate(client *cip.APIClient) *cobra.Command {
 		Use:   "update",
 		Short: "Update an existing folder with the given identifier.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			update(name, description, id, isAdminMode, client)
 		},
 	}

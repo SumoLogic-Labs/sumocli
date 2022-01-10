@@ -1,6 +1,7 @@
 package move
 
 import (
+	"github.com/SumoLogic-Labs/sumocli/internal/authentication"
 	"github.com/SumoLogic-Labs/sumocli/pkg/cmdutils"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip"
 	"github.com/SumoLogic-Labs/sumologic-go-sdk/service/cip/types"
@@ -18,6 +19,7 @@ func NewCmdMove(client *cip.APIClient) *cobra.Command {
 		Use:   "move",
 		Short: "Moves an item from its current location to another folder.",
 		Run: func(cmd *cobra.Command, args []string) {
+			authentication.ConfirmCredentialsSet(client)
 			move(id, destinationFolderId, isAdminMode, client)
 		},
 	}
