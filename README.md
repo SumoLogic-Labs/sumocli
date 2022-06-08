@@ -1,5 +1,5 @@
 # sumocli
-A CLI application that lets you manage/automate your Sumo Logic tenancy. 
+A CLI application that lets you manage/automate your Sumo Logic tenancy.
 
 Sumocli is currently in development so there could be bugs/incomplete functionality.
 GA will be v1.0.0 which I am expecting to be ready for release in Q1 2022.
@@ -51,7 +51,7 @@ Sumocli uses two authentication methods;
 - Environment variables
 - Credentials file
 
-When you run a command in sumocli it will first check to see if a credentials file exists, if it can't find one then it will fall back to environment variables. This is to ensure that sumocli can run in CI/CD pipelines. 
+When you run a command in sumocli it will first check to see if a credentials file exists, if it can't find one then it will fall back to environment variables. This is to ensure that sumocli can run in CI/CD pipelines.
 The sections below explain the requirements for each authentication type.
 
 ### Environment Variables
@@ -64,21 +64,23 @@ SUMO_ACCESS_ID: abcefghi
 SUMO_ACCESS_KEY: AbCeFG123
 
 SUMO_ENDPOINT: https://api.<regioncode>.sumologic.com/api
-```
+```'
 
-For a full list of Sumo Logic regions to API endpoints see this page: 
+Note: Environment variable authentication is not available when using the `sumocli` command.
+
+For a full list of Sumo Logic regions to API endpoints see this page:
 https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
 
 ### Credentials File
 
-The credentials file stores the same information as the environment variables however, it can be generated interactively using `sumocli login`. 
-The Sumo Logic Access ID and Access Key are encrypted (using AES-256) before being written to the credentials file to reduce the risk of the credentials being 
+The credentials file stores the same information as the environment variables however, it can be generated interactively using `sumocli configure`.
+The Sumo Logic Access ID and Access Key are encrypted (using AES-256) before being written to the credentials file to reduce the risk of the credentials being
 used outside of Sumocli.
 
 Encryption of the Sumo Logic Access ID and Access Key was added in v0.9.0 of Sumocli, if you are running
-an earlier version of Sumocli you will need to regenerate your credentials file by running `sumocli login` if you want 
+an earlier version of Sumocli you will need to regenerate your credentials file by running `sumocli configure` if you want
 to leverage encryption at rest.
-If you need to know which Access ID sumocli is configured to use you can run `sumocli login --showAccessId` and
+If you need to know which Access ID sumocli is configured to use you can run `sumocli configure --showAccessId` and
 the plaintext access ID will be displayed.
 
 The credential file is stored in the following locations depending on your operating system.
@@ -91,7 +93,15 @@ Macos: /User/<username>/.sumocli/credentials/creds.json
 Linux: /Usr/<username>/.sumocli/credentials/creds.json
 ```
 
-The contents of the credential file is as follows:
+The credential file path can be changed by supplying the environment variable `SUMO_CONFIG_PATH`.
+
+For example, to create/use a configuration file saved at `.sumocli/credentials/us.json`:
+```
+SUMO_CONFIG_NAME=us sumocli configure
+SUMO_CONFIG_NAME=us sumocli live-tail start
+```
+
+The contents of the credential file is as follows (note that accessid and accesskey are ciphered values):
 
 ```
 {
@@ -111,7 +121,7 @@ You can find a list of API endpoints and sources that Sumocli supports in the [s
 
 ## Contributing
 
-Clone or fork the repo, make your changes and create a pull request. 
+Clone or fork the repo, make your changes and create a pull request.
 I will then review it and all things looking good it gets merged!
 
 If there is something in the code that you don't understand please feel free to email at kyle@thepublicclouds.com.

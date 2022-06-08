@@ -10,7 +10,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -31,7 +30,7 @@ func NewCmdConfigure() *cobra.Command {
 					os.Exit(1)
 				}
 			}
-			configFile := authentication.ConfigPath()
+			configFile := authentication.ConfigFilePath()
 			fmt.Println("Sumocli requires an access id and access key.")
 			fmt.Println("Sumocli will encrypt and store the access id and access key in" +
 				" the following file for use by subsequent commands: " + configFile)
@@ -114,7 +113,7 @@ func getCredentials() {
 		fmt.Printf("Prompt failed %v\n", err)
 	}
 
-	configFilePath := filepath.Dir(authentication.ConfigPath())
+	configFilePath := authentication.ConfigDirPath()
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 		err := os.MkdirAll(configFilePath, 0755)
 		if err != nil {
@@ -122,11 +121,11 @@ func getCredentials() {
 		}
 	}
 	credentialFile, _ := json.MarshalIndent(credentials, "", "  ")
-	err = os.WriteFile(authentication.ConfigPath(), credentialFile, 0644)
+	err = os.WriteFile(authentication.ConfigFilePath(), credentialFile, 0644)
 	if err != nil {
 		log.Fatal().Err(err)
 	} else {
-		fmt.Println("Credentials file saved to: " + authentication.ConfigPath())
+		fmt.Println("Credentials file saved to: " + authentication.ConfigFilePath())
 	}
 
 	return

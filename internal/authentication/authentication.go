@@ -17,16 +17,26 @@ func ConfirmCredentialsSet(client *cip.APIClient) {
 	}
 }
 
-func ConfigPath() string {
-	var filePath = ".sumocli/credentials/creds.json"
+func ConfigName() string {
+	var envConfigName = os.Getenv("SUMO_CONFIG_NAME")
+	if envConfigName != "" {
+		return envConfigName
+	}
+	return "creds"
+}
+
+func ConfigDirPath() string {
 	homeDirectory, _ := os.UserHomeDir()
-	configFile := filepath.Join(homeDirectory, filePath)
-	return configFile
+	return filepath.Join(homeDirectory, ".sumocli/credentials")
+}
+
+func ConfigFilePath() string {
+	return filepath.Join(ConfigDirPath(), ConfigName() + ".json")
 }
 
 func ReadAccessId() string {
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(ConfigPath()))
+	viper.SetConfigName(ConfigName())
+	viper.AddConfigPath(ConfigDirPath())
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -45,12 +55,12 @@ func ReadAccessId() string {
 }
 
 func ReadAccessKeys() (string, string, string) {
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(ConfigPath()))
+	viper.SetConfigName(ConfigName())
+	viper.AddConfigPath(ConfigDirPath())
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Println("No authentication credentials, please run sumocli login")
+		fmt.Println("No authentication credentials, please run sumocli configure")
 		return "", "", ""
 	} else {
 		version := viper.GetString("version")
@@ -70,8 +80,8 @@ func ReadAccessKeys() (string, string, string) {
 func ReadCredentials() (string, string) {
 	var accessCredentialsComplete string
 	var endpoint string
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(ConfigPath()))
+	viper.SetConfigName(ConfigName())
+	viper.AddConfigPath(ConfigDirPath())
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -107,8 +117,8 @@ func ReadCredentials() (string, string) {
 
 func ReadAuthCredentials() (string, string, string) {
 	var endpoint string
-	viper.SetConfigName("creds")
-	viper.AddConfigPath(filepath.Dir(ConfigPath()))
+	viper.SetConfigName(ConfigName())
+	viper.AddConfigPath(ConfigDirPath())
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {
