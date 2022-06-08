@@ -64,7 +64,7 @@ SUMO_ACCESS_ID: abcefghi
 SUMO_ACCESS_KEY: AbCeFG123
 
 SUMO_ENDPOINT: https://api.<regioncode>.sumologic.com/api
-```'
+```
 
 Note: Environment variable authentication is not available when using the `sumocli` command.
 
